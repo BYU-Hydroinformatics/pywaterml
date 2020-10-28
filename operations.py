@@ -13,7 +13,6 @@ class WaterMLOperations(url):
         self.url = url
         self.client = Client(url, timeout= 500)
 
-    # client = Client(url, timeout= 500)
     """
         Get all the sites from a endpoint
         GetSites() function is similar to the
