@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 
 
-class WaterMLOperations(url):
+class WaterMLOperations():
     def __init__(self,url = None):
         self.url = url
         self.client = Client(url, timeout= 500)
@@ -16,7 +16,7 @@ class WaterMLOperations(url):
         Function to add a endpoint if needed
         AddEndpoint()
     """
-    def AddEndpoint(url):
+    def AddEndpoint(self,url):
         if self.url is None:
             self.url = url
         else:
@@ -26,7 +26,7 @@ class WaterMLOperations(url):
         Function to change the endpoint if needed
         ChangeEndpoint()
     """
-    def ChangeEndpoint(url):
+    def ChangeEndpoint(self,url):
         if self.url is not None:
             self.url = url
         else:
@@ -38,7 +38,7 @@ class WaterMLOperations(url):
         GetSites() function is similar to the
         GetSites() WaterML function
     """
-    def GetSites():
+    def GetSites(self):
         # True Extent is on and necessary if the user is trying to add USGS or
         # Get a list of all the sites and their respective lat lon.
 
@@ -61,7 +61,7 @@ class WaterMLOperations(url):
         GetSitesByBoxObject() function is similar to the
         GetSitesByBoxObject() WaterML function
     """
-    def GetSitesByBoxObject(ext_list):
+    def GetSitesByBoxObject(self,ext_list):
         return_obj['level'] = extent_value
         # Reprojecting the coordinates from 3857 to 4326 using pyproj
         inProj = Proj(init='epsg:3857')
@@ -85,11 +85,11 @@ class WaterMLOperations(url):
         GetVariables() function is similar to the
         GetVariables() WaterML function
     """
-    def GetVariables():
+    def GetVariables(self):
       variables = self.client.service.GetVariables('[:]')
 
-      variables_dict = xmltodict.parse(keywords)
-      variables_dict_object = json.dumps(keywords_dict)
+      variables_dict = xmltodict.parse(variables)
+      variables_dict_object = json.dumps(variables_dict)
 
       variables_json = json.loads(variables_dict_object)
       array_variables = variables_json['variablesResponse']['variables']['variable']
@@ -108,7 +108,7 @@ class WaterMLOperations(url):
         GetSiteInfo() function is similar to the
         GetSiteInfo() WaterML function
     """
-    def GetSiteInfo(site_ful_code):
+    def GetSiteInfo(self,site_ful_code):
 
         site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
@@ -152,7 +152,7 @@ class WaterMLOperations(url):
         GetValues() function is similar to the
         GetValues() WaterML function
     """
-    def GetValues(site_full_code, variable_full_code, methodID, start_date, end_date):
+    def GetValues(self,site_full_code, variable_full_code, methodID, start_date, end_date):
 
         values = self.client.service.GetValues(
             site_full_code, variable_full_code, start_date, end_date, "")
