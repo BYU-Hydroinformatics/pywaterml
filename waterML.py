@@ -12,13 +12,32 @@ class WaterMLOperations(url):
     def __init__(self,url = None):
         self.url = url
         self.client = Client(url, timeout= 500)
+    """
+        Function to add a endpoint if needed
+        AddEndpoint()
+    """
+    def AddEndpoint(url):
+        if self.url is None:
+            self.url = url
+        else:
+            print("There is already an enpoint, if you want to change the endpoint try ChangeEndpoint() function")
+        pass
+    """
+        Function to change the endpoint if needed
+        ChangeEndpoint()
+    """
+    def ChangeEndpoint(url):
+        if self.url is not None:
+            self.url = url
+        else:
+            print("There is no endpoint, please before changing an endpoint add one with AddEndpoint() function")
+        pass
 
     """
         Get all the sites from a endpoint
         GetSites() function is similar to the
         GetSites() WaterML function
     """
-
     def GetSites():
         # True Extent is on and necessary if the user is trying to add USGS or
         # Get a list of all the sites and their respective lat lon.
