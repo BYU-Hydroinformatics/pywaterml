@@ -19,6 +19,7 @@ class WaterMLOperations():
     def AddEndpoint(self,url):
         if self.url is None:
             self.url = url
+            self.client = Client(url, timeout= 500)
         else:
             print("There is already an enpoint, if you want to change the endpoint try ChangeEndpoint() function")
         pass
@@ -29,6 +30,7 @@ class WaterMLOperations():
     def ChangeEndpoint(self,url):
         if self.url is not None:
             self.url = url
+            self.client = Client(url, timeout= 500)
         else:
             print("There is no endpoint, please before changing an endpoint add one with AddEndpoint() function")
         pass
