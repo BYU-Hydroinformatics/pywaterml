@@ -1,4 +1,4 @@
-from waterML import WaterMLOperations
+from pywaterml import waterML.WaterMLOperations
 
 
 url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
