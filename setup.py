@@ -2,7 +2,13 @@ from setuptools import setup
 import versioneer
 
 requirements = [
-    # package requirements go here
+    xmltodict
+    pandas
+    numpy
+    owslib
+    suds-py3
+    # folium
+    # plotly
 ]
 
 setup(
@@ -26,5 +32,10 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Topic :: Scientific/Engineering :: Hydrology',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Intended Audience :: Science/Research',
+        'License :: MIT',
+        'Natural Language :: English',
     ]
 )
