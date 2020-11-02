@@ -6,8 +6,6 @@ requirements = [
     "numpy",
     "owslib",
     "suds-py3"
-    # folium
-    # plotly
 ]
 
 setup(
