@@ -4,3 +4,4 @@ dist
 build.sh
 bld.bat
 __pycache__
+.pypirc
