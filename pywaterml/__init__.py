@@ -1,3 +1,6 @@
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+import pywaterml.aux
+import pywaterml.analyzeData
+import geoglows.waterML
+
+__version__ = '0.0.1.dev1'
+__author__ = 'Elkin Giovanni Romero Bustamante'
