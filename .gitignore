@@ -3,3 +3,4 @@ pywaterml.egg-info
 dist
 build.sh
 bld.bat
+__pycache__
