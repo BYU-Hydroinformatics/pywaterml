@@ -2,7 +2,7 @@ from suds.client import Client  # For parsing WaterML/XML
 import json
 import xmltodict
 from json import dumps, loads
-from aux import Auxiliary
+from pywaterml.aux import Auxiliary
 from pyproj import Proj, transform  # Reprojecting/Transforming coordinates
 import xml.etree.ElementTree as ET
 import pandas as pd
