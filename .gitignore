@@ -1,3 +1,5 @@
 build
 pywaterml.egg-info
 dist
+build.sh
+bld.bat
