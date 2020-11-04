@@ -182,7 +182,7 @@ class WaterMLOperations():
                         if type(times_series['values']['value']) is list:
 
                             for k in times_series['values']['value']:
-                                return_obj['k']= k
+                                # return_obj['k']= k
 
                                 try:
                                     if k['@methodCode'] == methodID:
@@ -218,7 +218,7 @@ class WaterMLOperations():
                                     data_values.append([date_string,value])
                                     data_values.sort()
                                 graph_json["values"] = data_values
-                                return_obj['graphs']= graph_json
+                                # return_obj['graphs']= graph_json
 
                         else:  # The else statement is executed is there is only one value in the timeseries
                             try:
@@ -242,7 +242,7 @@ class WaterMLOperations():
                                     data_values.append([date_string,value])
                                     data_values.sort()
                                     graph_json["values"] = data_values
-                                    return_obj['graphs']=graph_json
+                                    # return_obj['graphs']=graph_json
 
                             except KeyError:
                                 time = times_series['values'][
@@ -262,8 +262,9 @@ class WaterMLOperations():
                                 data_values.append([date_string,value])
                                 data_values.sort()
                                 graph_json["values"] = data_values
-                                return_obj['graphs']=graph_json
-        return return_obj
+                                # return_obj['graphs']=graph_json
+        # return return_obj
+        return graph_json
 
 
 if __name__ == "__main__":
