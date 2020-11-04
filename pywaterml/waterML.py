@@ -141,7 +141,7 @@ class WaterMLOperations():
                 return_obj['code'] = object_method['variable']['variableCode']['#text']
                 return_obj['count'] = object_method['valueCount']
                 if 'method' in object_method:
-                    return_object['methodID'] = object_method['method']['@methodID']
+                    return_obj['methodID'] = object_method['method']['@methodID']
                 else:
                     return_obj['methodID'] = None
                 return_obj['description'] = object_method['source']
