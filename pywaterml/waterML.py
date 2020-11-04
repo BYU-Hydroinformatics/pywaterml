@@ -3,6 +3,7 @@ import json
 import xmltodict
 from json import dumps, loads
 from pywaterml.aux import Auxiliary
+from pywaterml.analyzeData import WaterAnalityca
 from pyproj import Proj, transform  # Reprojecting/Transforming coordinates
 import xml.etree.ElementTree as ET
 import pandas as pd
@@ -267,6 +268,13 @@ class WaterMLOperations():
         # return return_obj
         return graph_json
 
+    """
+        Return the mean interpolation for the GetValues()
+        MeanInterpolation()
+    """
+    def MeanInterpolation(self, GetValuesResponse):
+        mean_interpolation = WaterAnalityca.MeanInterpolation(GetValuesResponse)
+        return mean_interpolation
 
 if __name__ == "__main__":
     print("WaterML ops")
