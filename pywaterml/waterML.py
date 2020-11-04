@@ -110,7 +110,7 @@ class WaterMLOperations():
         GetSiteInfo() function is similar to the
         GetSiteInfo() WaterML function
     """
-    def GetSiteInfo(self,site_ful_code):
+    def GetSiteInfo(self,site_full_code):
 
         site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
