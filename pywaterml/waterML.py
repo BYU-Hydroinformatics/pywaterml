@@ -123,12 +123,12 @@ class WaterMLOperations():
         if(isinstance(object_methods,(dict))):
             return_obj = {}
             return_obj['name'] = object_methods['variable']['variableName']
-            return_objec['code'] = object_methods['variable']['variableCode']['#text']
-            return_objec['count'] = object_methods['valueCount']
+            return_obj['code'] = object_methods['variable']['variableCode']['#text']
+            return_obj['count'] = object_methods['valueCount']
             if 'method' in object_methods:
-                return_object['methodID'] = object_methods['method']['@methodID']
+                return_obj['methodID'] = object_methods['method']['@methodID']
             else:
-                return_object['methodID'] = None
+                return_obj['methodID'] = None
             return_obj['description'] = object_methods['source']
             return_obj['timeInterval'] = object_methods['variableTimeInterval']
             return_aray.append(return_obj)
@@ -138,8 +138,8 @@ class WaterMLOperations():
             for object_method in object_methods:
                 return_obj = {}
                 return_obj['name'] = object_method['variable']['variableName']
-                return_objec['code'] = object_method['variable']['variableCode']['#text']
-                return_objec['count'] = object_method['valueCount']
+                return_obj['code'] = object_method['variable']['variableCode']['#text']
+                return_obj['count'] = object_method['valueCount']
                 if 'method' in object_method:
                     return_object['methodID'] = object_method['method']['@methodID']
                 else:
