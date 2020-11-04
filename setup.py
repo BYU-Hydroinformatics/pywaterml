@@ -10,7 +10,7 @@ requirements = [
 
 setup(
     name='pywaterml',
-    version='0.0.7.dev1',
+    version='0.0.8.dev1',
     description="The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps",
     license='BSD 3-Clause',
     license_family='BSD',
