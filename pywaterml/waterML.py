@@ -143,7 +143,7 @@ class WaterMLOperations():
                 if 'method' in object_method:
                     return_object['methodID'] = object_method['method']['@methodID']
                 else:
-                    return_object['methodID'] = None
+                    return_obj['methodID'] = None
                 return_obj['description'] = object_method['source']
                 return_obj['timeInterval'] = object_method['variableTimeInterval']
                 return_aray.append(return_obj)
