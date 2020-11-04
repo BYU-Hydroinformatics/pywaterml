@@ -6,6 +6,7 @@ from pywaterml.aux import Auxiliary
 from pyproj import Proj, transform  # Reprojecting/Transforming coordinates
 import xml.etree.ElementTree as ET
 import pandas as pd
+from datetime import datetime
 
 
 class WaterMLOperations():
