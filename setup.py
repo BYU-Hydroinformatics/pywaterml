@@ -4,7 +4,7 @@ requirements = [
     "xmltodict",
     "pandas",
     "numpy",
-    "owslib=0.20.0",
+    "owslib",
     "suds-py3"
 ]
 
