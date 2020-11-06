@@ -57,7 +57,7 @@ class Auxiliary():
         hs_sites = []
         # print bbox
 
-        bbox_json = recursive_asdict(bbox)  # Convert bounding box to json
+        bbox_json = self.recursive_asdict(bbox)  # Convert bounding box to json
 
         # If there are multiple sites, create a list of of dictionaries with
         # metadata
@@ -104,18 +104,18 @@ class Auxiliary():
 
         return hs_sites
 
-    def recursive_asdict(d):
+    def recursive_asdict(self,d):
         """Convert Suds object into serializable format."""
         out = {}
         try:
             for k, v in asdict(d).items():
                 if hasattr(v, "__keylist__"):
-                    out[k] = recursive_asdict(v)
+                    out[k] = self.recursive_asdict(v)
                 elif isinstance(v, list):
                     out[k] = []
                     for item in v:
                         if hasattr(item, "__keylist__"):
-                            out[k].append(recursive_asdict(item))
+                            out[k].append(self.recursive_asdict(item))
                         else:
                             out[k].append(item)
                 else:
