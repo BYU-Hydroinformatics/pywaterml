@@ -66,7 +66,7 @@ class WaterMLOperations():
         GetSitesByBoxObject() WaterML function
     """
     def GetSitesByBoxObject(self,ext_list):
-        return_obj['level'] = extent_value
+        # return_obj['level'] = extent_value
         # Reprojecting the coordinates from 3857 to 4326 using pyproj
         inProj = Proj(init='epsg:3857')
         outProj = Proj(init='epsg:4326')
