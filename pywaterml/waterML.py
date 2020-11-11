@@ -14,6 +14,7 @@ class WaterMLOperations():
     def __init__(self,url = None):
         self.url = url
         self.client = Client(url, timeout= 500)
+        self.aux = Auxiliary()
     """
         Function to add a endpoint if needed
         AddEndpoint()
@@ -79,7 +80,7 @@ class WaterMLOperations():
         # Get Sites by bounding box using suds
         # Creating a sites object from the endpoint. This site object will
         # be used to generate the geoserver layer. See utilities.py.
-        wml_sites = Auxiliary.parseWML(bbox)
+        wml_sites = self.aux.parseWML(bbox)
         # wml_sites = xmltodict.parse(bbox)
         sites_parsed_json = json.dumps(wml_sites)
 
