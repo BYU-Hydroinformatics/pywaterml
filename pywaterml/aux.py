@@ -1,5 +1,7 @@
 import requests
 import json
+from suds.sudsobject import asdict
+
 
 class Auxiliary():
     def parseJSON(json):
@@ -53,7 +55,7 @@ class Auxiliary():
 
         return hs_sites
 
-    def parseWML(bbox):
+    def parseWML(self,bbox):
         hs_sites = []
         # print bbox
 
