@@ -7,7 +7,7 @@ class WaterAnalityca():
         MeanInterpolation() function is a complement to the
         GetValues() WaterML function if there is gaps in the data
     """
-    def MeanInterpolation(GetValuesResponse):
+    def Interpolate(GetValuesResponse, type='mean'):
         time_pd, values_pd = zip(*GetValuesResponse)
         pds={}
         pds['time'] = time_pd
@@ -17,7 +17,16 @@ class WaterAnalityca():
         df_interpolation.loc[df_interpolation.value < 0] = np.NaN
         df_interpolation.replace(0, np.NaN, inplace=True)
         df_interpolation['time'] = pd.to_datetime(df_interpolation['time'])
-        df_interpolation = df_interpolation.set_index('time').resample('D').mean()
+
+        if type == 'mean':
+            df_interpolation = df_interpolation.set_index('time').resample('D').mean()
+
+        if type == 'backward':
+            df_interpolation = df_interpolation.set_index('time').resample('D').bfill()
+
+        if type == 'forward':
+            df_interpolation = df_interpolation.set_index('time').resample('D').pad()
+
         df_interpolation['value'] = df_interpolation['value'].interpolate()
         df_interpolation.reset_index(level=0, inplace=True)
         df_interpolation.replace(np.NaN,0, inplace=True)
@@ -29,6 +38,6 @@ class WaterAnalityca():
             dataInterpolated.append([t,v])
 
         return dataInterpolated
-    
+
 if __name__ == "__main__":
     print("Why are you running the wrapper class file?")
