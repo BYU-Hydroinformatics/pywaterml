@@ -77,7 +77,6 @@ class WaterMLOperations():
         maxx, maxy = ext_list[2], ext_list[3]
         x1, y1 = transform(inProj, outProj, minx, miny)
         x2, y2 = transform(inProj, outProj, maxx, maxy)
-        print(x1,y1,x2,y2)
         bbox = self.client.service.GetSitesByBoxObject(
             x1, y1, x2, y2, '1', '')
         # Get Sites by bounding box using suds
