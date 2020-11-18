@@ -310,8 +310,8 @@ class WaterMLOperations():
         Return the mean interpolation for the GetValues()
         MeanInterpolation()
     """
-    def MeanInterpolation(self, GetValuesResponse):
-        mean_interpolation = WaterAnalityca.MeanInterpolation(GetValuesResponse)
+    def Interpolate(self, GetValuesResponse, type= 'mean'):
+        mean_interpolation = WaterAnalityca.Interpolate(GetValuesResponse)
         return mean_interpolation
 
 if __name__ == "__main__":
