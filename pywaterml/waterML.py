@@ -66,15 +66,18 @@ class WaterMLOperations():
         GetSitesByBoxObject() function is similar to the
         GetSitesByBoxObject() WaterML function
     """
-    def GetSitesByBoxObject(self,ext_list):
+    def GetSitesByBoxObject(self,ext_list,inProjection):
         # return_obj['level'] = extent_value
         # Reprojecting the coordinates from 3857 to 4326 using pyproj
-        inProj = Proj(init='epsg:3857')
+        # inProj = Proj(init='epsg:3857')
+        inProj = Proj(init=inProjection)
         outProj = Proj(init='epsg:4326')
+
         minx, miny = ext_list[0], ext_list[1]
         maxx, maxy = ext_list[2], ext_list[3]
         x1, y1 = transform(inProj, outProj, minx, miny)
         x2, y2 = transform(inProj, outProj, maxx, maxy)
+        print(x1,y1,x2,y2)
         bbox = self.client.service.GetSitesByBoxObject(
             x1, y1, x2, y2, '1', '')
         # Get Sites by bounding box using suds
