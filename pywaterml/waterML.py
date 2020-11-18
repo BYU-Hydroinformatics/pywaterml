@@ -155,7 +155,7 @@ class WaterMLOperations():
 
         return return_aray
     """
-        Get the specific site for an especific variable in a site.
+        Get the specific values for an specific variable in a site.
         GetValues() function is similar to the
         GetValues() WaterML function
     """
@@ -270,6 +270,41 @@ class WaterMLOperations():
                                 # return_obj['graphs']=graph_json
         # return return_obj
         return graph_json
+
+    """
+        Get the specific sites according to a keyword search array.
+        GetSitesByVariable()
+    """
+    def GetSitesByVariable(self,specific_variables,cookiCutter = None):
+
+        sites = []
+        new_sites = []
+
+        if cookiCutter is not None:
+            sites = cookiCutter
+        else:
+            sites = self.GetSites()
+
+        for site in sites:
+            site_obj = {}
+            sitecode = site['sitecode']
+            site_name = site['sitename']
+            network = site["network"]
+            site_obj['sitecode'] = sitecode
+            site_obj['sitename'] = site_name
+            site_obj['network'] = network
+            site_obj['latitude'] = site['latitude']
+            site_obj['longitude'] = site['longitude']
+
+            site_desc = network + ":" + sitecode
+            site_info = self.GetSiteInfo(site_desc)
+
+            for variable_site in site_info:
+                if variable_site['name'] in specific_variables:
+                    new_sites.append(site_obj)
+                    break
+
+        return new_sites
 
     """
         Return the mean interpolation for the GetValues()
