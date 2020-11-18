@@ -18,6 +18,23 @@ def main():
     site_full_code = "Para_La_Naturaleza:Rio_Toro_Negro"
     siteInfo =  water.GetSiteInfo(site_full_code)
     print(siteInfo)
+
+    print("VALUES")
+    network = sites[0]['network']
+    firstVariableCode = siteInfo[0]['code']
+    variable_full_code = network + ":" + firstVariableCode
+    methodID = siteInfo[0]['methodID']
+    start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+    end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
+    variableResponse = water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+    print("INTERPOLATION")
+    interpol_b = water.Interpolate(variableResponse['values'], 'backward')
+    interpol_f = water.Interpolate(variableResponse['values'], 'forward')
+    interpol_m = water.Interpolate(variableResponse['values'], 'mean')
+    print(len(interpol_f))
+    print(len(interpol_b))
+    print(len(interpol_m))
+
     """
     UNCOMMENT TO USE WITH THE epsg:3857
     """
@@ -30,6 +47,8 @@ def main():
     BoundsRearranged = [-66.4903,18.19699,-66.28665,18.28559]
     SitesByBoundingBox = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
     print(SitesByBoundingBox)
+
+
 
     print("***********FILTERING SITES BY KEYWORD****************")
     variablesTest = [variables[0]]
@@ -70,6 +89,8 @@ def main():
     sitesFiltered = water.GetSitesByVariable(variablesTest)
     print("GetSitesByVariable No CookieCutter")
     print(len(sitesFiltered))
+
+
 
 
 
