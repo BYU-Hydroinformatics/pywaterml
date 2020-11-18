@@ -31,14 +31,46 @@ def main():
     SitesByBoundingBox = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
     print(SitesByBoundingBox)
 
+    print("***********FILTERING SITES BY KEYWORD****************")
+    variablesTest = [variables[0]]
+
+    """
+    USING A COOKIE CUTTER
+    """
+    sitesFiltered = water.GetSitesByVariable(variablesTest,sites)
+    print("GetSitesByVariable With CookieCutter")
+    print(sitesFiltered)
+
+    """
+    WITHOUT USING A COOKIE CUTTER
+    """
+    sitesFiltered = water.GetSitesByVariable(variablesTest)
+    print("GetSitesByVariable No CookieCutter")
+    print(sitesFiltered)
+
     print("******************CHANGE URL***********")
     water.ChangeEndpoint("http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL")
     sites = water.GetSites()
     variables = water.GetVariables()
     print("************SITES***************")
-    print(sites)
+    print(len(sites))
     print("************VARIABLES***********")
     print(variables)
+    print("***********FILTERING SITES BY KEYWORD****************")
+    variablesTest = [variables[0]]
+    """
+    USING A COOKIE CUTTER
+    """
+    sitesFiltered = water.GetSitesByVariable(variablesTest,sites)
+    print("GetSitesByVariable With CookieCutter")
+    print(len(sitesFiltered))
+    """
+    WITHOUT USING A COOKIE CUTTER
+    """
+    sitesFiltered = water.GetSitesByVariable(variablesTest)
+    print("GetSitesByVariable No CookieCutter")
+    print(len(sitesFiltered))
+
 
 
 if __name__ == "__main__":
