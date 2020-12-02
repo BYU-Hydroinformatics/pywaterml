@@ -8,6 +8,7 @@ Welcome to pyWaterML's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :name: mastertoc
    :caption: Contents:
    .. toctree::
    :maxdepth: 3
