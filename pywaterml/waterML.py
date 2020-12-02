@@ -8,7 +8,9 @@ from pyproj import Proj, transform  # Reprojecting/Transforming coordinates
 import xml.etree.ElementTree as ET
 import pandas as pd
 from datetime import datetime
-
+from tslearn.metrics import dtw
+from tslearn.clustering import TimeSeriesKMeans
+from tslearn.utils import to_time_series, to_time_series_dataset
 
 class WaterMLOperations():
     def __init__(self,url = None):
@@ -121,38 +123,43 @@ class WaterMLOperations():
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
         site_info_Mc_json_object = json.dumps(site_info_Mc_dict)
         site_info_Mc_json = json.loads(site_info_Mc_json_object)
+        try:
+            object_methods = site_info_Mc_json['sitesResponse']['site']['seriesCatalog']['series']
 
-        object_methods = site_info_Mc_json['sitesResponse']['site']['seriesCatalog']['series']
-
-        return_aray = []
-        if(isinstance(object_methods,(dict))):
-            return_obj = {}
-            return_obj['name'] = object_methods['variable']['variableName']
-            return_obj['code'] = object_methods['variable']['variableCode']['#text']
-            return_obj['count'] = object_methods['valueCount']
-            if 'method' in object_methods:
-                return_obj['methodID'] = object_methods['method']['@methodID']
-            else:
-                return_obj['methodID'] = None
-            return_obj['description'] = object_methods['source']
-            return_obj['timeInterval'] = object_methods['variableTimeInterval']
-            return_aray.append(return_obj)
-            return return_aray
-
-        else:
-            for object_method in object_methods:
+            return_aray = []
+            if(isinstance(object_methods,(dict))):
                 return_obj = {}
-                return_obj['name'] = object_method['variable']['variableName']
-                return_obj['code'] = object_method['variable']['variableCode']['#text']
-                return_obj['count'] = object_method['valueCount']
-                if 'method' in object_method:
-                    return_obj['methodID'] = object_method['method']['@methodID']
+                return_obj['name'] = object_methods['variable']['variableName']
+                return_obj['code'] = object_methods['variable']['variableCode']['#text']
+                return_obj['count'] = object_methods['valueCount']
+                if 'method' in object_methods:
+                    return_obj['methodID'] = object_methods['method']['@methodID']
                 else:
                     return_obj['methodID'] = None
-                return_obj['description'] = object_method['source']
-                return_obj['timeInterval'] = object_method['variableTimeInterval']
+                return_obj['description'] = object_methods['source']
+                return_obj['timeInterval'] = object_methods['variableTimeInterval']
                 return_aray.append(return_obj)
+                return return_aray
 
+            else:
+                for object_method in object_methods:
+                    return_obj = {}
+                    return_obj['name'] = object_method['variable']['variableName']
+                    return_obj['code'] = object_method['variable']['variableCode']['#text']
+                    return_obj['count'] = object_method['valueCount']
+                    if 'method' in object_method:
+                        return_obj['methodID'] = object_method['method']['@methodID']
+                    else:
+                        return_obj['methodID'] = None
+                    return_obj['description'] = object_method['source']
+                    return_obj['timeInterval'] = object_method['variableTimeInterval']
+                    return_aray.append(return_obj)
+                    return return_aray
+
+        except KeyError:
+            print("No series for the site")
+            return_aray = []
+            return return_aray
         return return_aray
     """
         Get the specific values for an specific variable in a site.
@@ -308,11 +315,46 @@ class WaterMLOperations():
 
     """
         Return the mean interpolation for the GetValues()
-        MeanInterpolation()
     """
     def Interpolate(self, GetValuesResponse, type= 'mean'):
         mean_interpolation = WaterAnalityca.Interpolate(GetValuesResponse)
         return mean_interpolation
+    """
+        Return the monthly averages for a variable
 
+    """
+    def getMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code=None, methodID=None, start_date=None, end_date=None):
+        if GetValuesResponse is not None:
+            m_avg = WaterAnalityca.MonthlyAverages(GetValuesResponse)
+            return m_avg
+        else:
+            vals = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+            m_avg = WaterAnalityca.MonthlyAverages(vals)
+            return m_avg
+    def getClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
+        timeseries = []
+        i = 0
+        for site in sites:
+            print(i)
+            site_full_code = f'{site["network"]}:{site["sitecode"]}'
+            siteInfo =  self.GetSiteInfo(site_full_code)
+            for sinfo in siteInfo:
+                if sinfo['name'] == variable:
+                    firstVariableCode = siteInfo[0]['code']
+                    variable_full_code = site["network"] + ":" + firstVariableCode
+                    methodID = siteInfo[0]['methodID']
+                    start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+                    end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
+                    variableResponse = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+                    m_avg = self.getMonthlyAverage(variableResponse)
+                    timeseries.append(to_time_series(m_avg))
+                    break
+            i = i + 1
+        # X = np.array(np.array(list2))
+        formatted_time_series = to_time_series_dataset(timeseries)
+        # print(X)
+        model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
+        y_pred = model.fit_predict(formatted_time_series)
+        return y_pred
 if __name__ == "__main__":
     print("WaterML ops")
