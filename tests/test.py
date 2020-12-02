@@ -3,7 +3,12 @@
 import sys
 sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
 from pywaterml.waterML import WaterMLOperations
-
+from tslearn.metrics import dtw
+from tslearn.clustering import TimeSeriesKMeans
+from tslearn.utils import to_time_series, to_time_series_dataset
+import pandas as pd
+import numpy as np
+import time
 url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
 water = WaterMLOperations(url = url_testing)
 
@@ -18,7 +23,6 @@ def main():
     site_full_code = "Para_La_Naturaleza:Rio_Toro_Negro"
     siteInfo =  water.GetSiteInfo(site_full_code)
     print(siteInfo)
-
     print("VALUES")
     network = sites[0]['network']
     firstVariableCode = siteInfo[0]['code']
@@ -33,8 +37,12 @@ def main():
     interpol_m = water.Interpolate(variableResponse['values'], 'mean')
     print(len(interpol_f))
     print(len(interpol_b))
-    print(len(interpol_m))
+    print((interpol_m))
 
+    m_avg = water.getMonthlyAverage(None, site_full_code, variable_full_code, methodID, start_date, end_date)
+    print(m_avg)
+    y_pred = water.getClustersMonthlyAvg(sites,siteInfo[0]['name'])
+    print(y_pred)
     """
     UNCOMMENT TO USE WITH THE epsg:3857
     """
@@ -68,7 +76,8 @@ def main():
     print(sitesFiltered)
 
     print("******************CHANGE URL***********")
-    water.ChangeEndpoint("http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL")
+    # water.ChangeEndpoint("http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL")
+    water.ChangeEndpoint("http://hydroportal.cuahsi.org/CALVIN_HHS/cuahsi_1_1.asmx?WSDL")
     sites = water.GetSites()
     variables = water.GetVariables()
     print("************SITES***************")
@@ -89,9 +98,22 @@ def main():
     sitesFiltered = water.GetSitesByVariable(variablesTest)
     print("GetSitesByVariable No CookieCutter")
     print(len(sitesFiltered))
+    columns = ['dates','values']
+    df = pd.DataFrame(variableResponse['values'], columns=columns)
+    # print(df.head())
+    df['dates'] = pd.to_datetime(df['dates'])
+    df_2 = df.groupby(df.dates.dt.strftime('%m')).values.agg(['mean'])
+    # df_2 = df.groupby(df.dates.dt.strftime('%Y-%m')).values.agg(['mean'])
+    # print(df_2)
+    m_avg = df_2.to_numpy()
+    m_avg = m_avg.reshape((m_avg.shape[0],))
+    print(m_avg)
 
-
-
+    # y_pred = water.getClustersMonthlyAvg(sites,variablesTest[0])
+    start_time = time.time()
+    y_pred = water.getClustersMonthlyAvg(sitesFiltered,variablesTest[0])
+    print(y_pred)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
 if __name__ == "__main__":
