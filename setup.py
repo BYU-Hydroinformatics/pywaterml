@@ -5,7 +5,9 @@ requirements = [
     "pandas",
     "numpy",
     "owslib",
-    "suds-py3"
+    "suds-py3",
+    "hdf5",
+    "tslearn"
 ]
 
 setup(
