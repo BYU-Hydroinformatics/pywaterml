@@ -174,6 +174,7 @@ class WaterMLOperations():
         values_json_object = json.dumps(values_dict)
         values_json = json.loads(values_json_object)
         times_series = {}
+        graph_json = {}  # json object that will be returned to the front end
         if 'timeSeriesResponse' in values_json:
 
             times_series = values_json['timeSeriesResponse'][
@@ -334,27 +335,36 @@ class WaterMLOperations():
     def getClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
         timeseries = []
         i = 0
-        for site in sites:
-            print(i)
-            site_full_code = f'{site["network"]}:{site["sitecode"]}'
-            siteInfo =  self.GetSiteInfo(site_full_code)
-            for sinfo in siteInfo:
-                if sinfo['name'] == variable:
-                    firstVariableCode = siteInfo[0]['code']
-                    variable_full_code = site["network"] + ":" + firstVariableCode
-                    methodID = siteInfo[0]['methodID']
-                    start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-                    end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
-                    variableResponse = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
-                    m_avg = self.getMonthlyAverage(variableResponse)
-                    timeseries.append(to_time_series(m_avg))
-                    break
-            i = i + 1
-        # X = np.array(np.array(list2))
-        formatted_time_series = to_time_series_dataset(timeseries)
-        # print(X)
-        model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
-        y_pred = model.fit_predict(formatted_time_series)
-        return y_pred
+        # y_pred = []
+        timeSerie_cluster=[]
+        try:
+            for site in sites:
+                print(i)
+                site_full_code = f'{site["network"]}:{site["sitecode"]}'
+                siteInfo =  self.GetSiteInfo(site_full_code)
+                for sinfo in siteInfo:
+                    if sinfo['name'] == variable:
+                        firstVariableCode = siteInfo[0]['code']
+                        variable_full_code = site["network"] + ":" + firstVariableCode
+                        methodID = siteInfo[0]['methodID']
+                        start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+                        end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
+                        variableResponse = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+                        m_avg = self.getMonthlyAverage(variableResponse)
+                        timeseries.append(to_time_series(m_avg))
+                        timeSerie_cluster.append([m_avg])
+                        break
+                i = i + 1
+            # X = np.array(np.array(list2))
+            formatted_time_series = to_time_series_dataset(timeseries)
+            # print(X)
+            model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
+            y_pred = model.fit_predict(formatted_time_series)
+            for tc, y in zip(timeSerie_cluster,y_pred):
+                tc.append(y)
+            return timeSerie_cluster
+        except KeyError:
+            print("No values in GetValuesResponse")
+        return timeSerie_cluster
 if __name__ == "__main__":
     print("WaterML ops")
