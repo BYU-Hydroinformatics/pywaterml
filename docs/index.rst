@@ -10,3 +10,5 @@ Welcome to pyWaterML's documentation!
    :maxdepth: 1
    :name: mastertoc
    :caption: Contents:
+
+   main
