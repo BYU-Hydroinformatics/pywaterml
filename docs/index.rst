@@ -9,6 +9,8 @@ Welcome to pyWaterML's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   .. toctree::
+   :maxdepth: 3
    .. automodule:: pywaterml.WaterML
        :members:
            AddEndpoint, ChangeEndpoint, GetSites, GetSitesByBoxObject, GetVariables, GetSiteInfo, GetValues,GetSitesByVariable,Interpolate,getMonthlyAverage,getClustersMonthlyAvg
