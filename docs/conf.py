@@ -23,8 +23,7 @@ author = 'Elkin Giovanni Romero Bustamante'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.12.dev1'
-
-
+master_doc = 'index'
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
