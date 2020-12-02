@@ -5,7 +5,7 @@ pywaterml.waterML
 Functions to perform WaterML operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: pywaterml.WaterML
+.. automodule:: pywaterml.waterML
     :members:
         AddEndpoint, ChangeEndpoint, GetSites, GetSitesByBoxObject, GetVariables, GetSiteInfo, GetValues,GetSitesByVariable,Interpolate,getMonthlyAverage,getClustersMonthlyAvg
     :noindex:
@@ -13,7 +13,7 @@ Functions to perform WaterML operations
 Extra functionality to the WaterML operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: pywaterml.WaterML
+.. automodule:: pywaterml.waterML
     :members:
         GetSitesByVariable,Interpolate,getMonthlyAverage,getClustersMonthlyAvg
     :noindex:
