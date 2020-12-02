@@ -18,7 +18,7 @@ class WaterMLOperations():
         self.client = Client(url, timeout= 500)
         self.aux = Auxiliary()
 
-    def AddEndpoint(self,url:str):
+    def AddEndpoint(self,url):
         """
         Add a endpoint to the WaterMLOperations class. It can have any endpoint that uses the SOAP protocol.
 
@@ -91,7 +91,7 @@ class WaterMLOperations():
 
         return sites_object
 
-    def GetSitesByBoxObject(self,ext_list: list[float], inProjection:str):
+    def GetSitesByBoxObject(self,ext_list, inProjection):
         """
          Get all the sites from a bounding box from a endpoint that complies to the SOAP protocol. The GetSitesByBoxObject() function is similar to the GetSitesByBoxObject() WaterML function
         Args:
@@ -143,25 +143,25 @@ class WaterMLOperations():
                 water = WaterMLOperations(url = url_testing)
                 variables = water.GetVariables()
         """
-      variables = self.client.service.GetVariables('[:]')
+        variables = self.client.service.GetVariables('[:]')
 
-      variables_dict = xmltodict.parse(variables)
-      variables_dict_object = json.dumps(variables_dict)
+        variables_dict = xmltodict.parse(variables)
+        variables_dict_object = json.dumps(variables_dict)
 
-      variables_json = json.loads(variables_dict_object)
-      array_variables = variables_json['variablesResponse']['variables']['variable']
-      array_final_variables = []
+        variables_json = json.loads(variables_dict_object)
+        array_variables = variables_json['variablesResponse']['variables']['variable']
+        array_final_variables = []
 
-      if isinstance(array_variables,type([])):
+        if isinstance(array_variables,type([])):
           for one_variable in array_variables:
               array_final_variables.append(one_variable['variableName'])
 
-      if isinstance(array_variables,dict):
+        if isinstance(array_variables,dict):
           array_final_variables.append(array_variables['variableName'])
 
-      return array_final_variables
+        return array_final_variables
 
-    def GetSiteInfo(self,site_full_code:str):
+    def GetSiteInfo(self,site_full_code):
         """
          Get the information of a given site. GetSiteInfo() function is similar to the GetSiteInfo() WaterML function
         Args:
@@ -245,7 +245,7 @@ class WaterMLOperations():
         GetValues() function is similar to the
         GetValues() WaterML function
     """
-    def GetValues(self,site_full_code: str, variable_full_code: str, methodID: str, start_date: str, end_date: str):
+    def GetValues(self,site_full_code, variable_full_code, methodID, start_date, end_date):
         """
         Get the specific values for an specific variable in a site. GetValues() function is similar to the GetValues() WaterML function
         Args:
@@ -393,7 +393,7 @@ class WaterMLOperations():
         # return return_obj
         return graph_json
 
-    def GetSitesByVariable(self,specific_variables:list[str],cookiCutter:list[dict[str,str]] = None):
+    def GetSitesByVariable(self,specific_variables,cookiCutter = None):
         """
          Get the specific sites according to a variable search array from a endpoint that complies to the SOAP protocol. The GetSitesByVariable() is an addition to the WaterML functions
          because it allows the user to retrieve sites that contains the epecific site/s.
@@ -442,7 +442,7 @@ class WaterMLOperations():
 
         return new_sites
 
-    def Interpolate(self, GetValuesResponse:dict, type: str= 'mean'):
+    def Interpolate(self, GetValuesResponse, type= 'mean'):
         """
         Interpolates the data given by the GetValues function in order to fix datasets with missing values. Three ooptions for interpolation are offered:
         mean, backward, forward. The default is the mean interpolation.
@@ -481,7 +481,7 @@ class WaterMLOperations():
     """
         Return the monthly averages for a variable
     """
-    def getMonthlyAverage(self, GetValuesResponse:dict = None, site_full_code:str=None, variable_full_code:str =None, methodID:str=None, start_date:str=None, end_date:str=None):
+    def getMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code =None, methodID=None, start_date=None, end_date=None):
         """
         Gets the monthly averages for a given variable, or from the response given by the GetValues function for a given site.
         Args:
@@ -524,7 +524,7 @@ class WaterMLOperations():
             m_avg = WaterAnalityca.MonthlyAverages(vals)
             return m_avg
 
-    def getClustersMonthlyAvg(self,sites:list[dict], variable:str, n_cluster:int = 3):
+    def getClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
         """
         Gets "n" number of clusters using dtw time series interpolation for a given variable
         Args:
