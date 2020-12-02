@@ -17,22 +17,42 @@ class WaterMLOperations():
         self.url = url
         self.client = Client(url, timeout= 500)
         self.aux = Auxiliary()
-    """
-        Function to add a endpoint if needed
-        AddEndpoint()
-    """
-    def AddEndpoint(self,url):
+
+    def AddEndpoint(self,url:str):
+        """
+        Add a endpoint to the WaterMLOperations class. It can have any endpoint that uses the SOAP protocol.
+
+        Args:
+            url: endpoint that complies to the SOAP protocol
+        Returns:
+            None
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations()
+                data = water.AddEndpoint(url_testing)
+        """
         if self.url is None:
             self.url = url
             self.client = Client(url, timeout= 500)
         else:
             print("There is already an enpoint, if you want to change the endpoint try ChangeEndpoint() function")
         pass
-    """
-        Function to change the endpoint if needed
-        ChangeEndpoint()
-    """
+
     def ChangeEndpoint(self,url):
+        """
+         Change the endpoint of a WaterMLOperations class. The current endpoint can be changed by any endpoint that uses the SOAP protocol.
+
+        Args:
+            url: endpoint that complies to the SOAP protocol
+        Returns:
+            None
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                data = water.ChangeEndpoint("http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL")
+        """
         if self.url is not None:
             self.url = url
             self.client = Client(url, timeout= 500)
@@ -40,12 +60,20 @@ class WaterMLOperations():
             print("There is no endpoint, please before changing an endpoint add one with AddEndpoint() function")
         pass
 
-    """
-        Get all the sites from a endpoint
-        GetSites() function is similar to the
-        GetSites() WaterML function
-    """
     def GetSites(self):
+        """
+         Get all the sites from a endpoint that complies to the SOAP protocol. The GetSites() function is similar to the GetSites() WaterML function
+        Args:
+            None
+        Returns:
+            An array of objects that represent each site. The structure of the response is the following:
+            [{'sitename': 'Río Toro Negro', 'latitude': '18.28559', 'longitude': '-66.4903', 'sitecode': 'Rio_Toro_Negro', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Quebrada Batista', 'latitude': '18.19699', 'longitude': '-66.32992', 'sitecode': 'Quebrada_Batista', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Río Grande de Manatí', 'latitude': '18.2144', 'longitude': '-66.28665', 'sitecode': 'Rio_Grande_de_Manati', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}]
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+        """
         # True Extent is on and necessary if the user is trying to add USGS or
         # Get a list of all the sites and their respective lat lon.
 
@@ -63,12 +91,23 @@ class WaterMLOperations():
 
         return sites_object
 
-    """
-        Get all the sites from a selected biding box
-        GetSitesByBoxObject() function is similar to the
-        GetSitesByBoxObject() WaterML function
-    """
-    def GetSitesByBoxObject(self,ext_list,inProjection):
+    def GetSitesByBoxObject(self,ext_list: list[float], inProjection:str):
+        """
+         Get all the sites from a bounding box from a endpoint that complies to the SOAP protocol. The GetSitesByBoxObject() function is similar to the GetSitesByBoxObject() WaterML function
+        Args:
+            ext_list: Array of bounding box coordinates in a given projection.
+            inProjection: Projection from the array of coordinates of the given bounding box.
+        Returns:
+            An array of objects that represent each site. The structure of the response is the following:
+            [{'sitename': 'Río Toro Negro', 'latitude': '18.28559', 'longitude': '-66.4903', 'sitecode': 'Rio_Toro_Negro', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Quebrada Batista', 'latitude': '18.19699', 'longitude': '-66.32992', 'sitecode': 'Quebrada_Batista', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Río Grande de Manatí', 'latitude': '18.2144', 'longitude': '-66.28665', 'sitecode': 'Rio_Grande_de_Manati', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}]
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                ## use with epsg:4326 ##
+                BoundsRearranged = [-66.4903,18.19699,-66.28665,18.28559]
+                sites = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
+        """
         # return_obj['level'] = extent_value
         # Reprojecting the coordinates from 3857 to 4326 using pyproj
         # inProj = Proj(init='epsg:3857')
@@ -89,12 +128,21 @@ class WaterMLOperations():
         sites_parsed_json = json.dumps(wml_sites)
 
         return sites_parsed_json
-    """
-        Get all the variables from an endpoint
-        GetVariables() function is similar to the
-        GetVariables() WaterML function
-    """
+
     def GetVariables(self):
+        """
+        Get all the variables from a endpoint that complies to the SOAP protocol. GetVariables() function is similar to the GetVariables() WaterML function
+        Args:
+            None
+        Returns:
+            An array of strings representing the variables from the enpoint. The structure of the response is the following:
+            ['Water depth, averaged', 'Discharge', 'Velocity']
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                variables = water.GetVariables()
+        """
       variables = self.client.service.GetVariables('[:]')
 
       variables_dict = xmltodict.parse(variables)
@@ -112,13 +160,43 @@ class WaterMLOperations():
           array_final_variables.append(array_variables['variableName'])
 
       return array_final_variables
-    """
-        Get the information from a site.
-        GetSiteInfo() function is similar to the
-        GetSiteInfo() WaterML function
-    """
-    def GetSiteInfo(self,site_full_code):
 
+    def GetSiteInfo(self,site_full_code:str):
+        """
+         Get the information of a given site. GetSiteInfo() function is similar to the GetSiteInfo() WaterML function
+        Args:
+            site_full_code: A string representing the full code of the given site following the structure:
+                -site_full_code = site network + ":" + site code
+        Returns:
+            An array of objects that represent information for each site variable. Each object has the following properties:
+            - name: variable name
+            - code: varibale code
+            - count: time series data points for the given variable
+            - methodID: method for data extraction for the given variable
+            - description: object containing different properties for the description of the given variable in each site.
+                - organization: organization responsible for the data extraction of the site.
+                - sourceDescription: description of the source from the data extraction of the site
+                - citation: site citation for all the sites
+            - timeInterval
+                - beginDateTime: beginning date time for the time series of the variable
+                - endDateTime: end date time for the time series of the variable
+                - beginDateTimeUTC: beginning date time for the time series of the variable in UTC format
+                - endDateTimeUTC: end date time for the time series of the variable in UTC format
+
+            The structure of the response is the following:
+            name, code, count, description, organization, sourceDescription, citation, citation, timeInterval
+            [{'name': 'Water depth, averaged', 'code': 'Average_Stream_Depth', 'count': '21', 'methodID': '1', 'description': {'@sourceID': '1', 'organization': 'Para La Naturaleza', 'sourceDescription': 'Para La Naturaleza and National Science Foundation (Grant No. 1223882) sponsored this Citizen Science project about the hydrology of three streams in the Rio Grande de Manatí Watershed in Puerto Rico.', 'citation': 'Para La Naturaleza NSF'}, 'timeInterval': {'@xsi:type': 'TimeIntervalType', 'beginDateTime': '2013-08-03T09:00:00', 'endDateTime': '2015-05-02T09:00:00', 'beginDateTimeUTC': '2013-08-03T05:00:00', 'endDateTimeUTC': '2015-05-02T05:00:00'}}, {'name': 'Discharge', 'code': 'Total_Flow', 'count': '21', 'methodID': '2', 'description': {'@sourceID': '1', 'organization': 'Para La Naturaleza', 'sourceDescription': 'Para La Naturaleza and National Science Foundation (Grant No. 1223882) sponsored this Citizen Science project about the hydrology of three streams in the Rio Grande de Manatí Watershed in Puerto Rico.', 'citation': 'Para La Naturaleza NSF'}, 'timeInterval': {'@xsi:type': 'TimeIntervalType', 'beginDateTime': '2013-08-03T09:00:00', 'endDateTime': '2015-05-02T09:00:00', 'beginDateTimeUTC': '2013-08-03T05:00:00', 'endDateTimeUTC': '2015-05-02T05:00:00'}}, {'name': 'Velocity', 'code': 'Average_Stream_Velocity', 'count': '21', 'methodID': '3', 'description': {'@sourceID': '1', 'organization': 'Para La Naturaleza', 'sourceDescription': 'Para La Naturaleza and National Science Foundation (Grant No. 1223882) sponsored this Citizen Science project about the hydrology of three streams in the Rio Grande de Manatí Watershed in Puerto Rico.', 'citation': 'Para La Naturaleza NSF'}, 'timeInterval': {'@xsi:type': 'TimeIntervalType', 'beginDateTime': '2013-08-03T09:00:00', 'endDateTime': '2015-05-02T09:00:00', 'beginDateTimeUTC': '2013-08-03T05:00:00', 'endDateTimeUTC': '2015-05-02T05:00:00'}}]
+
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+                firstSiteCode = sites[0]['sitecode']
+                network = sites[0]['network']
+                site_full_code = network +":"+firstSiteCode
+                siteInfo = water.GetSiteInfo(site_full_code)
+        """
         site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
         site_info_Mc_json_object = json.dumps(site_info_Mc_dict)
@@ -161,13 +239,49 @@ class WaterMLOperations():
             return_aray = []
             return return_aray
         return return_aray
+
     """
         Get the specific values for an specific variable in a site.
         GetValues() function is similar to the
         GetValues() WaterML function
     """
-    def GetValues(self,site_full_code, variable_full_code, methodID, start_date, end_date):
+    def GetValues(self,site_full_code: str, variable_full_code: str, methodID: str, start_date: str, end_date: str):
+        """
+        Get the specific values for an specific variable in a site. GetValues() function is similar to the GetValues() WaterML function
+        Args:
+            site_full_code: A string representing the full code of the given site following the structure:
+                -site_full_code = site network + ":" + site code
+            variable_full_code: A string representing the full code of the given variable following the structure:
+                -variable_full_code = site network + ":" + variable code
+            methodID: method for data extraction for the given variable
+            start_date: beginning date time for the time series of the variable
+            end_date: end date time for the time series of the variable
+        Returns:
+            An object containing properties for the time series values for the given variable in the given site. The structure of the response is the following:
+                - variable: variable name
+                - unit: units of the values
+                - title: title of the time series values
+                - values: an array of arrays containing [date, value]
 
+            An example of the response is:
+            {'variable': 'Water depth, averaged', 'unit': 'm', 'title': 'Water depth, averaged (m) vs Time', 'values': [['2013-08-03 05:00:00', 0.1815], ['2013-09-07 05:00:00', 0.187], ['2013-10-05 05:00:00', 0.226], ['2013-11-02 05:00:00', 0.1535], ['2013-12-07 05:00:00', 0.231], ['2014-01-11 05:00:00', 0.15525], ['2014-02-01 05:00:00', 0.124875], ['2014-03-01 05:00:00', 0.0], ['2014-04-05 05:00:00', 0.1145], ['2014-05-03 05:00:00', 0.0877], ['2014-06-07 05:00:00', 0.0], ['2014-07-05 05:00:00', 0.09375], ['2014-09-06 05:00:00', 0.12175], ['2014-10-04 05:00:00', 0.10325], ['2014-11-01 05:00:00', 0.1693], ['2014-12-06 05:00:00', 0.187], ['2015-01-03 05:00:00', 0.1285], ['2015-02-07 05:00:00', 0.125], ['2015-03-07 05:00:00', 0.159], ['2015-04-04 05:00:00', 0.14]]}
+
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+                firstSiteCode = sites[0]['sitecode']
+                network = sites[0]['network']
+                site_full_code = network +":"+firstSiteCode
+                siteInfo = water.GetSiteInfo(site_full_code)
+                firstVariableCode = siteInfo[0]['code']
+                variable_full_code = network + ":" + firstVariableCode
+                methodID = siteInfo[0]['methodID']
+                start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+                end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
+                variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+        """
         values = self.client.service.GetValues(
             site_full_code, variable_full_code, start_date, end_date, "")
         values_dict = xmltodict.parse(values)  # Converting xml to dict
@@ -279,12 +393,26 @@ class WaterMLOperations():
         # return return_obj
         return graph_json
 
-    """
-        Get the specific sites according to a keyword search array.
-        GetSitesByVariable()
-    """
-    def GetSitesByVariable(self,specific_variables,cookiCutter = None):
-
+    def GetSitesByVariable(self,specific_variables:list[str],cookiCutter:list[dict[str,str]] = None):
+        """
+         Get the specific sites according to a variable search array from a endpoint that complies to the SOAP protocol. The GetSitesByVariable() is an addition to the WaterML functions
+         because it allows the user to retrieve sites that contains the epecific site/s.
+         Args:
+         specific_variables: An array of strings representing a list of variables that will serve as a filter when retrieving sites.
+         cookiCutter: A list containing the different information from each site. It can be the response of the GetSites() or GetSitesByBoxObject() functions.
+         if the cookiCutter is not specified, the function will filter all the functions calling GetSites() internally.
+        Returns:
+            An array of objects that represent each site. The structure of the response is the following:
+            [{'sitename': 'Río Toro Negro', 'latitude': '18.28559', 'longitude': '-66.4903', 'sitecode': 'Rio_Toro_Negro', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Quebrada Batista', 'latitude': '18.19699', 'longitude': '-66.32992', 'sitecode': 'Quebrada_Batista', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Río Grande de Manatí', 'latitude': '18.2144', 'longitude': '-66.28665', 'sitecode': 'Rio_Grande_de_Manati', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}]
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+                variables = water.GetVariables()
+                variables_to_filter = [variables[0]]
+                sitesFiltered = water.GetSitesByVariable(variables_to_filter,sites)
+        """
         sites = []
         new_sites = []
 
@@ -314,17 +442,80 @@ class WaterMLOperations():
 
         return new_sites
 
-    """
-        Return the mean interpolation for the GetValues()
-    """
-    def Interpolate(self, GetValuesResponse, type= 'mean'):
+    def Interpolate(self, GetValuesResponse:dict, type: str= 'mean'):
+        """
+        Interpolates the data given by the GetValues function in order to fix datasets with missing values. Three ooptions for interpolation are offered:
+        mean, backward, forward. The default is the mean interpolation.
+        Args:
+            GetValuesResponse: response from the GetValues() function
+            type: type of interpolation to be performed: mean, backward, forward
+        Returns:
+            An object containing properties for the time series values for the given variable in the given site. The structure of the response is the following:
+                - variable: variable name
+                - unit: units of the values
+                - title: title of the time series values
+                - values: an array of arrays containing [date, value]
+
+            An example of the response is:
+            {'variable': 'Water depth, averaged', 'unit': 'm', 'title': 'Water depth, averaged (m) vs Time', 'values': [['2013-08-03 05:00:00', 0.1815], ['2013-09-07 05:00:00', 0.187], ['2013-10-05 05:00:00', 0.226], ['2013-11-02 05:00:00', 0.1535], ['2013-12-07 05:00:00', 0.231], ['2014-01-11 05:00:00', 0.15525], ['2014-02-01 05:00:00', 0.124875], ['2014-03-01 05:00:00', 0.0], ['2014-04-05 05:00:00', 0.1145], ['2014-05-03 05:00:00', 0.0877], ['2014-06-07 05:00:00', 0.0], ['2014-07-05 05:00:00', 0.09375], ['2014-09-06 05:00:00', 0.12175], ['2014-10-04 05:00:00', 0.10325], ['2014-11-01 05:00:00', 0.1693], ['2014-12-06 05:00:00', 0.187], ['2015-01-03 05:00:00', 0.1285], ['2015-02-07 05:00:00', 0.125], ['2015-03-07 05:00:00', 0.159], ['2015-04-04 05:00:00', 0.14]]}
+
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+                firstSiteCode = sites[0]['sitecode']
+                network = sites[0]['network']
+                site_full_code = network +":"+firstSiteCode
+                siteInfo = water.GetSiteInfo(site_full_code)
+                firstVariableCode = siteInfo[0]['code']
+                variable_full_code = network + ":" + firstVariableCode
+                methodID = siteInfo[0]['methodID']
+                start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+                end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
+                variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+                interpolationData = water.Interpolate(variableResponse, 'mean')
+        """
         mean_interpolation = WaterAnalityca.Interpolate(GetValuesResponse)
         return mean_interpolation
     """
         Return the monthly averages for a variable
-
     """
-    def getMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code=None, methodID=None, start_date=None, end_date=None):
+    def getMonthlyAverage(self, GetValuesResponse:dict = None, site_full_code:str=None, variable_full_code:str =None, methodID:str=None, start_date:str=None, end_date:str=None):
+        """
+        Gets the monthly averages for a given variable, or from the response given by the GetValues function for a given site.
+        Args:
+            GetValuesResponse: response from the GetValues() function. If this is given the others paramters do not need to be given.
+            site_full_code: A string representing the full code of the given site following the structure:
+                -site_full_code = site network + ":" + site code
+            variable_full_code: A string representing the full code of the given variable following the structure:
+                -variable_full_code = site network + ":" + variable code
+            methodID: method for data extraction for the given variable
+            start_date: beginning date time for the time series of the variable
+            end_date: end date time for the time series of the variable
+        Returns:
+            An object containing properties for the time series values for the given variable in the given site. The structure of the response is the following:
+                - variable: variable name
+                - unit: units of the values
+                - title: title of the time series values
+                - values: an array of arrays containing [date, value]
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+                firstSiteCode = sites[0]['sitecode']
+                network = sites[0]['network']
+                site_full_code = network +":"+firstSiteCode
+                siteInfo = water.GetSiteInfo(site_full_code)
+                firstVariableCode = siteInfo[0]['code']
+                variable_full_code = network + ":" + firstVariableCode
+                methodID = siteInfo[0]['methodID']
+                start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+                end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
+                variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+                monthly_averages = water.getMonthlyAverage(variableResponse)
+        """
         if GetValuesResponse is not None:
             m_avg = WaterAnalityca.MonthlyAverages(GetValuesResponse)
             return m_avg
@@ -332,7 +523,33 @@ class WaterMLOperations():
             vals = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
             m_avg = WaterAnalityca.MonthlyAverages(vals)
             return m_avg
-    def getClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
+
+    def getClustersMonthlyAvg(self,sites:list[dict], variable:str, n_cluster:int = 3):
+        """
+        Gets "n" number of clusters using dtw time series interpolation for a given variable
+        Args:
+            sites: response from the GetSites() function. Performance of the fuction can be given if the resuls of the GetSitesByVariable() function is passed instead
+            variable: string representing the variable for the time series clusters of the given sites
+            n_clusters: integer representing the number of cluster to form.
+
+        Returns:
+            An array of arrays of the following structure [monthly averages array, cluster_id]:
+            Example:
+            [[[0.141875, 0.1249375, 0.0795, 0.12725, 0.0877, 0.0, 0.09375, 0.1815, 0.15437499999999998, 0.164625, 0.1614, 0.20900000000000002], 1],
+             [[0.1, 0.08662500000000001, 0.0414025, 0.048, 0.052, 0.0, 0.1105, 0.015, 0.06625, 0.10587500000000001, 0.0505, 0.046125], 0],
+             [[0.2265, 0.27225, 0.17407499999999998, 0.13475, 0.14525, 0.129, 0.17825, 0.210625, 0.103125, 0.0, 0.23675], 2]]
+
+        Example:
+            .. code-block:: python
+                url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+                water = WaterMLOperations(url = url_testing)
+                sites = water.GetSites()
+                firstSiteCode = sites[0]['sitecode']
+                network = sites[0]['network']
+                site_full_code = network +":"+firstSiteCode
+                siteInfo = water.GetSiteInfo(site_full_code)
+                clusters = water.getClustersMonthlyAvg(sites,siteInfo[0]['name'])
+        """
         timeseries = []
         i = 0
         # y_pred = []
