@@ -41,6 +41,13 @@ autodoc_default_options = {
     'excluded-members': '__init__',
 }
 autodoc_mock_imports = [
+    "xmltodict",
+    "pandas",
+    "numpy",
+    "owslib",
+    "suds",
+    "hdf5",
+    "tslearn"
 ]
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
