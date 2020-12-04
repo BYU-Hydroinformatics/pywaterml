@@ -13,9 +13,11 @@ from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series, to_time_series_dataset
 
 class WaterMLOperations():
-    """This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services
+    """
+    This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services
 
-    :param url: Endpoint that complies to the SOAP protocol
+    Args:
+        url: Endpoint that complies to the SOAP protocol
     """
     def __init__(self,url = None):
         self.url = url
