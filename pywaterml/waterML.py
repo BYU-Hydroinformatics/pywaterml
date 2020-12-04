@@ -240,11 +240,6 @@ class WaterMLOperations():
             return return_aray
         return return_aray
 
-    """
-        Get the specific values for an specific variable in a site.
-        GetValues() function is similar to the
-        GetValues() WaterML function
-    """
     def GetValues(self,site_full_code, variable_full_code, methodID, start_date, end_date):
         """
         Get the specific values for an specific variable in a site. GetValues() function is similar to the GetValues() WaterML function
@@ -478,10 +473,8 @@ class WaterMLOperations():
         """
         mean_interpolation = WaterAnalityca.Interpolate(GetValuesResponse)
         return mean_interpolation
-    """
-        Return the monthly averages for a variable
-    """
-    def getMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code =None, methodID=None, start_date=None, end_date=None):
+
+    def GetMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code =None, methodID=None, start_date=None, end_date=None):
         """
         Gets the monthly averages for a given variable, or from the response given by the GetValues function for a given site.
         Args:
@@ -524,7 +517,7 @@ class WaterMLOperations():
             m_avg = WaterAnalityca.MonthlyAverages(vals)
             return m_avg
 
-    def getClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
+    def GetClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
         """
         Gets "n" number of clusters using dtw time series interpolation for a given variable
         Args:
