@@ -37,6 +37,8 @@ extensions = [
 ]
 autodoc_default_options = {
     'member-order': 'bysource',
+    'members': True,
+    'excluded-members': '__init__',
 }
 autodoc_mock_imports = [
     "xmltodict",

@@ -6,3 +6,4 @@ bld.bat
 __pycache__
 .pypirc
 .gitattributes
+_build
