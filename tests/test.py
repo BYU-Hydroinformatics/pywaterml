@@ -39,9 +39,9 @@ def main():
     print(len(interpol_b))
     print((interpol_m))
 
-    m_avg = water.getMonthlyAverage(None, site_full_code, variable_full_code, methodID, start_date, end_date)
+    m_avg = water.GetMonthlyAverage(None, site_full_code, variable_full_code, methodID, start_date, end_date)
     print(m_avg)
-    y_pred = water.getClustersMonthlyAvg(sites,siteInfo[0]['name'])
+    y_pred = water.GetClustersMonthlyAvg(sites,siteInfo[0]['name'])
     print(y_pred)
     """
     UNCOMMENT TO USE WITH THE epsg:3857
@@ -111,7 +111,7 @@ def main():
 
     # y_pred = water.getClustersMonthlyAvg(sites,variablesTest[0])
     start_time = time.time()
-    y_pred = water.getClustersMonthlyAvg(sitesFiltered,variablesTest[0])
+    y_pred = water.GetClustersMonthlyAvg(sitesFiltered,variablesTest[0])
     print(y_pred)
     print("--- %s seconds ---" % (time.time() - start_time))
 
