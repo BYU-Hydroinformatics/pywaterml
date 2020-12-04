@@ -6,7 +6,6 @@ requirements = [
     "numpy",
     "owslib",
     "suds-py3",
-    "hdf5",
     "tslearn"
 ]
 
