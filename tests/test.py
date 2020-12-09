@@ -32,9 +32,9 @@ def main():
     end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
     variableResponse = water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
     print("INTERPOLATION")
-    interpol_b = water.Interpolate(variableResponse['values'], 'backward')
-    interpol_f = water.Interpolate(variableResponse['values'], 'forward')
-    interpol_m = water.Interpolate(variableResponse['values'], 'mean')
+    interpol_b = water.GetInterpolation(variableResponse['values'], 'backward')
+    interpol_f = water.GetInterpolation(variableResponse['values'], 'forward')
+    interpol_m = water.GetInterpolation(variableResponse['values'], 'mean')
     print(len(interpol_f))
     print(len(interpol_b))
     print((interpol_m))

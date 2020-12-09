@@ -477,7 +477,7 @@ class WaterMLOperations():
 
         return new_sites
 
-    def Interpolate(self, GetValuesResponse, type= 'mean'):
+    def GetInterpolation(self, GetValuesResponse, type= 'mean'):
         """
         Interpolates the data given by the GetValues function in order to fix datasets with missing values. Three ooptions for interpolation are offered:
         mean, backward, forward. The default is the mean interpolation.
