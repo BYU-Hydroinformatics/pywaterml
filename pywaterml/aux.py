@@ -4,6 +4,11 @@ from suds.sudsobject import asdict
 
 
 class Auxiliary():
+    """
+    This class represents the Auxiliary object for the WaterMLOperations class. The Auxiliary provides functions related to parsing data from XML
+    to JSON format, and the creation of JSON responses to have a more digested output. However, this is a helper class for the main WaterMLOperations
+    class.
+    """
     def _parseJSON(json):
         hs_sites = []
         sites_object = None
