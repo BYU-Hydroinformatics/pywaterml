@@ -10,6 +10,13 @@ class Auxiliary():
     class.
     """
     def _parseJSON(json):
+        """
+        Helper function to parse JSON data into a python dictionary. It is used in the WaterMLOperations GetSites() function.
+        Args:
+            json: json object
+        Returns:
+            hs_sites: Dictionary from all the sites of an specific URL
+        """
         hs_sites = []
         sites_object = None
         try:
@@ -61,6 +68,13 @@ class Auxiliary():
         return hs_sites
 
     def _parseWML(self,bbox):
+        """
+        Helper function to parse JSON data from a bounding box into a python dictionary . It is used in the WaterMLOperations GetSitesByBoxObject() function.
+        Args:
+            bbox: json object from belonging to the bounding box
+        Returns:
+            hs_sites: Dictionary from all the sites of an specific URL
+        """
         hs_sites = []
         # print bbox
 
@@ -112,7 +126,13 @@ class Auxiliary():
         return hs_sites
 
     def _recursive_asdict(self,d):
-        """Convert Suds object into serializable format."""
+        """
+        Helper function to make Suds object into serializable format recurvesively . It is used in the _parseJSON and _parseWML functions.
+        Args:
+            d: json object
+        Returns:
+            None
+        """
         out = {}
         try:
             for k, v in asdict(d).items():

@@ -7,6 +7,14 @@ class WaterAnalityca():
     basic Math functionality(Interpolation). However, this is a helper class for the main WaterMLOperations class.
     """
     def _Interpolate(GetValuesResponse, type='mean'):
+        """
+        Helper function to rerieve different kinds of interpolation in the WaterMLOperations GetInterpolation() function
+        Args:
+            GetValuesResponse: GetValues Response from WaterMLOperations GetValues() function
+            type: Type of interpolation
+        Returns:
+            dataInterpolated: Interpolated data
+        """
         time_pd, values_pd = zip(*GetValuesResponse)
         pds={}
         pds['time'] = time_pd
@@ -39,6 +47,13 @@ class WaterAnalityca():
         return dataInterpolated
 
     def _MonthlyAverages(GetValuesResponse):
+        """
+        Helper function to rerieve the monthly averages from the WaterMLOperations GetValues() function in the GetMonthlyAverage() function
+        Args:
+            GetValuesResponse: GetValues Response from WaterMLOperations GetValues() function
+        Returns:
+            m_avg: monthly_average array
+        """
         columns = ['dates','values']
         df = pd.DataFrame(GetValuesResponse['values'], columns=columns)
         df['dates'] = pd.to_datetime(df['dates'])
@@ -50,7 +65,14 @@ class WaterAnalityca():
         m_avg = m_avg.tolist()
         return m_avg
 
-    def _DailyAverages(variable_site,CookieCutter = None):
+    def _DailyAverages(GetValuesResponse):
+        """
+        Helper function to rerieve the daily averages from the WaterMLOperations GetValues() function in the GetDailyAverage() function
+        Args:
+            GetValuesResponse: GetValues Response from WaterMLOperations GetValues() function
+        Returns:
+            d_avg: daily_average array
+        """
         d_avg = []
         return d_avg
 
