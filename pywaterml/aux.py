@@ -4,7 +4,7 @@ from suds.sudsobject import asdict
 
 
 class Auxiliary():
-    def parseJSON(json):
+    def _parseJSON(json):
         hs_sites = []
         sites_object = None
         try:
@@ -55,11 +55,11 @@ class Auxiliary():
 
         return hs_sites
 
-    def parseWML(self,bbox):
+    def _parseWML(self,bbox):
         hs_sites = []
         # print bbox
 
-        bbox_json = self.recursive_asdict(bbox)  # Convert bounding box to json
+        bbox_json = self._recursive_asdict(bbox)  # Convert bounding box to json
 
         # If there are multiple sites, create a list of of dictionaries with
         # metadata
@@ -106,18 +106,18 @@ class Auxiliary():
 
         return hs_sites
 
-    def recursive_asdict(self,d):
+    def _recursive_asdict(self,d):
         """Convert Suds object into serializable format."""
         out = {}
         try:
             for k, v in asdict(d).items():
                 if hasattr(v, "__keylist__"):
-                    out[k] = self.recursive_asdict(v)
+                    out[k] = self._recursive_asdict(v)
                 elif isinstance(v, list):
                     out[k] = []
                     for item in v:
                         if hasattr(item, "__keylist__"):
-                            out[k].append(self.recursive_asdict(item))
+                            out[k].append(self._recursive_asdict(item))
                         else:
                             out[k].append(item)
                 else:

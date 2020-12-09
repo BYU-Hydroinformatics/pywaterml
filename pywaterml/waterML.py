@@ -99,7 +99,7 @@ class WaterMLOperations():
             sites_json_object = suds_to_json(sites)
             sites_json = json.loads(sites_json_object)
 
-        sites_object = Auxiliary.parseJSON(sites_json)
+        sites_object = Auxiliary._parseJSON(sites_json)
 
         return sites_object
 
@@ -139,7 +139,7 @@ class WaterMLOperations():
         # Get Sites by bounding box using suds
         # Creating a sites object from the endpoint. This site object will
         # be used to generate the geoserver layer. See utilities.py.
-        wml_sites = self.aux.parseWML(bbox)
+        wml_sites = self.aux._parseWML(bbox)
         # wml_sites = xmltodict.parse(bbox)
         sites_parsed_json = json.dumps(wml_sites)
 
@@ -611,7 +611,7 @@ class WaterMLOperations():
                         start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
                         end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
                         variableResponse = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
-                        m_avg = self.getMonthlyAverage(variableResponse)
+                        m_avg = self.GetMonthlyAverage(variableResponse)
                         timeseries.append(to_time_series(m_avg))
                         timeSerie_cluster.append([m_avg])
                         break
