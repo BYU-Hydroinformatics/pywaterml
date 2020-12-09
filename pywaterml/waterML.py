@@ -513,9 +513,9 @@ class WaterMLOperations():
             start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
             end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
             variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
-            interpolationData = water.Interpolate(variableResponse, 'mean')
+            interpolationData = water.GetInterpolation(variableResponse, 'mean')
         """
-        mean_interpolation = WaterAnalityca.Interpolate(GetValuesResponse)
+        mean_interpolation = WaterAnalityca._Interpolate(GetValuesResponse)
         return mean_interpolation
 
     def GetMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code =None, methodID=None, start_date=None, end_date=None):
@@ -559,11 +559,11 @@ class WaterMLOperations():
             monthly_averages = water.getMonthlyAverage(variableResponse)
         """
         if GetValuesResponse is not None:
-            m_avg = WaterAnalityca.MonthlyAverages(GetValuesResponse)
+            m_avg = WaterAnalityca._MonthlyAverages(GetValuesResponse)
             return m_avg
         else:
             vals = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
-            m_avg = WaterAnalityca.MonthlyAverages(vals)
+            m_avg = WaterAnalityca._MonthlyAverages(vals)
             return m_avg
 
     def GetClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
