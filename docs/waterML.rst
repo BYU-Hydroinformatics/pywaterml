@@ -14,4 +14,4 @@ Extra functionality to the WaterML operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: pywaterml.waterML
    :members:
-        GetSitesByVariable, Interpolate, getMonthlyAverage, getClustersMonthlyAvg
+        GetSitesByVariable, GetInterpolation, GetMonthlyAverage, GetClustersMonthlyAvg
