@@ -1,10 +1,10 @@
-from suds.client import Client  # For parsing WaterML/XML
+from suds.client import Client
 import json
 import xmltodict
 from json import dumps, loads
 from pywaterml.aux import Auxiliary
 from pywaterml.analyzeData import WaterAnalityca
-from pyproj import Proj, transform  # Reprojecting/Transforming coordinates
+from pyproj import Proj, transform
 import xml.etree.ElementTree as ET
 import pandas as pd
 from datetime import datetime
@@ -86,9 +86,6 @@ class WaterMLOperations():
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
         """
-        # True Extent is on and necessary if the user is trying to add USGS or
-        # Get a list of all the sites and their respective lat lon.
-
         sites = self.client.service.GetSites('[:]')
         sites_json={}
         if isinstance(sites, str):
@@ -124,9 +121,7 @@ class WaterMLOperations():
             BoundsRearranged = [-66.4903,18.19699,-66.28665,18.28559]
             sites = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
         """
-        # return_obj['level'] = extent_value
-        # Reprojecting the coordinates from 3857 to 4326 using pyproj
-        # inProj = Proj(init='epsg:3857')
+
         inProj = Proj(init=inProjection)
         outProj = Proj(init='epsg:4326')
 
@@ -136,11 +131,7 @@ class WaterMLOperations():
         x2, y2 = transform(inProj, outProj, maxx, maxy)
         bbox = self.client.service.GetSitesByBoxObject(
             x1, y1, x2, y2, '1', '')
-        # Get Sites by bounding box using suds
-        # Creating a sites object from the endpoint. This site object will
-        # be used to generate the geoserver layer. See utilities.py.
         wml_sites = self.aux._parseWML(bbox)
-        # wml_sites = xmltodict.parse(bbox)
         sites_parsed_json = json.dumps(wml_sites)
 
         return sites_parsed_json
@@ -314,18 +305,18 @@ class WaterMLOperations():
         """
         values = self.client.service.GetValues(
             site_full_code, variable_full_code, start_date, end_date, "")
-        values_dict = xmltodict.parse(values)  # Converting xml to dict
+        values_dict = xmltodict.parse(values)
         values_json_object = json.dumps(values_dict)
         values_json = json.loads(values_json_object)
         times_series = {}
-        graph_json = {}  # json object that will be returned to the front end
+        graph_json = {}
         if 'timeSeriesResponse' in values_json:
 
             times_series = values_json['timeSeriesResponse'][
-                'timeSeries']  # Timeseries object for the variable
+                'timeSeries']
             if times_series['values'] is not None:
 
-                graph_json = {}  # json object that will be returned to the front end
+                graph_json = {}
                 graph_json["variable"] = times_series['variable']['variableName']
                 graph_json["unit"]=""
                 if times_series['variable']['unit']['unitAbbreviation'] is not None:
@@ -333,14 +324,12 @@ class WaterMLOperations():
                         'variable']['unit']['unitAbbreviation']
 
                 graph_json["title"] = times_series['variable']['variableName'] + " (" + graph_json["unit"] + ") vs Time"
-                for j in times_series['values']:  # Parsing the timeseries
+                for j in times_series['values']:
                     data_values = []
                     if j == "value":
                         if type(times_series['values']['value']) is list:
 
                             for k in times_series['values']['value']:
-                                # return_obj['k']= k
-
                                 try:
                                     if k['@methodCode'] == methodID:
                                         time = k['@dateTimeUTC']
@@ -375,7 +364,6 @@ class WaterMLOperations():
                                     data_values.append([date_string,value])
                                     data_values.sort()
                                 graph_json["values"] = data_values
-                                # return_obj['graphs']= graph_json
 
                         else:  # The else statement is executed is there is only one value in the timeseries
                             try:
@@ -392,14 +380,12 @@ class WaterMLOperations():
                                     minute = int(hour_minute[1])
                                     value = float(
                                         str(times_series['values']['value']['#text']))
-
                                     date_string = datetime(
                                         year, month, day, hour, minute)
 
                                     data_values.append([date_string,value])
                                     data_values.sort()
                                     graph_json["values"] = data_values
-                                    # return_obj['graphs']=graph_json
 
                             except KeyError:
                                 time = times_series['values'][
@@ -419,8 +405,6 @@ class WaterMLOperations():
                                 data_values.append([date_string,value])
                                 data_values.sort()
                                 graph_json["values"] = data_values
-                                # return_obj['graphs']=graph_json
-        # return return_obj
         return graph_json
 
     def GetSitesByVariable(self,specific_variables,cookiCutter = None):
@@ -595,12 +579,9 @@ class WaterMLOperations():
             clusters = water.getClustersMonthlyAvg(sites,siteInfo[0]['name'])
         """
         timeseries = []
-        i = 0
-        # y_pred = []
         timeSerie_cluster=[]
         try:
             for site in sites:
-                print(i)
                 site_full_code = f'{site["network"]}:{site["sitecode"]}'
                 siteInfo =  self.GetSiteInfo(site_full_code)
                 for sinfo in siteInfo:
@@ -615,10 +596,7 @@ class WaterMLOperations():
                         timeseries.append(to_time_series(m_avg))
                         timeSerie_cluster.append([m_avg])
                         break
-                i = i + 1
-            # X = np.array(np.array(list2))
             formatted_time_series = to_time_series_dataset(timeseries)
-            # print(X)
             model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
             y_pred = model.fit_predict(formatted_time_series)
             for tc, y in zip(timeSerie_cluster,y_pred):
@@ -627,5 +605,6 @@ class WaterMLOperations():
         except KeyError:
             print("No values in GetValuesResponse")
         return timeSerie_cluster
+
 if __name__ == "__main__":
     print("WaterML ops")

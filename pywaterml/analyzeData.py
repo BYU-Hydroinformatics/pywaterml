@@ -40,7 +40,6 @@ class WaterAnalityca():
         listVals = df_interpolation['value'].to_list()
         listTimes = df_interpolation['time'].to_list()
         dataInterpolated = []
-        #a count for the number of interpolated can be introduced
         for t,v in zip(listTimes,listVals):
             dataInterpolated.append([t,v])
 
@@ -58,8 +57,6 @@ class WaterAnalityca():
         df = pd.DataFrame(GetValuesResponse['values'], columns=columns)
         df['dates'] = pd.to_datetime(df['dates'])
         df_2 = df.groupby(df.dates.dt.strftime('%m')).values.agg(['mean'])
-        # df_2 = df.groupby(df.dates.dt.strftime('%Y-%m')).values.agg(['mean'])
-        # print(df_2)
         m_avg = df_2.to_numpy()
         m_avg = m_avg.reshape((m_avg.shape[0],))
         m_avg = m_avg.tolist()

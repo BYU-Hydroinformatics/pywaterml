@@ -22,9 +22,6 @@ class Auxiliary():
         try:
             if "sitesResponse" in json:
                 sites_object = json['sitesResponse']['site']
-                # If statement is executed for multiple sites within the HydroServer, if there is a single site then it goes to the else statement
-                # Parse through the HydroServer and each site with its metadata as a
-                # dictionary object to the hs_sites list
                 if type(sites_object) is list:
                     for site in sites_object:
                         hs_json = {}
@@ -54,7 +51,6 @@ class Auxiliary():
                     site_name = site_name.encode("utf-8")
                     network = sites_object['siteInfo']['siteCode']["@network"]
                     sitecode = sites_object['siteInfo']['siteCode']["#text"]
-
                     hs_json["sitename"] = site_name.decode("UTF-8")
                     hs_json["latitude"] = latitude
                     hs_json["longitude"] = longitude
@@ -76,18 +72,13 @@ class Auxiliary():
             hs_sites: Dictionary from all the sites of an specific URL
         """
         hs_sites = []
-        # print bbox
 
-        bbox_json = self._recursive_asdict(bbox)  # Convert bounding box to json
-
-        # If there are multiple sites, create a list of of dictionaries with
-        # metadata
+        bbox_json = self._recursive_asdict(bbox)
         try:
             if type(bbox_json['site']) is list:
                 for site in bbox_json['site']:
                     hs_json = {}
                     site_name = site['siteInfo']['siteName']
-                    # site_name = site_name.encode("utf-8")
                     latitude = site['siteInfo']['geoLocation'][
                         'geogLocation']['latitude']
                     longitude = site['siteInfo']['geoLocation'][
@@ -102,10 +93,9 @@ class Auxiliary():
                     hs_json["network"] = network
                     hs_json["service"] = "SOAP"
                     hs_sites.append(hs_json)
-            else:  # If there is just one site within the bounding box, add that site as dictionary object
+            else:
                 hs_json = {}
                 site_name = bbox_json['site']['siteInfo']['siteName']
-                # site_name = site_name.encode("utf-8")
                 latitude = bbox_json['site']['siteInfo'][
                     'geoLocation']['geogLocation']['latitude']
                 longitude = bbox_json['site']['siteInfo'][
