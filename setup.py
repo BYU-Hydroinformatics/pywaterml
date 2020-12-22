@@ -1,4 +1,5 @@
 from setuptools import setup
+import versioneer
 
 requirements = [
     "xmltodict",
@@ -12,7 +13,9 @@ requirements = [
 setup(
     name='pywaterml',
     # version='0.0.14.dev1',
-    version='1.1.1',
+    # version='1.1.1',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description="The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps",
     license='BSD 3-Clause',
     license_family='BSD',
