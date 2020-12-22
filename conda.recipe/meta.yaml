@@ -1,55 +1,53 @@
-
-{% set data = load_setup_py_data() %}
+{% set name = "pyWaterML" %}
+{% set version = "1.1.1" %}
 
 package:
-  name: pywaterml
-  
-  version: {{ data['version'] }}
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
 
 source:
-  path: ..
+  git_url: https://github.com/romer8/pywaterml
+  sha256: 4642bdee860d3950c33c180a60e3244bc08bbfe13acd86bc278b50e591fc4601
 
 build:
-  # If the installation is complex, or different between Unix and Windows, use
-  # separate bld.bat and build.sh files instead of this key.  Add the line
-  # "skip: True  # [py<35]" (for example) to limit to Python 3.5 and newer, or
-  # "skip: True  # [not win]" to limit to Windows.
-  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv .
-  noarch: python
-  
+  number: 0
   entry_points:
-    {% for entry in setup_py['entry_points']['console_scripts'] %}
-      - {{ entry.split('=')[0].strip() }} = {{ entry.split('=')[1].strip() }}
-    {% endfor %}
-  
+    - pywaterml=pywaterml.cli:cli
 
 requirements:
-  # if you need compilers, uncomment these
-  #    read more at https://docs.conda.io/projects/conda-build/en/latest/resources/compiler-tools.html
-  # build:
-  #   - {{ compilers('c') }}
   host:
-    - python
+    - numpy
+    - owslib
+    - pandas
     - pip
-  run:
     - python
-    # dependencies are defined in setup.py
-    {% for dep in data['install_requires'] %}
-    - {{ dep.lower() }}
-    {% endfor %}
-    {# raw is for ignoring templating with cookiecutter, leaving it for use with conda-build #}
+    - suds-py3
+    - tslearn
+    - xmltodict
+    - cython
+  run:
+    - numpy
+    - owslib
+    - pandas
+    - python
+    - suds-py3
+    - tslearn
+    - xmltodict
+    - cython
 
 test:
-  source_files:
-    - tests
-  requires:
-    - pytest
-    - pytest-cov
-  commands:
-    - pytest tests
+  imports:
+    - pywaterml
 
 about:
-  home: https://github.com/romer8/https://github.com/romer8/pywaterml.git
-  summary: The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps
-  license: {{ setup_py.get('license') }}
-  license_file: LICENSE
+  home: "https://github.com/romer8/pywaterml"
+  license: BSD
+  license_family: BSD
+  license_file:
+  summary: "The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps"
+  doc_url: https://pywaterml.readthedocs.io/en/latest/index.html
+  dev_url: https://hydroinformatics.byu.edu/
+
+extra:
+  recipe-maintainers:
+    - romer8
