@@ -1,7 +1,7 @@
 # from pywaterml.waterML import WaterMLOperations
 
-import sys
-sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
+# import sys
+# sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
 from pywaterml.waterML import WaterMLOperations
 from tslearn.metrics import dtw
 from tslearn.clustering import TimeSeriesKMeans
@@ -16,7 +16,7 @@ def main():
     sites = water.GetSites()
     variables = water.GetVariables()
     print("************SITES***************")
-    print(sites)
+    print(len(sites))
     print("************VARIABLES***********")
     print(variables)
     print("***********GET SITE INFO****************")
@@ -37,12 +37,12 @@ def main():
     interpol_m = water.GetInterpolation(variableResponse['values'], 'mean')
     print(len(interpol_f))
     print(len(interpol_b))
-    print((interpol_m))
+    print(len(interpol_m))
 
     m_avg = water.GetMonthlyAverage(None, site_full_code, variable_full_code, methodID, start_date, end_date)
     print(m_avg)
     y_pred = water.GetClustersMonthlyAvg(sites,siteInfo[0]['name'])
-    print(y_pred)
+    print(len(y_pred))
     """
     UNCOMMENT TO USE WITH THE epsg:3857
     """
@@ -54,9 +54,7 @@ def main():
     """
     BoundsRearranged = [-66.4903,18.19699,-66.28665,18.28559]
     SitesByBoundingBox = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
-    print(SitesByBoundingBox)
-
-
+    print(len(SitesByBoundingBox))
 
     print("***********FILTERING SITES BY KEYWORD****************")
     variablesTest = [variables[0]]
@@ -66,17 +64,16 @@ def main():
     """
     sitesFiltered = water.GetSitesByVariable(variablesTest,sites)
     print("GetSitesByVariable With CookieCutter")
-    print(sitesFiltered)
+    print(len(sitesFiltered))
 
     """
     WITHOUT USING A COOKIE CUTTER
     """
     sitesFiltered = water.GetSitesByVariable(variablesTest)
     print("GetSitesByVariable No CookieCutter")
-    print(sitesFiltered)
+    print(len(sitesFiltered))
 
     print("******************CHANGE URL***********")
-    # water.ChangeEndpoint("http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL")
     water.ChangeEndpoint("http://hydroportal.cuahsi.org/CALVIN_HHS/cuahsi_1_1.asmx?WSDL")
     sites = water.GetSites()
     variables = water.GetVariables()
@@ -107,14 +104,12 @@ def main():
     # print(df_2)
     m_avg = df_2.to_numpy()
     m_avg = m_avg.reshape((m_avg.shape[0],))
-    print(m_avg)
-
-    # y_pred = water.getClustersMonthlyAvg(sites,variablesTest[0])
+    print(len(m_avg))
     start_time = time.time()
     y_pred = water.GetClustersMonthlyAvg(sitesFiltered,variablesTest[0])
-    print(y_pred)
+    print(len(y_pred))
     print("--- %s seconds ---" % (time.time() - start_time))
-
+    print("Test was sucessful")
 
 if __name__ == "__main__":
     main()
