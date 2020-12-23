@@ -1,6 +1,7 @@
 language: python
+script: pytest
 deploy:
   provider: pypi
-  username: "__token__"
+  username: romer8
   password:
     secure: "bVf3///8awRH1+UjNkYWscJ2j4E4ZTBXo2J4KGYOBOn/7+4bf8D2RNhzPrgh5ycEnY+ypNh6d3xckZbRDJ9L+d8WvW76yUgYbUfWAU8ah3PsHHbUeEEeXminhA5HleRNeJVjIVOkbQNzKoHGNYKeHQ+5ZROKDIEYYKwvlzp6S1Qy8l2n4jXeP++2tnG6dDL52WlTh4/YL2K6IkI/yQBEr9BrGBPjQPmEZGwuRNYvUtFD2R0LYcPX9yX0KOLU0RRc61EroOvQhsDtUoh6oBQParMhWxupVsdG1CZQnE0BWte6ehbyLXMUz1ztvdgt9VGRLzeSw20AEZZLLH4K2PZ5Qp+uT7KdxZW3OyqTR/KDVtnkCV0bzSWocqMm2rM4a4R0uajWT8HFKWscQyzqQpx8Y3+y9/sy8U2ejV3Bc3Z0Y1rCNQuVvXteqW1+2/bWZ3mHyH7C3J/8K6gEXtyIkWmkHXJplFNKExkZUhrjdpn7R7aEqa87hJiguel921Ev7TLoMNy6Srf2fDv6XSscVEqjvHw+tXS9RJqUVq0o8lROUVhr5ZCoYWfu3vy4/i2OHDVDi2GwHvOXdz1nT6pS+mLvziCJcXBGgDQdG4qfXk/+P79gr6477Y/6CwHZKLEzFVATfpmAqOPymzoCajJ4jLT3XLsbFRYkfBBv2qf76uD9Umk="
