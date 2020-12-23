@@ -1,0 +1,6 @@
+xmltodict
+pandas
+numpy
+owslib
+suds-py3
+tslearn
