@@ -7,6 +7,7 @@ requirements = [
     "numpy",
     "owslib",
     "suds-py3",
+    "scikit-learn",
     "tslearn"
 ]
 
