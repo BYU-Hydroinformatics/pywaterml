@@ -7,7 +7,7 @@ script:
 before_deploy:
   - conda install conda-build
   - conda install anaconda-client
-  - bash .ci/conda_upload.sh
+  - bash conda_upload.sh
 
 deploy:
   provider: pypi
