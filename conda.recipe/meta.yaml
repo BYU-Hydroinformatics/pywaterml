@@ -1,16 +1,17 @@
 {% set name = "pyWaterML" %}
-{% set version = "1.1.1" %}
+# {% set version = "1.1.1" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
-
+  # version: "{{ version }}"
+  version: {{ GIT_DESCRIBE_TAG }}
 source:
   git_url: https://github.com/romer8/pywaterml
   sha256: 4642bdee860d3950c33c180a60e3244bc08bbfe13acd86bc278b50e591fc4601
 
 build:
-  number: 0
+  # number: 0
+  number: {{ GIT_DESCRIBE_NUMBER }}
   entry_points:
     - pywaterml=pywaterml.cli:cli
 
