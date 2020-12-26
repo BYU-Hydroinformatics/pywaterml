@@ -24,6 +24,7 @@ install:
   - conda config --add channels elkingio
   - conda install conda-build
   - conda build conda.recipe/meta.yaml
+  - conda install python=3.7
   - conda install pywaterml --use-local
   # - python setup.py install
 
