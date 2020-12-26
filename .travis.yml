@@ -17,9 +17,9 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - conda activate test-environment
+  - conda config --add channels channels conda-forge
   - conda install --file requirements.txt
   - conda config --add channels elkingio
-  - conda config --add channels conda-forge
   # - conda build
   # - conda install your-package --use-local
   - python setup.py install
