@@ -19,6 +19,7 @@ install:
   - conda activate test-environment
   - conda install --file requirements.txt
   - conda config --add channels elkingio
+  - conda config --add channels conda-forge
   # - conda build
   # - conda install your-package --use-local
   - python setup.py install
