@@ -21,7 +21,7 @@ install:
   - conda install --file requirements.txt
   - conda config --add channels elkingio
   - conda install conda-build
-  - conda build pywaterml
+  - conda build conda.recipe/meta.yaml
   - conda install pywaterml --use-local
   # - python setup.py install
 
