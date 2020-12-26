@@ -15,8 +15,7 @@ build:
   entry_points:
     - pywaterml=pywaterml.cli:cli
   script: python setup.py install
-  script_env:
-    - CONDA_BLD_PATH
+
 requirements:
   host:
     - numpy
