@@ -1,7 +1,7 @@
 language: python
 python:
   - "3.6"
-install:
+after_deploy:
   - pip install --upgrade pip && pip install -r requirements.txt
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -23,18 +23,13 @@ install:
   - conda install --file requirements.txt
   - conda config --add channels elkingio
   - conda install conda-build
+  - conda config --set anaconda_upload yes
   - conda build conda.recipe/meta.yaml
   - conda install python=3.7
   - conda install pywaterml --use-local
-  # - python setup.py install
 
 # script:
 #   - pytest
-
-before_deploy:
-  - conda install conda-build
-  - conda install anaconda-client
-  - bash conda_upload.sh
 
 deploy:
   provider: pypi
