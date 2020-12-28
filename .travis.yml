@@ -37,6 +37,8 @@ after_sucess:
     if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == "romer8/pywaterml"
           && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' ]]; then
       export ANACONDA_API_TOKEN=$ANACONDA_TOKEN
+      conda convert --platform all /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2 --output-dir conda-bld/
+
       anaconda upload /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2
     fi
 
