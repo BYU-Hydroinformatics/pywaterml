@@ -12,9 +12,12 @@ source:
 build:
   # number: 0
   number: {{ GIT_DESCRIBE_NUMBER }}
+
   entry_points:
     - pywaterml=pywaterml.cli:cli
+
   script: python setup.py install
+
   script_env:
     - PKG_NAME
     - PKG_VERSION
