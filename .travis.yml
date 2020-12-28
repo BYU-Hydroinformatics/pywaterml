@@ -20,24 +20,33 @@ install:
   - conda config --add channels conda-forge
   - conda install --file requirements.txt
   - conda config --add channels elkingio
-  - conda install conda-build
+  - conda install conda-build jinja2 anaconda-client
   # - conda config --set anaconda_upload yes
   - conda build conda.recipe/meta.yaml
-  - anaconda upload /home/travis/miniconda/envs/test-environment/conda-bld/linux-64/pywaterml-v1.1.3-py36hd844fa7_4.tar.bz2
   - conda install python=3.7
   - conda install pywaterml --use-local
 
 script:
   - echo $(which pytest) && pytest
 
+after_sucess:
+  - chmod +x ./deploy_anaconda.sh
+
 deploy:
-  provider: pypi
-  username: elkingio
-  password:
-    secure: nneflO1mqMk08VDmg4t/jI0IFPoQzV9o8oRq8KGA9Czzm1bUYbdHCFOaGmdj9SHDP/94g3SamCdjkYuj56zyFMh1DFh117onXfvZmYixb+l1y7tjYSrHVsbV+4k+RtdJB14nP5C+s4GDO20QXDvtybx6ARX0egJsf6ix9KAxV2Jpw0EGhJELEHzYkbhuF7msi5aYVUv47G8e7zdwOUTBclAH9G5X8LmNot/F5sc+JSK/8KaicZOWS7Ked67AxResQ2ycybxZvH9V8WqLtFoWaOjtaFaiwRlSfLNr5EMrlNWNnZsK3tveDEpO+ekHWafpAcKpv35P6I28obXxNYGIFFIZcA5jJ7ZyvH89RgomXmDyWE7XaKlxZ6uIvPyGc1bjUJYotVjKPkE0vZ5F9tpbuFFs4e/9an3L3zo1VTaCBFsX0DRwSICT/5OmZQZReMGbFKlzJ6NCqg/MX7F8GrY96S3pU/jis1A3Cn84e6ohrc+F2e/iGhElPX9VILRVCmjg5i73+ChFT+yuXYo767VQwNZpyB6CwzEFerAvyCcCoGXyqnInU0XjJy609Herlfk9vitDQKnuI/dt726dnouzIvOrzH5EVZakEE3KeRv0T7kAsHs1KCtiY2IuAbhg7SgyCJMoPRe5OJBOotrKQYncPPUQc0Mer7YcHrRB0Gh8AoA=
-  distributions: sdist bdist_wheel
-  skip_existing: true
-  skip_cleanup: true
-  on:
-    branch: master
-    tags: true
+  - provider: pypi
+    username: elkingio
+    password:
+      secure: nneflO1mqMk08VDmg4t/jI0IFPoQzV9o8oRq8KGA9Czzm1bUYbdHCFOaGmdj9SHDP/94g3SamCdjkYuj56zyFMh1DFh117onXfvZmYixb+l1y7tjYSrHVsbV+4k+RtdJB14nP5C+s4GDO20QXDvtybx6ARX0egJsf6ix9KAxV2Jpw0EGhJELEHzYkbhuF7msi5aYVUv47G8e7zdwOUTBclAH9G5X8LmNot/F5sc+JSK/8KaicZOWS7Ked67AxResQ2ycybxZvH9V8WqLtFoWaOjtaFaiwRlSfLNr5EMrlNWNnZsK3tveDEpO+ekHWafpAcKpv35P6I28obXxNYGIFFIZcA5jJ7ZyvH89RgomXmDyWE7XaKlxZ6uIvPyGc1bjUJYotVjKPkE0vZ5F9tpbuFFs4e/9an3L3zo1VTaCBFsX0DRwSICT/5OmZQZReMGbFKlzJ6NCqg/MX7F8GrY96S3pU/jis1A3Cn84e6ohrc+F2e/iGhElPX9VILRVCmjg5i73+ChFT+yuXYo767VQwNZpyB6CwzEFerAvyCcCoGXyqnInU0XjJy609Herlfk9vitDQKnuI/dt726dnouzIvOrzH5EVZakEE3KeRv0T7kAsHs1KCtiY2IuAbhg7SgyCJMoPRe5OJBOotrKQYncPPUQc0Mer7YcHrRB0Gh8AoA=
+    distributions: sdist bdist_wheel
+    skip_existing: true
+    skip_cleanup: true
+    on:
+      branch: master
+      tags: true
+   # Deploy to Anaconda.org
+  - provider: script
+    script: ./deploy_anaconda.sh
+    on:
+      tags: true
+    skip_cleanup: true
+    skip_existing: true
