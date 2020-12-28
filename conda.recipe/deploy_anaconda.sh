@@ -6,7 +6,7 @@
 set -e
 
 echo "Converting conda package..."
-conda convert --platform all $HOME/miniconda2/conda-bld/linux-64/$PKG_NAME-$PKG_VERSION-$PKG_BUILD_STRING*.tar.bz2 --output-dir conda-bld/
+conda convert --platform all $HOME/envs/test-environment/conda-bld/linux-64/$PKG_NAME-$PKG_VERSION-$PKG_BUILD_STRING*.tar.bz2 --output-dir conda-bld/
 
 echo "Deploying to Anaconda.org..."
 anaconda -t $ANACONDA_TOKEN upload conda-bld/**/$PKG_NAME-$PKG_VERSION-$PKG_BUILD_STRING*.tar.bz2
