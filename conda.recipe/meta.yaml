@@ -1,4 +1,4 @@
-{% set name = "pyWaterML" %}
+{% set name = "pywaterml" %}
 # {% set version = "1.1.1" %}
 
 package:

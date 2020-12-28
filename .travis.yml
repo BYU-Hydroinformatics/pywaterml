@@ -32,6 +32,14 @@ script:
 after_sucess:
   - chmod +x ./deploy_anaconda.sh
 
+  - |
+    # Only upload builds from tags
+    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == "romer8/pywaterml"
+          && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' ]]; then
+      export ANACONDA_API_TOKEN=$ANACONDA_TOKEN
+      anaconda upload bld-dir/**/pywaterml-*.tar.bz2
+    fi
+
 deploy:
   - provider: pypi
     username: elkingio
@@ -44,9 +52,9 @@ deploy:
       branch: master
       tags: true
    # Deploy to Anaconda.org
-  - provider: script
-    script: bash conda.recipe/deploy_anaconda.sh
-    on:
-      tags: true
-    skip_cleanup: true
-    skip_existing: true
+  # - provider: script
+  #   script: bash conda.recipe/deploy_anaconda.sh
+  #   on:
+  #     tags: true
+  #   skip_cleanup: true
+  #   skip_existing: true
