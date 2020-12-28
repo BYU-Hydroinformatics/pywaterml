@@ -5,3 +5,4 @@ owslib
 suds-py3
 scikit-learn==0.22
 tslearn
+pytest

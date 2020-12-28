@@ -1,8 +1,8 @@
 language: python
 python:
   - "3.6"
-# install:
-#   - pip install --upgrade pip && pip install -r requirements.txt
+install:
+  - pip install --upgrade pip && pip install -r requirements.txt
 #   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
 #       wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
 #     else
@@ -26,8 +26,8 @@ python:
 #   - conda install python=3.7
 #   - conda install pywaterml --use-local
 
-# script:
-#   - pytest
+script:
+  - echo $(which pytest) && pytest
 
 deploy:
   provider: pypi
