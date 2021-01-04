@@ -6,7 +6,8 @@ package:
   # version: "{{ version }}"
   version: {{ GIT_DESCRIBE_TAG }}
 source:
-  git_url: https://github.com/romer8/pywaterml
+  # git_url: https://github.com/romer8/pywaterml
+  git_url: https://github.com/romer8/pywaterml/releases/download/{{ version }}/pywaterml-{{ version }}.tar.gz
   sha256: 4642bdee860d3950c33c180a60e3244bc08bbfe13acd86bc278b50e591fc4601
 
 build:
@@ -14,10 +15,11 @@ build:
   number: {{ GIT_DESCRIBE_NUMBER }}
   noarch: python
 
-  entry_points:
-    - pywaterml=pywaterml.cli:cli
+  # entry_points:
+  #   - pywaterml=pywaterml.cli:cli
 
-  script: python setup.py install
+  # script: python setup.py install
+  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
   host:
