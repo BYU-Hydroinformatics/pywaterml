@@ -3,8 +3,8 @@
 
 package:
   name: "{{ name|lower }}"
-  # version: "{{ version }}"
-  version: {{ GIT_DESCRIBE_TAG }}
+  version: "{{ version }}"
+  # version: {{ GIT_DESCRIBE_TAG }}
 source:
   # git_url: https://github.com/romer8/pywaterml
   git_url: https://github.com/romer8/pywaterml/releases/download/{{ version }}/pywaterml-{{ version }}.tar.gz
