@@ -31,6 +31,7 @@ script:
   - echo $(which pytest) && pytest
   # convert package to other platforms
   # conda convert --platform all /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2 --output-dir conda-bld/
+  # anaconda upload /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2
 
 after_sucess:
   - chmod +x ./deploy_anaconda.sh
@@ -41,7 +42,7 @@ after_sucess:
           && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' ]]; then
       export ANACONDA_API_TOKEN=$ANACONDA_TOKEN
       platforms=( osx-64 linux-32 linux-64 win-32 win-64 )
-
+      find /home/travis/miniconda/envs/test-environment/conda-bld/linux-64/ -name *.tar.bz2 | while read file
       do
           echo $file
           #conda convert --platform all $file  -o /home/travis/miniconda/envs/test-environment/conda-bld/
@@ -50,7 +51,13 @@ after_sucess:
              conda convert --platform $platform $file  -o /home/travis/miniconda/envs/test-environment/conda-bld/
           done
       done
-      anaconda upload /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2
+      find /home/travis/miniconda/envs/test-environment/conda-bld/ -name *.tar.bz2 | while read file
+      do
+          echo $file
+          anaconda upload $file
+      done
+
+      echo "Building conda package done!"
     fi
 
 deploy:
