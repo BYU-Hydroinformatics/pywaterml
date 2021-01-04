@@ -29,6 +29,8 @@ install:
 
 script:
   - echo $(which pytest) && pytest
+  # convert package to other platforms
+  # conda convert --platform all /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2 --output-dir conda-bld/
 
 after_sucess:
   - chmod +x ./deploy_anaconda.sh
@@ -38,8 +40,16 @@ after_sucess:
     if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == "romer8/pywaterml"
           && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' ]]; then
       export ANACONDA_API_TOKEN=$ANACONDA_TOKEN
-      conda convert --platform all /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2 --output-dir conda-bld/
+      platforms=( osx-64 linux-32 linux-64 win-32 win-64 )
 
+      do
+          echo $file
+          #conda convert --platform all $file  -o /home/travis/miniconda/envs/test-environment/conda-bld/
+          for platform in "${platforms[@]}"
+          do
+             conda convert --platform $platform $file  -o /home/travis/miniconda/envs/test-environment/conda-bld/
+          done
+      done
       anaconda upload /home/travis/miniconda/envs/test-environment/conda-bld/**/pywaterml-*.tar.bz2
     fi
 
@@ -54,7 +64,7 @@ deploy:
     on:
       branch: master
       tags: true
-      
+
    # Deploy to Anaconda.org
   # - provider: script
   #   script: bash conda.recipe/deploy_anaconda.sh

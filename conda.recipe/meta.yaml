@@ -12,6 +12,7 @@ source:
 build:
   # number: 0
   number: {{ GIT_DESCRIBE_NUMBER }}
+  noarch: generic
 
   entry_points:
     - pywaterml=pywaterml.cli:cli
