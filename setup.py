@@ -10,7 +10,6 @@ requirements = [
     "suds-jurko",
     "scikit-learn<=0.22",
     "tslearn",
-    "llvmlite"
 ]
 
 setup(
