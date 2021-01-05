@@ -2,6 +2,7 @@ xmltodict
 pandas
 numpy
 owslib
+Cython
 suds-jurko
 scikit-learn==0.22
 tslearn
