@@ -9,7 +9,8 @@ requirements = [
     # "suds-py3",
     "suds-jurko",
     "scikit-learn<=0.22",
-    "tslearn"
+    "tslearn",
+    "llvmlite"
 ]
 
 setup(
