@@ -1,29 +1,20 @@
 {% set name = "pywaterml" %}
-# {% set setup_data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
-# {% set version = {{ GIT_DESCRIBE_TAG }} %}
 
 package:
   name: "{{ name|lower }}"
-  # version: "{{ setup_data['version'] }}"
-  # version: "{{ version }}"
   version: {{ GIT_DESCRIBE_TAG }}
 source:
-  # git_url: https://github.com/romer8/pywaterml
-  # git_url: https://github.com/romer8/pywaterml/releases/download/{{ setup_data['version'] }}/pywaterml-{{ setup_data['version'] }}.tar.gz
-  # url: https://github.com/romer8/{{ name|lower }}/releases/download/{{ setup_data['version'] }}/{{ name|lower }}-{{ setup_data['version'] }}.tar.gz
-  url: https://github.com/romer8/{{ name|lower }}/releases/download/{{ GIT_DESCRIBE_TAG }}/{{ name|lower }}-{{ GIT_DESCRIBE_TAG }}.tar.gz
+  git_url: https://github.com/romer8/pywaterml
   sha256: 4642bdee860d3950c33c180a60e3244bc08bbfe13acd86bc278b50e591fc4601
 
 build:
-  # number: 0
   number: {{ GIT_DESCRIBE_NUMBER }}
   noarch: python
 
-  # entry_points:
-  #   - pywaterml=pywaterml.cli:cli
+  entry_points:
+    - pywaterml=pywaterml.cli:cli
 
-  # script: python setup.py install
-  script: "{{ PYTHON }} -m pip install . -vv"
+  script: python setup.py install
 
 requirements:
   host:
