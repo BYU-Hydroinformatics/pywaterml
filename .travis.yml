@@ -18,7 +18,7 @@ install:
     if [[ "$TRAVIS_PYTHON_VERSION" == "3.9" ]]; then
       python -m pip install cython;
       pip3 install scipy;
-      sudo apt install llvm-9
+      sudo apt install llvm-8
       export LLVM_CONFIG=/usr/bin/llvm-config-8
       pip install llvmlite
     fi;
