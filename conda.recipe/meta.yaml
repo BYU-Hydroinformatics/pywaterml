@@ -1,13 +1,16 @@
 {% set name = "pywaterml" %}
-{% set version = {{ GIT_DESCRIBE_TAG }} %}
+{% set setup_data = load_setup_py_data() %}
+# {% set version = {{ GIT_DESCRIBE_TAG }} %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: "{{ setup_data['version'] }}"
+  # version: "{{ version }}"
   # version: {{ GIT_DESCRIBE_TAG }}
 source:
   # git_url: https://github.com/romer8/pywaterml
-  git_url: https://github.com/romer8/pywaterml/releases/download/{{ version }}/pywaterml-{{ version }}.tar.gz
+  # git_url: https://github.com/romer8/pywaterml/releases/download/{{ setup_data['version'] }}/pywaterml-{{ setup_data['version'] }}.tar.gz
+  git_url: https://github.com/romer8/{{ name|lower }}/releases/download/{{ setup_data['version'] }}/{{ name|lower }}-{{ setup_data['version'] }}.tar.gz
   sha256: 4642bdee860d3950c33c180a60e3244bc08bbfe13acd86bc278b50e591fc4601
 
 build:
