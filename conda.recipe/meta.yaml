@@ -1,5 +1,5 @@
 {% set name = "pywaterml" %}
-{% set setup_data = load_setup_py_data() %}
+{% set setup_data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
 # {% set version = {{ GIT_DESCRIBE_TAG }} %}
 
 package:
