@@ -8,7 +8,7 @@ requirements = [
     "owslib",
     # "suds-py3",
     "suds-jurko",
-    "scikit-learn==0.22",
+    "scikit-learn<=0.22",
     "tslearn"
 ]
 
