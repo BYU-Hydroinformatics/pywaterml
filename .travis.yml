@@ -1,9 +1,14 @@
 language: python
-
 python:
 
   - "3.6"      # current default Python on Travis CI
   - "3.7"
+os:
+  - linux
+  - osx
+  - windows
+
+dist: xenial
 
 install:
   - |
