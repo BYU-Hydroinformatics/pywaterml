@@ -27,6 +27,7 @@ requirements:
     - scikit-learn==0.22
     - tslearn
     - xmltodict
+    - cython
   run:
     - numpy
     - owslib
@@ -36,6 +37,7 @@ requirements:
     - scikit-learn==0.22
     - tslearn
     - xmltodict
+    - cython
 
 test:
   imports:
