@@ -23,7 +23,6 @@ requirements:
     - pandas
     - pip
     - python
-    # - suds-py3
     - suds-jurko
     - scikit-learn==0.22
     - tslearn
@@ -34,7 +33,6 @@ requirements:
     - owslib
     - pandas
     - python
-    # - suds-py3
     - suds-jurko
     - scikit-learn==0.22
     - tslearn
