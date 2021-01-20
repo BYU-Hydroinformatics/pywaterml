@@ -132,9 +132,10 @@ class WaterMLOperations():
         bbox = self.client.service.GetSitesByBoxObject(
             x1, y1, x2, y2, '1', '')
         wml_sites = self.aux._parseWML(bbox)
-        sites_parsed_json = json.dumps(wml_sites)
+        # sites_parsed_json = json.dumps(wml_sites)
+        # return sites_parsed_json
 
-        return sites_parsed_json
+        return wml_sites
 
     def GetVariables(self):
         """
