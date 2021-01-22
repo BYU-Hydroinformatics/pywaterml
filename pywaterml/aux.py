@@ -58,9 +58,9 @@ class Auxiliary():
                     hs_json["network"] = network
                     hs_json["service"] = "SOAP"
                     hs_sites.append(hs_json)
-        except ValueError:
+        except (ValueError, KeyError) as error:
             print("There is a discrepancy in the structure of the response. It is possible that the respond object does not contain the sitesResponse attribute")
-
+            print(error)
         return hs_sites
 
     def _parseWML(self,bbox):
@@ -110,7 +110,7 @@ class Auxiliary():
                 hs_json["network"] = network
                 hs_json["service"] = "SOAP"
                 hs_sites.append(hs_json)
-        except AssertionError as error:
+        except (AssertionError, KeyError) as error:
             print("There is an error while parsing the response object ", error)
 
         return hs_sites

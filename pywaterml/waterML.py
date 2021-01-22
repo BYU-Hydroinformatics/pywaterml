@@ -156,21 +156,25 @@ class WaterMLOperations():
             variables = water.GetVariables()
 
         """
-        variables = self.client.service.GetVariables('[:]')
+        try:
+            variables = self.client.service.GetVariables('[:]')
 
-        variables_dict = xmltodict.parse(variables)
-        variables_dict_object = json.dumps(variables_dict)
+            variables_dict = xmltodict.parse(variables)
+            variables_dict_object = json.dumps(variables_dict)
 
-        variables_json = json.loads(variables_dict_object)
-        array_variables = variables_json['variablesResponse']['variables']['variable']
-        array_final_variables = []
+            variables_json = json.loads(variables_dict_object)
+            array_variables = variables_json['variablesResponse']['variables']['variable']
+            array_final_variables = []
 
-        if isinstance(array_variables,type([])):
-          for one_variable in array_variables:
-              array_final_variables.append(one_variable['variableName'])
+            if isinstance(array_variables,type([])):
+              for one_variable in array_variables:
+                  array_final_variables.append(one_variable['variableName'])
 
-        if isinstance(array_variables,dict):
-          array_final_variables.append(array_variables['variableName'])
+            if isinstance(array_variables,dict):
+              array_final_variables.append(array_variables['variableName'])
+
+        except KeyError as error:
+            print error
 
         return array_final_variables
 
@@ -311,28 +315,46 @@ class WaterMLOperations():
         values_json = json.loads(values_json_object)
         times_series = {}
         graph_json = {}
-        if 'timeSeriesResponse' in values_json:
+        try:
+            if 'timeSeriesResponse' in values_json:
 
-            times_series = values_json['timeSeriesResponse'][
-                'timeSeries']
-            if times_series['values'] is not None:
+                times_series = values_json['timeSeriesResponse'][
+                    'timeSeries']
+                if times_series['values'] is not None:
 
-                graph_json = {}
-                graph_json["variable"] = times_series['variable']['variableName']
-                graph_json["unit"]=""
-                if times_series['variable']['unit']['unitAbbreviation'] is not None:
-                    graph_json["unit"] = times_series[
-                        'variable']['unit']['unitAbbreviation']
+                    graph_json = {}
+                    graph_json["variable"] = times_series['variable']['variableName']
+                    graph_json["unit"]=""
+                    if times_series['variable']['unit']['unitAbbreviation'] is not None:
+                        graph_json["unit"] = times_series[
+                            'variable']['unit']['unitAbbreviation']
 
-                graph_json["title"] = times_series['variable']['variableName'] + " (" + graph_json["unit"] + ") vs Time"
-                for j in times_series['values']:
-                    data_values = []
-                    if j == "value":
-                        if type(times_series['values']['value']) is list:
+                    graph_json["title"] = times_series['variable']['variableName'] + " (" + graph_json["unit"] + ") vs Time"
+                    for j in times_series['values']:
+                        data_values = []
+                        if j == "value":
+                            if type(times_series['values']['value']) is list:
 
-                            for k in times_series['values']['value']:
-                                try:
-                                    if k['@methodCode'] == methodID:
+                                for k in times_series['values']['value']:
+                                    try:
+                                        if k['@methodCode'] == methodID:
+                                            time = k['@dateTimeUTC']
+                                            time1 = time.replace("T", "-")
+                                            time_split = time1.split("-")
+                                            year = int(time_split[0])
+                                            month = int(time_split[1])
+                                            day = int(time_split[2])
+                                            hour_minute = time_split[3].split(":")
+                                            hour = int(hour_minute[0])
+                                            minute = int(hour_minute[1])
+                                            value = float(str(k['#text']))
+                                            date_string = datetime(
+                                                year, month, day, hour, minute)
+                                            date_string_converted = date_string.strftime("%Y-%m-%d %H:%M:%S")
+                                            data_values.append([date_string_converted,value])
+                                            data_values.sort()
+                                        graph_json["values"] = data_values
+                                    except KeyError:  # The Key Error kicks in when there is only one timeseries
                                         time = k['@dateTimeUTC']
                                         time1 = time.replace("T", "-")
                                         time_split = time1.split("-")
@@ -345,30 +367,33 @@ class WaterMLOperations():
                                         value = float(str(k['#text']))
                                         date_string = datetime(
                                             year, month, day, hour, minute)
-                                        date_string_converted = date_string.strftime("%Y-%m-%d %H:%M:%S")
-                                        data_values.append([date_string_converted,value])
+                                        data_values.append([date_string,value])
                                         data_values.sort()
                                     graph_json["values"] = data_values
-                                except KeyError:  # The Key Error kicks in when there is only one timeseries
-                                    time = k['@dateTimeUTC']
-                                    time1 = time.replace("T", "-")
-                                    time_split = time1.split("-")
-                                    year = int(time_split[0])
-                                    month = int(time_split[1])
-                                    day = int(time_split[2])
-                                    hour_minute = time_split[3].split(":")
-                                    hour = int(hour_minute[0])
-                                    minute = int(hour_minute[1])
-                                    value = float(str(k['#text']))
-                                    date_string = datetime(
-                                        year, month, day, hour, minute)
-                                    data_values.append([date_string,value])
-                                    data_values.sort()
-                                graph_json["values"] = data_values
 
-                        else:  # The else statement is executed is there is only one value in the timeseries
-                            try:
-                                if times_series['values']['value']['@methodCode'] == methodID:
+                            else:  # The else statement is executed is there is only one value in the timeseries
+                                try:
+                                    if times_series['values']['value']['@methodCode'] == methodID:
+                                        time = times_series['values'][
+                                            'value']['@dateTimeUTC']
+                                        time1 = time.replace("T", "-")
+                                        time_split = time1.split("-")
+                                        year = int(time_split[0])
+                                        month = int(time_split[1])
+                                        day = int(time_split[2])
+                                        hour_minute = time_split[3].split(":")
+                                        hour = int(hour_minute[0])
+                                        minute = int(hour_minute[1])
+                                        value = float(
+                                            str(times_series['values']['value']['#text']))
+                                        date_string = datetime(
+                                            year, month, day, hour, minute)
+
+                                        data_values.append([date_string,value])
+                                        data_values.sort()
+                                        graph_json["values"] = data_values
+
+                                except KeyError:
                                     time = times_series['values'][
                                         'value']['@dateTimeUTC']
                                     time1 = time.replace("T", "-")
@@ -383,29 +408,12 @@ class WaterMLOperations():
                                         str(times_series['values']['value']['#text']))
                                     date_string = datetime(
                                         year, month, day, hour, minute)
-
                                     data_values.append([date_string,value])
                                     data_values.sort()
                                     graph_json["values"] = data_values
+        except KeyError as error:
+            print(error)
 
-                            except KeyError:
-                                time = times_series['values'][
-                                    'value']['@dateTimeUTC']
-                                time1 = time.replace("T", "-")
-                                time_split = time1.split("-")
-                                year = int(time_split[0])
-                                month = int(time_split[1])
-                                day = int(time_split[2])
-                                hour_minute = time_split[3].split(":")
-                                hour = int(hour_minute[0])
-                                minute = int(hour_minute[1])
-                                value = float(
-                                    str(times_series['values']['value']['#text']))
-                                date_string = datetime(
-                                    year, month, day, hour, minute)
-                                data_values.append([date_string,value])
-                                data_values.sort()
-                                graph_json["values"] = data_values
         return graph_json
 
     def GetSitesByVariable(self,specific_variables,cookiCutter = None):
