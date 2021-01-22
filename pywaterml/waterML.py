@@ -174,7 +174,7 @@ class WaterMLOperations():
               array_final_variables.append(array_variables['variableName'])
 
         except KeyError as error:
-            print error
+            print(error)
 
         return array_final_variables
 
