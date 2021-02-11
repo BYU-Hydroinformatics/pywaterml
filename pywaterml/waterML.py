@@ -68,12 +68,12 @@ class WaterMLOperations():
             print("There is no endpoint, please before changing an endpoint add one with AddEndpoint() function")
         pass
 
-    def GetSites(self):
+    def GetSites(self, format="json"):
         """
         Get all the sites from a endpoint that complies to the SOAP protocol. The GetSites() function is similar to the GetSites() WaterML function.
 
         Args:
-            None
+            format: format of the response (json or waterML)
 
         Returns:
             An array of objects that represent each site. The structure of the response is the following
@@ -86,7 +86,12 @@ class WaterMLOperations():
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
         """
-        sites = self.client.service.GetSites('[:]')
+        try:
+            sites = self.client.service.GetSites('[:]')
+        except Exception as error:
+            print(error)
+        if format is "waterml":
+            return sites
         sites_json={}
         if isinstance(sites, str):
             sites_dict = xmltodict.parse(sites)
@@ -98,15 +103,24 @@ class WaterMLOperations():
 
         sites_object = Auxiliary._parseJSON(sites_json)
 
-        return sites_object
+        if format is "json":
+            return sites_object
+        elif format is "csv":
+            df = pd.DataFrame.from_dict(sites_object)
+            csv_sites = df.to_csv(index=False)
+            # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
+            return csv_sites
+        else:
+            return print("the only supported formats are json, csv, and waterml")
 
-    def GetSitesByBoxObject(self,ext_list, inProjection):
+    def GetSitesByBoxObject(self,ext_list, inProjection, format="json"):
         """
         Get all the sites from a bounding box from a endpoint that complies to the SOAP protocol. The GetSitesByBoxObject() function is similar to the GetSitesByBoxObject() WaterML function.
 
         Args:
             ext_list: Array of bounding box coordinates in a given projection.
             inProjection: Projection from the array of coordinates of the given bounding box.
+            format: format of the response (json or waterML)
 
         Returns:
             An array of objects that represent each site. The structure of the response is the following
@@ -129,20 +143,32 @@ class WaterMLOperations():
         maxx, maxy = ext_list[2], ext_list[3]
         x1, y1 = transform(inProj, outProj, minx, miny)
         x2, y2 = transform(inProj, outProj, maxx, maxy)
-        bbox = self.client.service.GetSitesByBoxObject(
-            x1, y1, x2, y2, '1', '')
+        try:
+            bbox = self.client.service.GetSitesByBoxObject(
+                x1, y1, x2, y2, '1', '')
+        except Exception as error:
+            print(error)
+        if format is "waterml":
+            return bbox
+
         wml_sites = self.aux._parseWML(bbox)
+        if format is "json":
         # sites_parsed_json = json.dumps(wml_sites)
         # return sites_parsed_json
+            return wml_sites
+        elif format is "csv":
+            df = pd.DataFrame.from_dict(wml_sites)
+            csv_sites = df.to_csv(index=False)
+            return csv_sites
+        else:
+            return print("the only supported formats are json, csv, and waterml")
 
-        return wml_sites
-
-    def GetVariables(self):
+    def GetVariables(self, format="json"):
         """
         Get all the variables from a endpoint that complies to the SOAP protocol. GetVariables() function is similar to the GetVariables() WaterML function
 
         Args:
-            None
+            format: format of the response (json or waterML)
 
         Returns:
             An array of strings representing the variables from the enpoint. The structure of the response is the following
@@ -156,27 +182,98 @@ class WaterMLOperations():
             variables = water.GetVariables()
 
         """
+        return_object = {}
         try:
             variables = self.client.service.GetVariables('[:]')
-
+            if format is 'waterml':
+                return variables
             variables_dict = xmltodict.parse(variables)
             variables_dict_object = json.dumps(variables_dict)
 
             variables_json = json.loads(variables_dict_object)
+            print(variables_json)
             array_variables = variables_json['variablesResponse']['variables']['variable']
+
             array_final_variables = []
+            array_variable_code = []
+            array_value_Type = []
+            array_dataType = []
+            array_general_category=[]
+            array_sample_medium=[]
+            array_unit_name=[]
+            array_unit_type=[]
+            array_unit_abr=[]
+            array_no_data_value=[]
+            array_isRegular=[]
+            array_timeUnitName=[]
+            array_time_unitAbbreviation =[]
+            array_timeSupport=[]
+            array_speciation =[]
 
             if isinstance(array_variables,type([])):
               for one_variable in array_variables:
                   array_final_variables.append(one_variable['variableName'])
-
+                  array_variable_code.append(one_variable['variableCode']['#text'])
+                  array_value_Type.append(one_variable['valueType'])
+                  array_dataType.append(one_variable['dataType'])
+                  array_general_category.append(one_variable['generalCategory'])
+                  array_sample_medium.append(one_variable['sampleMedium'])
+                  array_unit_name.append(one_variable['unit']['unitName'])
+                  array_unit_type.append(one_variable['unit']['unitType'])
+                  array_unit_abr.append(one_variable['unit']['unitAbbreviation'])
+                  array_no_data_value.append(one_variable['noDataValue'])
+                  array_isRegular.append(one_variable['variableCode']['@default'])
+                  array_timeUnitName.append(one_variable['timeScale']['unit']['unitName'])
+                  array_time_unitAbbreviation.append(one_variable['timeScale']['unit']['unitAbbreviation'])
+                  array_timeSupport.append(one_variable['timeScale']['timeSupport'])
+                  array_speciation.append(one_variable['speciation'])
             if isinstance(array_variables,dict):
               array_final_variables.append(array_variables['variableName'])
+              array_variable_code.append(array_variables['variableCode']['#text'])
+              array_value_Type.append(array_variables['valueType'])
+              array_dataType.append(array_variables['dataType'])
+              array_general_category.append(array_variables['generalCategory'])
+              array_sample_medium.append(array_variables['sampleMedium'])
+              array_unit_name.append(array_variables['unit']['unitName'])
+              array_unit_type.append(array_variables['unit']['unitType'])
+              array_unit_abr.append(array_variables['unit']['unitAbbreviation'])
+              array_no_data_value.append(array_variables['noDataValue'])
+              array_isRegular.append(array_variables['variableCode']['@default'])
+              array_timeUnitName.append(array_variables['timeScale']['unit']['unitName'])
+              array_time_unitAbbreviation.append(array_variables['timeScale']['unit']['unitAbbreviation'])
+              array_timeSupport.append(array_variables['timeScale']['timeSupport'])
+              array_speciation.append(array_variables['speciation'])
 
-        except KeyError as error:
+            return_object['variableName'] = array_final_variables
+            return_object['variableCode'] = array_variable_code
+            return_object['valueType'] = array_value_Type
+            return_object['dataType'] = array_dataType
+            return_object['generalCategory'] = array_general_category
+            return_object['sampleMedium'] = array_sample_medium
+            return_object['unitName'] = array_unit_name
+            return_object['unitType'] = array_unit_type
+            return_object['unitAbr'] = array_unit_abr
+            return_object['noDataValue'] = array_no_data_value
+            return_object['isRegular'] = array_isRegular
+            return_object['timeUnitName'] = array_timeUnitName
+            return_object['timeUnitAbbreviation'] =array_time_unitAbbreviation
+            return_object['timeSupport'] = array_timeSupport
+            return_object['speciation'] = array_speciation
+            if format is "json":
+                return return_object
+
+            elif format is "csv":
+                df = pd.DataFrame.from_dict(return_object)
+                # print(df)
+                csv_variables = df.to_csv(index=False)
+                return csv_variables
+            else:
+                return print("the only supported formats are json, csv, and waterml")
+        except Exception as error:
             print(error)
 
-        return array_final_variables
+
+        # return array_final_variables
 
     def GetSiteInfo(self,site_full_code):
         """
