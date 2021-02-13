@@ -272,7 +272,7 @@ class WaterMLOperations():
 
         # return array_final_variables
 
-    def GetSiteInfo(self,site_full_code):
+    def GetSiteInfo(self,site_full_code, format ="json"):
         """
         Get the information of a given site. GetSiteInfo() function is similar to the GetSiteInfo() WaterML function.
 
@@ -306,7 +306,7 @@ class WaterMLOperations():
                 - citation
                 - timeInterval
 
-        
+
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
@@ -318,10 +318,13 @@ class WaterMLOperations():
             siteInfo = water.GetSiteInfo(site_full_code)
         """
         site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
+        if format is 'waterml':
+            return site_info_Mc
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
         site_info_Mc_json_object = json.dumps(site_info_Mc_dict)
         print (json.dumps(site_info_Mc_dict,sort_keys=True, indent=4))
         site_info_Mc_json = json.loads(site_info_Mc_json_object)
+
         # print(site_info_Mc_json)
         # print(type(site_info_Mc_json))
 
@@ -376,7 +379,7 @@ class WaterMLOperations():
                 return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
                 return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
                 return_aray.append(return_obj)
-                return return_aray
+                # return return_aray
 
             else:
                 for object_method in object_methods:
@@ -407,7 +410,7 @@ class WaterMLOperations():
 
                     if 'method' in object_method:
                         return_obj['methodID'] = object_method['method']['@methodID']
-                        return_obj['methodDescription'] = object_methods['method']['methodDescription']
+                        return_obj['methodDescription'] = object_method['method']['methodDescription']
                     else:
                         return_obj['methodID'] = "No MethodID provided"
                         return_obj['methodDescription'] = "No Method Description was provided"
@@ -426,8 +429,19 @@ class WaterMLOperations():
                     return_obj['endDateTimeUTC'] = object_method['variableTimeInterval']['endDateTimeUTC']
 
                     return_aray.append(return_obj)
-                    return return_aray
-
+                    # return return_aray
+            if format is "json":
+                json_response = {
+                    'siteInfo':return_aray
+                }
+                return json_response
+            elif format is "csv":
+                df = pd.DataFrame.from_dict(return_aray)
+                # print(df)
+                csv_siteInfo = df.to_csv(index=False)
+                return csv_siteInfo
+            else:
+                return print("the only supported formats are json, csv, and waterml")
         except KeyError:
             print("No series for the site")
             return_aray = []
