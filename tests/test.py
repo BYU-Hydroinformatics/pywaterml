@@ -1,7 +1,7 @@
 # from pywaterml.waterML import WaterMLOperations
 
-# import sys
-# sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
+import sys
+sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
 from pywaterml.waterML import WaterMLOperations
 from tslearn.metrics import dtw
 from tslearn.clustering import TimeSeriesKMeans
@@ -20,17 +20,19 @@ def main():
     print("************VARIABLES***********")
     print(variables)
     print("***********GET SITE INFO****************")
-    site_full_code = "Para_La_Naturaleza:Rio_Toro_Negro"
-    siteInfo =  water.GetSiteInfo(site_full_code)
+    # site_full_code = "Para_La_Naturaleza:Rio_Toro_Negro"
+    fullSiteCodeFirstSite = sites[0]['fullSiteCode']
+    siteInfo =  water.GetSiteInfo(fullSiteCodeFirstSite)
     print(siteInfo)
     print("VALUES")
-    network = sites[0]['network']
-    firstVariableCode = siteInfo[0]['code']
-    variable_full_code = network + ":" + firstVariableCode
-    methodID = siteInfo[0]['methodID']
-    start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-    end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
-    variableResponse = water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+    # network = sites[0]['network']
+    fullVariableCodeFirstVariable = siteInfo['siteInfo'][0]['fullVariableCode']
+    # variable_full_code = network + ":" + firstVariableCode
+    methodID = siteInfo['siteInfo'][0]['methodID']
+    start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
+    end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
+
+    variableResponse = water.GetValues(fullSiteCodeFirstSite, fullVariableCodeFirstVariable, methodID, start_date, end_date)
     print("INTERPOLATION")
     interpol_b = water.GetInterpolation(variableResponse['values'], 'backward')
     interpol_f = water.GetInterpolation(variableResponse['values'], 'forward')
