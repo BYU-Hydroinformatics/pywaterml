@@ -33,7 +33,7 @@ class Auxiliary():
                         site_name = site_name.encode("utf-8")
                         network = site['siteInfo']['siteCode']["@network"]
                         sitecode = site['siteInfo']['siteCode']["#text"]
-                        siteID = site['siteInfo']['siteCode']["siteID"]
+                        siteID = site['siteInfo']['siteCode']["@siteID"]
                         hs_json["sitename"] = site_name.decode("UTF-8")
                         hs_json["latitude"] = latitude
                         hs_json["longitude"] = longitude
@@ -53,7 +53,7 @@ class Auxiliary():
                     site_name = site_name.encode("utf-8")
                     network = sites_object['siteInfo']['siteCode']["@network"]
                     sitecode = sites_object['siteInfo']['siteCode']["#text"]
-                    siteID = sites_object['siteInfo']['siteCode']["siteID"]
+                    siteID = sites_object['siteInfo']['siteCode']["@siteID"]
                     hs_json["sitename"] = site_name.decode("UTF-8")
                     hs_json["latitude"] = latitude
                     hs_json["longitude"] = longitude
