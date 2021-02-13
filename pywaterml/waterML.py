@@ -179,7 +179,7 @@ class WaterMLOperations():
             variables = water.GetVariables()
 
         """
-        return_object = {}
+        return_array = []
         try:
             variables = self.client.service.GetVariables('[:]')
             if format is 'waterml':
@@ -208,66 +208,107 @@ class WaterMLOperations():
             array_speciation =[]
 
             if isinstance(array_variables,type([])):
-              for one_variable in array_variables:
-                  array_final_variables.append(one_variable['variableName'])
-                  array_variable_code.append(one_variable['variableCode']['#text'])
-                  array_value_Type.append(one_variable['valueType'])
-                  array_dataType.append(one_variable['dataType'])
-                  array_general_category.append(one_variable['generalCategory'])
-                  array_sample_medium.append(one_variable['sampleMedium'])
-                  array_unit_name.append(one_variable['unit']['unitName'])
-                  array_unit_type.append(one_variable['unit']['unitType'])
-                  array_unit_abr.append(one_variable['unit']['unitAbbreviation'])
-                  array_no_data_value.append(one_variable['noDataValue'])
-                  array_isRegular.append(one_variable['variableCode']['@default'])
-                  array_timeUnitName.append(one_variable['timeScale']['unit']['unitName'])
-                  array_time_unitAbbreviation.append(one_variable['timeScale']['unit']['unitAbbreviation'])
-                  array_timeSupport.append(one_variable['timeScale']['timeSupport'])
-                  array_speciation.append(one_variable['speciation'])
+                return_object = {}
+                for one_variable in array_variables:
+                    return_object['variableName'] = one_variable['variableName']
+                    return_object['variableCode'] = one_variable['variableCode']['#text']
+                    return_object['valueType']= one_variable['valueType']
+                    return_object['dataType']= one_variable['dataType']
+                    return_object['generalCategory'] = one_variable['generalCategory']
+                    return_object['sampleMedium'] = one_variable['sampleMedium']
+                    return_object['unitName'] = one_variable['unit']['unitName']
+                    return_object['unitType'] = one_variable['unit']['unitType']
+                    return_object['unitAbbreviation'] = one_variable['unit']['unitAbbreviation']
+                    return_object['noDataValue'] = one_variable['noDataValue']
+                    return_object['isRegular'] = one_variable['variableCode']['@default']
+                    return_object['timeUnitName'] = one_variable['timeScale']['unit']['unitName']
+                    return_object['timeUnitAbbreviation'] = one_variable['timeScale']['unit']['unitAbbreviation']
+                    return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
+                    return_object['speciation'] = one_variable['speciation']
+                    return_array.append(return_object)
+                  # array_final_variables.append(one_variable['variableName'])
+                  # array_variable_code.append(one_variable['variableCode']['#text'])
+                  # array_value_Type.append(one_variable['valueType'])
+                  # array_dataType.append(one_variable['dataType'])
+                  # array_general_category.append(one_variable['generalCategory'])
+                  # array_sample_medium.append(one_variable['sampleMedium'])
+                  # array_unit_name.append(one_variable['unit']['unitName'])
+                  # array_unit_type.append(one_variable['unit']['unitType'])
+                  # array_unit_abr.append(one_variable['unit']['unitAbbreviation'])
+                  # array_no_data_value.append(one_variable['noDataValue'])
+                  # array_isRegular.append(one_variable['variableCode']['@default'])
+                  # array_timeUnitName.append(one_variable['timeScale']['unit']['unitName'])
+                  # array_time_unitAbbreviation.append(one_variable['timeScale']['unit']['unitAbbreviation'])
+                  # array_timeSupport.append(one_variable['timeScale']['timeSupport'])
+                  # array_speciation.append(one_variable['speciation'])
+
             if isinstance(array_variables,dict):
-              array_final_variables.append(array_variables['variableName'])
-              array_variable_code.append(array_variables['variableCode']['#text'])
-              array_value_Type.append(array_variables['valueType'])
-              array_dataType.append(array_variables['dataType'])
-              array_general_category.append(array_variables['generalCategory'])
-              array_sample_medium.append(array_variables['sampleMedium'])
-              array_unit_name.append(array_variables['unit']['unitName'])
-              array_unit_type.append(array_variables['unit']['unitType'])
-              array_unit_abr.append(array_variables['unit']['unitAbbreviation'])
-              array_no_data_value.append(array_variables['noDataValue'])
-              array_isRegular.append(array_variables['variableCode']['@default'])
-              array_timeUnitName.append(array_variables['timeScale']['unit']['unitName'])
-              array_time_unitAbbreviation.append(array_variables['timeScale']['unit']['unitAbbreviation'])
-              array_timeSupport.append(array_variables['timeScale']['timeSupport'])
-              array_speciation.append(array_variables['speciation'])
+                return_object = {}
+                return_object['variableName'] = array_variables['variableName']
+                return_object['variableCode'] = array_variables['variableCode']['#text']
+                return_object['valueType']= array_variables['valueType']
+                return_object['dataType']= array_variables['dataType']
+                return_object['generalCategory'] = array_variables['generalCategory']
+                return_object['sampleMedium'] = array_variables['sampleMedium']
+                return_object['unitName'] = array_variables['unit']['unitName']
+                return_object['unitType'] = array_variables['unit']['unitType']
+                return_object['unitAbbreviation'] = array_variables['unit']['unitAbbreviation']
+                return_object['noDataValue'] = array_variables['noDataValue']
+                return_object['isRegular'] = array_variables['variableCode']['@default']
+                return_object['timeUnitName'] = array_variables['timeScale']['unit']['unitName']
+                return_object['timeUnitAbbreviation'] = array_variables['timeScale']['unit']['unitAbbreviation']
+                return_object['timeSupport'] = array_variables['timeScale']['timeSupport']
+                return_object['speciation'] = array_variables['speciation']
+                return_array.append(return_object)
+              # array_final_variables.append(array_variables['variableName'])
+              # array_variable_code.append(array_variables['variableCode']['#text'])
+              # array_value_Type.append(array_variables['valueType'])
+              # array_dataType.append(array_variables['dataType'])
+              # array_general_category.append(array_variables['generalCategory'])
+              # array_sample_medium.append(array_variables['sampleMedium'])
+              # array_unit_name.append(array_variables['unit']['unitName'])
+              # array_unit_type.append(array_variables['unit']['unitType'])
+              # array_unit_abr.append(array_variables['unit']['unitAbbreviation'])
+              # array_no_data_value.append(array_variables['noDataValue'])
+              # array_isRegular.append(array_variables['variableCode']['@default'])
+              # array_timeUnitName.append(array_variables['timeScale']['unit']['unitName'])
+              # array_time_unitAbbreviation.append(array_variables['timeScale']['unit']['unitAbbreviation'])
+              # array_timeSupport.append(array_variables['timeScale']['timeSupport'])
+              # array_speciation.append(array_variables['speciation'])
 
-            return_object['variableName'] = array_final_variables
-            return_object['variableCode'] = array_variable_code
-            return_object['valueType'] = array_value_Type
-            return_object['dataType'] = array_dataType
-            return_object['generalCategory'] = array_general_category
-            return_object['sampleMedium'] = array_sample_medium
-            return_object['unitName'] = array_unit_name
-            return_object['unitType'] = array_unit_type
-            return_object['unitAbr'] = array_unit_abr
-            return_object['noDataValue'] = array_no_data_value
-            return_object['isRegular'] = array_isRegular
-            return_object['timeUnitName'] = array_timeUnitName
-            return_object['timeUnitAbbreviation'] =array_time_unitAbbreviation
-            return_object['timeSupport'] = array_timeSupport
-            return_object['speciation'] = array_speciation
+            # return_object['variableName'] = array_final_variables
+            # return_object['variableCode'] = array_variable_code
+            # return_object['valueType'] = array_value_Type
+            # return_object['dataType'] = array_dataType
+            # return_object['generalCategory'] = array_general_category
+            # return_object['sampleMedium'] = array_sample_medium
+            # return_object['unitName'] = array_unit_name
+            # return_object['unitType'] = array_unit_type
+            # return_object['unitAbr'] = array_unit_abr
+            # return_object['noDataValue'] = array_no_data_value
+            # return_object['isRegular'] = array_isRegular
+            # return_object['timeUnitName'] = array_timeUnitName
+            # return_object['timeUnitAbbreviation'] =array_time_unitAbbreviation
+            # return_object['timeSupport'] = array_timeSupport
+            # return_object['speciation'] = array_speciation
+            # return return_object
+
             if format is "json":
-                return return_object
-
+                json_response = {
+                    'variables':return_array
+                }
+                return(json_response)
             elif format is "csv":
-                df = pd.DataFrame.from_dict(return_object)
+                df = pd.DataFrame.from_dict(return_array)
                 # print(df)
-                csv_variables = df.to_csv(index=False)
-                return csv_variables
+                csv_siteInfo = df.to_csv(index=False)
+                return csv_siteInfo
             else:
                 return print("the only supported formats are json, csv, and waterml")
         except Exception as error:
             print(error)
+            return_array = []
+            return return_array
 
 
         # return array_final_variables
@@ -322,7 +363,7 @@ class WaterMLOperations():
             return site_info_Mc
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
         site_info_Mc_json_object = json.dumps(site_info_Mc_dict)
-        print (json.dumps(site_info_Mc_dict,sort_keys=True, indent=4))
+        # print (json.dumps(site_info_Mc_dict,sort_keys=True, indent=4))
         site_info_Mc_json = json.loads(site_info_Mc_json_object)
 
         # print(site_info_Mc_json)
@@ -331,16 +372,20 @@ class WaterMLOperations():
         try:
             object_methods = site_info_Mc_json['sitesResponse']['site']['seriesCatalog']['series']
             object_siteInfo = site_info_Mc_json['sitesResponse']['site']['siteInfo']
-            return_aray = []
+            return_array = []
             if(isinstance(object_methods,(dict))):
                 return_obj = {}
                 return_obj['siteName']= object_siteInfo['siteName']
                 return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
                 return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
+                return_obj['network'] = object_siteInfo['siteCode']['@network']
+                return_obj['siteCode'] = object_siteInfo['siteCode']['#text']
+                return_obj['fullSiteCode'] = return_obj['network'] + ":" + return_obj['siteCode']
 
-                return_obj['name'] = object_methods['variable']['variableName']
-                return_obj['code'] = object_methods['variable']['variableCode']['#text']
-                return_obj['count'] = object_methods['valueCount']
+                return_obj['variableName'] = object_methods['variable']['variableName']
+                return_obj['variableCode'] = object_methods['variable']['variableCode']['#text']
+                return_obj['fullVariableCode'] = return_obj['network'] + ":" + return_obj['variableCode']
+                return_obj['variableCount'] = object_methods['valueCount']
 
                 return_obj['dataType'] = object_methods['variable']['dataType']
                 return_obj['valueType'] = object_methods['variable']['valueType']
@@ -378,7 +423,7 @@ class WaterMLOperations():
                 return_obj['endDateTime'] = object_methods['variableTimeInterval']['endDateTime']
                 return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
                 return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
-                return_aray.append(return_obj)
+                return_array.append(return_obj)
                 # return return_aray
 
             else:
@@ -387,11 +432,14 @@ class WaterMLOperations():
 
                     return_obj['siteName']= object_siteInfo['siteName']
                     return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
-                    return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
+                    return_obj['network'] = object_siteInfo['siteCode']['@network']
+                    return_obj['siteCode'] = object_siteInfo['siteCode']['#text']
+                    return_obj['fullSiteCode'] = return_obj['network'] + ":" + return_obj['siteCode']
 
-                    return_obj['name'] = object_method['variable']['variableName']
-                    return_obj['code'] = object_method['variable']['variableCode']['#text']
-                    return_obj['count'] = object_method['valueCount']
+                    return_obj['variableName'] = object_method['variable']['variableName']
+                    return_obj['variableCode'] = object_method['variable']['variableCode']['#text']
+                    return_obj['fullVariableCode'] = return_obj['network'] + ":" + return_obj['variableCode']
+                    return_obj['variableCount'] = object_method['valueCount']
 
                     return_obj['dataType'] = object_method['variable']['dataType']
                     return_obj['valueType'] = object_method['variable']['valueType']
@@ -428,15 +476,15 @@ class WaterMLOperations():
                     return_obj['beginDateTimeUTC'] = object_method['variableTimeInterval']['beginDateTimeUTC']
                     return_obj['endDateTimeUTC'] = object_method['variableTimeInterval']['endDateTimeUTC']
 
-                    return_aray.append(return_obj)
+                    return_array.append(return_obj)
                     # return return_aray
             if format is "json":
                 json_response = {
-                    'siteInfo':return_aray
+                    'siteInfo':return_array
                 }
                 return json_response
             elif format is "csv":
-                df = pd.DataFrame.from_dict(return_aray)
+                df = pd.DataFrame.from_dict(return_array)
                 # print(df)
                 csv_siteInfo = df.to_csv(index=False)
                 return csv_siteInfo
@@ -444,9 +492,9 @@ class WaterMLOperations():
                 return print("the only supported formats are json, csv, and waterml")
         except KeyError:
             print("No series for the site")
-            return_aray = []
-            return return_aray
-        return return_aray
+            return_array = []
+            return return_array
+        return return_array
 
     def GetValues(self,site_full_code, variable_full_code, methodID, start_date, end_date):
         """
