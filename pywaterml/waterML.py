@@ -1,6 +1,7 @@
 from suds.client import Client
 import json
 import xmltodict
+from bs4 import BeautifulSoup
 from json import dumps, loads
 from pywaterml.aux import Auxiliary
 from pywaterml.analyzeData import WaterAnalityca
@@ -78,8 +79,6 @@ class WaterMLOperations():
         Returns:
             An array of objects that represent each site. The structure of the response is the following
 
-            [{'sitename': 'Río Toro Negro', 'latitude': '18.28559', 'longitude': '-66.4903', 'sitecode': 'Rio_Toro_Negro', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Quebrada Batista', 'latitude': '18.19699', 'longitude': '-66.32992', 'sitecode': 'Quebrada_Batista', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Río Grande de Manatí', 'latitude': '18.2144', 'longitude': '-66.28665', 'sitecode': 'Rio_Grande_de_Manati', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}]
-
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
@@ -124,8 +123,6 @@ class WaterMLOperations():
 
         Returns:
             An array of objects that represent each site. The structure of the response is the following
-
-            [{'sitename': 'Río Toro Negro', 'latitude': '18.28559', 'longitude': '-66.4903', 'sitecode': 'Rio_Toro_Negro', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Quebrada Batista', 'latitude': '18.19699', 'longitude': '-66.32992', 'sitecode': 'Quebrada_Batista', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Río Grande de Manatí', 'latitude': '18.2144', 'longitude': '-66.28665', 'sitecode': 'Rio_Grande_de_Manati', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}]
 
         Example::
 
@@ -307,10 +304,9 @@ class WaterMLOperations():
                 - organization
                 - sourceDescription
                 - citation
-                - citation
                 - timeInterval
 
-            [{'name': 'Water depth, averaged', 'code': 'Average_Stream_Depth', 'count': '21', 'methodID': '1', 'description': {'@sourceID': '1', 'organization': 'Para La Naturaleza', 'sourceDescription': 'Para La Naturaleza and National Science Foundation (Grant No. 1223882) sponsored this Citizen Science project about the hydrology of three streams in the Rio Grande de Manatí Watershed in Puerto Rico.', 'citation': 'Para La Naturaleza NSF'}, 'timeInterval': {'@xsi:type': 'TimeIntervalType', 'beginDateTime': '2013-08-03T09:00:00', 'endDateTime': '2015-05-02T09:00:00', 'beginDateTimeUTC': '2013-08-03T05:00:00', 'endDateTimeUTC': '2015-05-02T05:00:00'}}, {'name': 'Discharge', 'code': 'Total_Flow', 'count': '21', 'methodID': '2', 'description': {'@sourceID': '1', 'organization': 'Para La Naturaleza', 'sourceDescription': 'Para La Naturaleza and National Science Foundation (Grant No. 1223882) sponsored this Citizen Science project about the hydrology of three streams in the Rio Grande de Manatí Watershed in Puerto Rico.', 'citation': 'Para La Naturaleza NSF'}, 'timeInterval': {'@xsi:type': 'TimeIntervalType', 'beginDateTime': '2013-08-03T09:00:00', 'endDateTime': '2015-05-02T09:00:00', 'beginDateTimeUTC': '2013-08-03T05:00:00', 'endDateTimeUTC': '2015-05-02T05:00:00'}}, {'name': 'Velocity', 'code': 'Average_Stream_Velocity', 'count': '21', 'methodID': '3', 'description': {'@sourceID': '1', 'organization': 'Para La Naturaleza', 'sourceDescription': 'Para La Naturaleza and National Science Foundation (Grant No. 1223882) sponsored this Citizen Science project about the hydrology of three streams in the Rio Grande de Manatí Watershed in Puerto Rico.', 'citation': 'Para La Naturaleza NSF'}, 'timeInterval': {'@xsi:type': 'TimeIntervalType', 'beginDateTime': '2013-08-03T09:00:00', 'endDateTime': '2015-05-02T09:00:00', 'beginDateTimeUTC': '2013-08-03T05:00:00', 'endDateTimeUTC': '2015-05-02T05:00:00'}}]
+        
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
@@ -324,37 +320,111 @@ class WaterMLOperations():
         site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
         site_info_Mc_json_object = json.dumps(site_info_Mc_dict)
+        print (json.dumps(site_info_Mc_dict,sort_keys=True, indent=4))
         site_info_Mc_json = json.loads(site_info_Mc_json_object)
+        # print(site_info_Mc_json)
+        # print(type(site_info_Mc_json))
+
         try:
             object_methods = site_info_Mc_json['sitesResponse']['site']['seriesCatalog']['series']
-
+            object_siteInfo = site_info_Mc_json['sitesResponse']['site']['siteInfo']
             return_aray = []
             if(isinstance(object_methods,(dict))):
                 return_obj = {}
+                return_obj['siteName']= object_siteInfo['siteName']
+                return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
+                return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
+
                 return_obj['name'] = object_methods['variable']['variableName']
                 return_obj['code'] = object_methods['variable']['variableCode']['#text']
                 return_obj['count'] = object_methods['valueCount']
+
+                return_obj['dataType'] = object_methods['variable']['dataType']
+                return_obj['valueType'] = object_methods['variable']['valueType']
+                return_obj['generalCategory'] = object_methods['variable']['generalCategory']
+                return_obj['noDataValue'] = object_methods['variable']['noDataValue']
+                return_obj['sampleMedium'] = object_methods['variable']['sampleMedium']
+                return_obj['speciation'] = object_methods['variable']['speciation']
+                return_obj['timeUnitAbbreviation'] = object_methods['variable']['timeScale']['unit']['unitAbbreviation']
+                return_obj['timeUnitName'] = object_methods['variable']['timeScale']['unit']['unitName']
+                return_obj['timeUnitType'] = object_methods['variable']['timeScale']['unit']['unitType']
+                return_obj['timeSupport'] = object_methods['variable']['timeScale']['timeSupport']
+                return_obj['isRegular'] = object_methods['variable']['timeScale']['@isRegular']
+                return_obj['unitAbbreviation'] = object_methods['variable']['unit']['unitAbbreviation']
+                return_obj['unitName'] = object_methods['variable']['unit']['unitName']
+                return_obj['unitType'] = object_methods['variable']['unit']['unitType']
+
+
                 if 'method' in object_methods:
                     return_obj['methodID'] = object_methods['method']['@methodID']
+                    return_obj['methodDescription'] = object_methods['method']['methodDescription']
                 else:
-                    return_obj['methodID'] = None
-                return_obj['description'] = object_methods['source']
-                return_obj['timeInterval'] = object_methods['variableTimeInterval']
+                    return_obj['methodID'] = "No Method Id was provided"
+                    return_obj['methodDescription'] = "No Method Description was provided"
+
+
+                return_obj['qualityControlLevelID'] = object_methods['qualityControlLevel']['@qualityControlLevelID']
+                return_obj['definition'] = object_methods['qualityControlLevel']['definition']
+                return_obj['qualityControlLevelCode'] = object_methods['qualityControlLevel']['qualityControlLevelCode']
+
+                return_obj['citation'] = object_methods['source']['citation']
+                return_obj['organization'] = object_methods['source']['organization']
+                return_obj['description'] = object_methods['source']['sourceDescription']
+
+                return_obj['beginDateTime'] = object_methods['variableTimeInterval']['beginDateTime']
+                return_obj['endDateTime'] = object_methods['variableTimeInterval']['endDateTime']
+                return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
+                return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
                 return_aray.append(return_obj)
                 return return_aray
 
             else:
                 for object_method in object_methods:
                     return_obj = {}
+
+                    return_obj['siteName']= object_siteInfo['siteName']
+                    return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
+                    return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
+
                     return_obj['name'] = object_method['variable']['variableName']
                     return_obj['code'] = object_method['variable']['variableCode']['#text']
                     return_obj['count'] = object_method['valueCount']
+
+                    return_obj['dataType'] = object_method['variable']['dataType']
+                    return_obj['valueType'] = object_method['variable']['valueType']
+                    return_obj['generalCategory'] = object_method['variable']['generalCategory']
+                    return_obj['noDataValue'] = object_method['variable']['noDataValue']
+                    return_obj['sampleMedium'] = object_method['variable']['sampleMedium']
+                    return_obj['speciation'] = object_method['variable']['speciation']
+                    return_obj['timeUnitAbbreviation'] = object_method['variable']['timeScale']['unit']['unitAbbreviation']
+                    return_obj['timeUnitName'] = object_method['variable']['timeScale']['unit']['unitName']
+                    return_obj['timeUnitType'] = object_method['variable']['timeScale']['unit']['unitType']
+                    return_obj['timeSupport'] = object_method['variable']['timeScale']['timeSupport']
+                    return_obj['isRegular'] = object_method['variable']['timeScale']['@isRegular']
+                    return_obj['unitAbbreviation'] = object_method['variable']['unit']['unitAbbreviation']
+                    return_obj['unitName'] = object_method['variable']['unit']['unitName']
+                    return_obj['unitType'] = object_method['variable']['unit']['unitType']
+
                     if 'method' in object_method:
                         return_obj['methodID'] = object_method['method']['@methodID']
+                        return_obj['methodDescription'] = object_methods['method']['methodDescription']
                     else:
-                        return_obj['methodID'] = None
-                    return_obj['description'] = object_method['source']
-                    return_obj['timeInterval'] = object_method['variableTimeInterval']
+                        return_obj['methodID'] = "No MethodID provided"
+                        return_obj['methodDescription'] = "No Method Description was provided"
+
+                    return_obj['qualityControlLevelID'] = object_method['qualityControlLevel']['@qualityControlLevelID']
+                    return_obj['definition'] = object_method['qualityControlLevel']['definition']
+                    return_obj['qualityControlLevelCode'] = object_method['qualityControlLevel']['qualityControlLevelCode']
+
+                    return_obj['citation'] = object_method['source']['citation']
+                    return_obj['organization'] = object_method['source']['organization']
+                    return_obj['description'] = object_method['source']['sourceDescription']
+
+                    return_obj['beginDateTime'] = object_method['variableTimeInterval']['beginDateTime']
+                    return_obj['endDateTime'] = object_method['variableTimeInterval']['endDateTime']
+                    return_obj['beginDateTimeUTC'] = object_method['variableTimeInterval']['beginDateTimeUTC']
+                    return_obj['endDateTimeUTC'] = object_method['variableTimeInterval']['endDateTimeUTC']
+
                     return_aray.append(return_obj)
                     return return_aray
 
