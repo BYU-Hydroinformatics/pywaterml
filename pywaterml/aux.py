@@ -33,13 +33,15 @@ class Auxiliary():
                         site_name = site_name.encode("utf-8")
                         network = site['siteInfo']['siteCode']["@network"]
                         sitecode = site['siteInfo']['siteCode']["#text"]
-
+                        siteID = site['siteInfo']['siteCode']["siteID"]
                         hs_json["sitename"] = site_name.decode("UTF-8")
                         hs_json["latitude"] = latitude
                         hs_json["longitude"] = longitude
                         hs_json["sitecode"] = sitecode
                         hs_json["network"] = network
-                        hs_json["service"] = "SOAP"
+                        hs_json["fullSiteCode"] = network +":" + sitecode
+                        hs_json["siteID"] = siteID
+                        # hs_json["service"] = "SOAP"
                         hs_sites.append(hs_json)
                 else:
                     hs_json = {}
@@ -51,12 +53,15 @@ class Auxiliary():
                     site_name = site_name.encode("utf-8")
                     network = sites_object['siteInfo']['siteCode']["@network"]
                     sitecode = sites_object['siteInfo']['siteCode']["#text"]
+                    siteID = sites_object['siteInfo']['siteCode']["siteID"]
                     hs_json["sitename"] = site_name.decode("UTF-8")
                     hs_json["latitude"] = latitude
                     hs_json["longitude"] = longitude
                     hs_json["sitecode"] = sitecode
                     hs_json["network"] = network
-                    hs_json["service"] = "SOAP"
+                    hs_json["fullSiteCode"] = network +":" + sitecode
+                    hs_json["siteID"] = siteID
+                    # hs_json["service"] = "SOAP"
                     hs_sites.append(hs_json)
         except (ValueError, KeyError) as error:
             print("There is a discrepancy in the structure of the response. It is possible that the respond object does not contain the sitesResponse attribute")
@@ -85,13 +90,15 @@ class Auxiliary():
                         'geogLocation']['longitude']
                     network = site['siteInfo']['siteCode'][0]['_network']
                     sitecode = site['siteInfo']['siteCode'][0]['value']
-
+                    siteID = site['siteInfo']['siteCode'][0]["siteID"]
                     hs_json["sitename"] = site_name
                     hs_json["latitude"] = latitude
                     hs_json["longitude"] = longitude
                     hs_json["sitecode"] = sitecode
                     hs_json["network"] = network
-                    hs_json["service"] = "SOAP"
+                    hs_json["siteID"] = siteID
+
+                    # hs_json["service"] = "SOAP"
                     hs_sites.append(hs_json)
             else:
                 hs_json = {}
@@ -102,13 +109,15 @@ class Auxiliary():
                     'geoLocation']['geogLocation']['longitude']
                 network = bbox_json['site']['siteInfo']['siteCode'][0]['_network']
                 sitecode = bbox_json['site']['siteInfo']['siteCode'][0]['value']
+                siteID = bbox_json['site']['siteInfo']['siteCode'][0]["siteID"]
 
                 hs_json["sitename"] = site_name
                 hs_json["latitude"] = latitude
                 hs_json["longitude"] = longitude
                 hs_json["sitecode"] = sitecode
                 hs_json["network"] = network
-                hs_json["service"] = "SOAP"
+                hs_json["siteID"] = siteID
+                # hs_json["service"] = "SOAP"
                 hs_sites.append(hs_json)
         except (AssertionError, KeyError) as error:
             print("There is an error while parsing the response object ", error)
