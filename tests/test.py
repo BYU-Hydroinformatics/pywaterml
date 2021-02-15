@@ -44,7 +44,7 @@ def main():
     print(len(interpol_b))
     print(len(interpol_m))
 
-    m_avg = water.GetMonthlyAverage(None, fullSiteCodeFirstSite, fullVariableCodeFirstVariable, methodID, start_date, end_date)
+    m_avg = water.GetMonthlyAverage(None, fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
     print(m_avg)
     y_pred = water.GetClustersMonthlyAvg(sites,siteInfo['siteInfo'][0]['variableCode'])
     print(len(y_pred))

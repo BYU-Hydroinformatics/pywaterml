@@ -737,7 +737,7 @@ class WaterMLOperations():
         mean_interpolation = WaterAnalityca._Interpolate(GetValuesResponse)
         return mean_interpolation
 
-    def GetMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code =None, methodID=None, start_date=None, end_date=None):
+    def GetMonthlyAverage(self, GetValuesResponse = None, site_full_code=None, variable_full_code =None, start_date=None, end_date=None, methodCode = None, qualityControlLevelCode = None):
         """
         Gets the monthly averages for a given variable, or from the response given by the GetValues function for a given site.
 
@@ -781,7 +781,7 @@ class WaterMLOperations():
             m_avg = WaterAnalityca._MonthlyAverages(GetValuesResponse)
             return m_avg
         else:
-            vals = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+            vals = self.GetValues(site_full_code, variable_full_code,start_date, end_date, methodCode = methodCode, qualityControlLevelCode = qualityControlLevelCode)
             m_avg = WaterAnalityca._MonthlyAverages(vals)
             return m_avg
 
