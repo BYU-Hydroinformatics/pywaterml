@@ -91,7 +91,7 @@ class Auxiliary():
                         'geogLocation']['longitude']
                     network = site['siteInfo']['siteCode'][0]['_network']
                     sitecode = site['siteInfo']['siteCode'][0]['value']
-                    siteID = site['siteInfo']['siteCode'][0]["siteID"]
+                    siteID = site['siteInfo']['siteCode'][0]["_siteID"]
                     hs_json["sitename"] = site_name
                     hs_json["latitude"] = latitude
                     hs_json["longitude"] = longitude
@@ -110,7 +110,7 @@ class Auxiliary():
                     'geoLocation']['geogLocation']['longitude']
                 network = bbox_json['site']['siteInfo']['siteCode'][0]['_network']
                 sitecode = bbox_json['site']['siteInfo']['siteCode'][0]['value']
-                siteID = bbox_json['site']['siteInfo']['siteCode'][0]["siteID"]
+                siteID = bbox_json['site']['siteInfo']['siteCode'][0]["_siteID"]
 
                 hs_json["sitename"] = site_name
                 hs_json["latitude"] = latitude

@@ -188,24 +188,7 @@ class WaterMLOperations():
             variables_dict_object = json.dumps(variables_dict)
 
             variables_json = json.loads(variables_dict_object)
-            print(variables_json)
             array_variables = variables_json['variablesResponse']['variables']['variable']
-
-            array_final_variables = []
-            array_variable_code = []
-            array_value_Type = []
-            array_dataType = []
-            array_general_category=[]
-            array_sample_medium=[]
-            array_unit_name=[]
-            array_unit_type=[]
-            array_unit_abr=[]
-            array_no_data_value=[]
-            array_isRegular=[]
-            array_timeUnitName=[]
-            array_time_unitAbbreviation =[]
-            array_timeSupport=[]
-            array_speciation =[]
 
             if isinstance(array_variables,type([])):
                 return_object = {}
@@ -226,21 +209,6 @@ class WaterMLOperations():
                     return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
                     return_object['speciation'] = one_variable['speciation']
                     return_array.append(return_object)
-                  # array_final_variables.append(one_variable['variableName'])
-                  # array_variable_code.append(one_variable['variableCode']['#text'])
-                  # array_value_Type.append(one_variable['valueType'])
-                  # array_dataType.append(one_variable['dataType'])
-                  # array_general_category.append(one_variable['generalCategory'])
-                  # array_sample_medium.append(one_variable['sampleMedium'])
-                  # array_unit_name.append(one_variable['unit']['unitName'])
-                  # array_unit_type.append(one_variable['unit']['unitType'])
-                  # array_unit_abr.append(one_variable['unit']['unitAbbreviation'])
-                  # array_no_data_value.append(one_variable['noDataValue'])
-                  # array_isRegular.append(one_variable['variableCode']['@default'])
-                  # array_timeUnitName.append(one_variable['timeScale']['unit']['unitName'])
-                  # array_time_unitAbbreviation.append(one_variable['timeScale']['unit']['unitAbbreviation'])
-                  # array_timeSupport.append(one_variable['timeScale']['timeSupport'])
-                  # array_speciation.append(one_variable['speciation'])
 
             if isinstance(array_variables,dict):
                 return_object = {}
@@ -260,38 +228,6 @@ class WaterMLOperations():
                 return_object['timeSupport'] = array_variables['timeScale']['timeSupport']
                 return_object['speciation'] = array_variables['speciation']
                 return_array.append(return_object)
-              # array_final_variables.append(array_variables['variableName'])
-              # array_variable_code.append(array_variables['variableCode']['#text'])
-              # array_value_Type.append(array_variables['valueType'])
-              # array_dataType.append(array_variables['dataType'])
-              # array_general_category.append(array_variables['generalCategory'])
-              # array_sample_medium.append(array_variables['sampleMedium'])
-              # array_unit_name.append(array_variables['unit']['unitName'])
-              # array_unit_type.append(array_variables['unit']['unitType'])
-              # array_unit_abr.append(array_variables['unit']['unitAbbreviation'])
-              # array_no_data_value.append(array_variables['noDataValue'])
-              # array_isRegular.append(array_variables['variableCode']['@default'])
-              # array_timeUnitName.append(array_variables['timeScale']['unit']['unitName'])
-              # array_time_unitAbbreviation.append(array_variables['timeScale']['unit']['unitAbbreviation'])
-              # array_timeSupport.append(array_variables['timeScale']['timeSupport'])
-              # array_speciation.append(array_variables['speciation'])
-
-            # return_object['variableName'] = array_final_variables
-            # return_object['variableCode'] = array_variable_code
-            # return_object['valueType'] = array_value_Type
-            # return_object['dataType'] = array_dataType
-            # return_object['generalCategory'] = array_general_category
-            # return_object['sampleMedium'] = array_sample_medium
-            # return_object['unitName'] = array_unit_name
-            # return_object['unitType'] = array_unit_type
-            # return_object['unitAbr'] = array_unit_abr
-            # return_object['noDataValue'] = array_no_data_value
-            # return_object['isRegular'] = array_isRegular
-            # return_object['timeUnitName'] = array_timeUnitName
-            # return_object['timeUnitAbbreviation'] =array_time_unitAbbreviation
-            # return_object['timeSupport'] = array_timeSupport
-            # return_object['speciation'] = array_speciation
-            # return return_object
 
             if format is "json":
                 json_response = {
@@ -363,11 +299,8 @@ class WaterMLOperations():
             return site_info_Mc
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
         site_info_Mc_json_object = json.dumps(site_info_Mc_dict)
-        # print (json.dumps(site_info_Mc_dict,sort_keys=True, indent=4))
         site_info_Mc_json = json.loads(site_info_Mc_json_object)
 
-        # print(site_info_Mc_json)
-        # print(type(site_info_Mc_json))
 
         try:
             object_methods = site_info_Mc_json['sitesResponse']['site']['seriesCatalog']['series']
@@ -424,7 +357,6 @@ class WaterMLOperations():
                 return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
                 return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
                 return_array.append(return_obj)
-                # return return_aray
 
             else:
                 for object_method in object_methods:
@@ -477,7 +409,6 @@ class WaterMLOperations():
                     return_obj['endDateTimeUTC'] = object_method['variableTimeInterval']['endDateTimeUTC']
 
                     return_array.append(return_obj)
-                    # return return_aray
             if format is "json":
                 json_response = {
                     'siteInfo':return_array
@@ -485,7 +416,6 @@ class WaterMLOperations():
                 return json_response
             elif format is "csv":
                 df = pd.DataFrame.from_dict(return_array)
-                # print(df)
                 csv_siteInfo = df.to_csv(index=False)
                 return csv_siteInfo
             else:
@@ -544,12 +474,10 @@ class WaterMLOperations():
             return values
         values_dict = xmltodict.parse(values)
         values_json_object = json.dumps(values_dict)
-        # print (json.dumps(values_dict,sort_keys=True, indent=4))
 
         values_json = json.loads(values_json_object)
         times_series = {}
         return_array = []
-        # graph_json = {}
         try:
             if 'timeSeriesResponse' in values_json:
                 times_series = values_json['timeSeriesResponse']['timeSeries']
@@ -567,26 +495,18 @@ class WaterMLOperations():
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
                                             json_response = {}
-                                            # print("HERE")
 
                                         if k['@qualityControlLevelCode'] == qualityControlLevelCode and qualityControlLevelCode is not None:
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
                                             json_response = {}
-                                            # print("HERE_NOT1")
 
                                         else:
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
                                             json_response = {}
-
-                                            # print("HERE_NOT1")
-                                            # print(json_response)
-                                            # print(return_array)
-
-
 
                                     except KeyError as ke:  # The Key Error kicks in when there is only one timeseries
                                         print(ke)
@@ -640,7 +560,7 @@ class WaterMLOperations():
 
         return graph_json
 
-    def GetSitesByVariable(self,specific_variables,cookiCutter = None):
+    def GetSitesByVariable(self,specific_variables_codes,cookiCutter = None, format='json'):
         """
         Get the specific sites according to a variable search array from a endpoint that complies to the SOAP protocol. The GetSitesByVariable() is an addition to the WaterML functions
         because it allows the user to retrieve sites that contains the epecific site/s.
@@ -674,23 +594,26 @@ class WaterMLOperations():
             sites = self.GetSites()
 
         for site in sites:
-            site_obj = {}
-            sitecode = site['sitecode']
-            site_name = site['sitename']
-            network = site["network"]
-            site_obj['sitecode'] = sitecode
-            site_obj['sitename'] = site_name
-            site_obj['network'] = network
-            site_obj['latitude'] = site['latitude']
-            site_obj['longitude'] = site['longitude']
-
-            site_desc = network + ":" + sitecode
+            site_desc = site['fullSiteCode']
             site_info = self.GetSiteInfo(site_desc)
 
-            for variable_site in site_info:
-                if variable_site['name'] in specific_variables:
-                    new_sites.append(site_obj)
+            for variable_site in site_info['siteInfo']:
+                if variable_site['variableCode'] in specific_variables_codes:
+                    new_sites.append(site)
                     break
+
+        if format is "json":
+            json_response = {}
+            json_response['sites'] = sites
+            return json_response
+
+        elif format is "csv":
+            df = pd.DataFrame.from_dict(new_sites)
+            csv_sites = df.to_csv(index=False)
+            # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
+            return csv_sites
+        else:
+            return print("the only supported formats are json, csv, and waterml")
 
         return new_sites
 
@@ -820,11 +743,6 @@ class WaterMLOperations():
                 siteInfo =  self.GetSiteInfo(site_full_code)['siteInfo']
                 for sinfo in siteInfo:
                     if sinfo['variableCode'] == variableCode:
-                        # firstVariableCode = siteInfo[0]['code']
-                        # variable_full_code = site["network"] + ":" + firstVariableCode
-                        # methodID = siteInfo[0]['methodID']
-                        # start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-                        # end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
                         variable_full_code = sinfo['fullVariableCode']
                         start_date = sinfo['beginDateTime'].split('T')[0]
                         end_date = sinfo['endDateTime'].split('T')[0]
