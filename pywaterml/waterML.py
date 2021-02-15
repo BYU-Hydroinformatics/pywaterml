@@ -554,40 +554,9 @@ class WaterMLOperations():
             if 'timeSeriesResponse' in values_json:
                 times_series = values_json['timeSeriesResponse']['timeSeries']
                 if times_series['values'] is not None:
-                    # graph_json = {}
-                    # graph_json["variable"] = times_series['variable']['variableName']
-                    # graph_json["unit"]=""
-                    # if times_series['variable']['unit']['unitAbbreviation'] is not None:
-                        # graph_json["unit"] = times_series['variable']['unit']['unitAbbreviation']
-                    #
-                    # json_response['variable'] = times_series['variable']['variableName']
-                    # json_response["unit"]=""
-                    # if times_series['variable']['unit']['unitAbbreviation'] is not None:
-                    #     json_response["unit"] = times_series['variable']['unit']['unitAbbreviation']
-                    # json_response['dataType'] = times_series['variable']['dataType']
-                    # json_response['noDataValue'] = times_series['variable']['noDataValue']
-                    # json_response['sampleMedium'] = times_series['variable']['sampleMedium']
-                    # json_response['speciation'] = times_series['variable']['speciation']
 
-                    # graph_json["title"] = times_series['variable']['variableName'] + " (" + graph_json["unit"] + ") vs Time"
                     for j in times_series['values']:
 
-                        # json_response['siteName'] = times_series['sourceInfo']['siteName']
-                        # json_response['siteCode'] = times_series['sourceInfo']['siteCode']['#text']
-                        # json_response['network'] = times_series['sourceInfo']['siteCode']['@network']
-                        # json_response['siteID'] = times_series['sourceInfo']['siteCode']['@siteID']
-                        # json_response['latitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
-                        # json_response['longitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
-                        # json_response['variable'] = times_series['variable']['variableName']
-                        # json_response["unit"]=""
-                        # if times_series['variable']['unit']['unitAbbreviation'] is not None:
-                        #     json_response["unit"] = times_series['variable']['unit']['unitAbbreviation']
-                        #
-                        # json_response['dataType'] = times_series['variable']['dataType']
-                        # json_response['noDataValue'] = times_series['variable']['noDataValue']
-                        # json_response['sampleMedium'] = times_series['variable']['sampleMedium']
-                        # json_response['speciation'] = times_series['variable']['speciation']
-                        # data_values = []
                         if j == "value":
                             if type(times_series['values']['value']) is list:
                                 json_response = {}
@@ -597,12 +566,14 @@ class WaterMLOperations():
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
+                                            json_response = {}
 
                                             print("HERE")
                                         if k['@qualityControlLevelCode'] == qualityControlLevelCode and qualityControlLevelCode is not None:
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
+                                            json_response = {}
 
                                             print("HERE_NOT1")
 
@@ -610,49 +581,22 @@ class WaterMLOperations():
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
+                                            print("HERE_NOT1")
+                                            json_response = {}
+
+                                            # print(json_response)
+                                            print(return_array)
 
 
-                                        #     time = k['@dateTimeUTC']
-                                        #     time1 = time.replace("T", "-")
-                                        #     time_split = time1.split("-")
-                                        #     year = int(time_split[0])
-                                        #     month = int(time_split[1])
-                                        #     day = int(time_split[2])
-                                        #     hour_minute = time_split[3].split(":")
-                                        #     hour = int(hour_minute[0])
-                                        #     minute = int(hour_minute[1])
-                                        #     value = float(str(k['#text']))
-                                        #     date_string = datetime(
-                                        #         year, month, day, hour, minute)
-                                        #     date_string_converted = date_string.strftime("%Y-%m-%d %H:%M:%S")
-                                        #     data_values.append([date_string_converted,value])
-                                        #     data_values.sort()
-                                        # graph_json["values"] = data_values
+
                                     except KeyError as ke:  # The Key Error kicks in when there is only one timeseries
                                         print(ke)
                                         json_response = self.aux._getValuesHelper2(times_series,json_response)
                                         json_response = self.aux._getValuesHelper(k,json_response)
+                                        json_response = {}
+
                                         return_array.append(json_response)
 
-                                        print("HERE_NOT2")
-
-
-                                    #
-                                    #     time = k['@dateTimeUTC']
-                                    #     time1 = time.replace("T", "-")
-                                    #     time_split = time1.split("-")
-                                    #     year = int(time_split[0])
-                                    #     month = int(time_split[1])
-                                    #     day = int(time_split[2])
-                                    #     hour_minute = time_split[3].split(":")
-                                    #     hour = int(hour_minute[0])
-                                    #     minute = int(hour_minute[1])
-                                    #     value = float(str(k['#text']))
-                                    #     date_string = datetime(
-                                    #         year, month, day, hour, minute)
-                                    #     data_values.append([date_string,value])
-                                    #     data_values.sort()
-                                    # graph_json["values"] = data_values
 
                             else:  # The else statement is executed is there is only one value in the timeseries
                                 k = times_series['values']['value']
@@ -673,25 +617,6 @@ class WaterMLOperations():
                                         json_response = self.aux._getValuesHelper2(times_series,json_response)
                                         json_response = self.aux._getValuesHelper(k,json_response)
                                         return_array.append(json_response)
-                                    # if times_series['values']['value']['@methodCode'] == methodID:
-                                    #     time = times_series['values'][
-                                    #         'value']['@dateTimeUTC']
-                                    #     time1 = time.replace("T", "-")
-                                    #     time_split = time1.split("-")
-                                    #     year = int(time_split[0])
-                                    #     month = int(time_split[1])
-                                    #     day = int(time_split[2])
-                                    #     hour_minute = time_split[3].split(":")
-                                    #     hour = int(hour_minute[0])
-                                    #     minute = int(hour_minute[1])
-                                    #     value = float(
-                                    #         str(times_series['values']['value']['#text']))
-                                    #     date_string = datetime(
-                                    #         year, month, day, hour, minute)
-                                    #
-                                    #     data_values.append([date_string,value])
-                                    #     data_values.sort()
-                                    #     graph_json["values"] = data_values
 
                                 except KeyError as ke:
                                     json_response = {}
@@ -699,23 +624,6 @@ class WaterMLOperations():
                                     json_response = self.aux._getValuesHelper(k,json_response)
                                     return_array.append(json_response)
 
-                                    # time = times_series['values'][
-                                    #     'value']['@dateTimeUTC']
-                                    # time1 = time.replace("T", "-")
-                                    # time_split = time1.split("-")
-                                    # year = int(time_split[0])
-                                    # month = int(time_split[1])
-                                    # day = int(time_split[2])
-                                    # hour_minute = time_split[3].split(":")
-                                    # hour = int(hour_minute[0])
-                                    # minute = int(hour_minute[1])
-                                    # value = float(
-                                    #     str(times_series['values']['value']['#text']))
-                                    # date_string = datetime(
-                                    #     year, month, day, hour, minute)
-                                    # data_values.append([date_string,value])
-                                    # data_values.sort()
-                                    # graph_json["values"] = data_values
         except KeyError as error:
             print(error)
 
