@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import time
 url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+# url_testing = "http://hydroportal.cuahsi.org/czo_catalina/cuahsi_1_1.asmx?WSDL"
 water = WaterMLOperations(url = url_testing)
 
 def main():
@@ -31,19 +32,21 @@ def main():
     methodID = siteInfo['siteInfo'][0]['methodID']
     start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
     end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
+    print(fullSiteCodeFirstSite,fullVariableCodeFirstVariable,start_date,end_date)
 
-    variableResponse = water.GetValues(fullSiteCodeFirstSite, fullVariableCodeFirstVariable, methodID, start_date, end_date)
+    variableResponse = water.GetValues(fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
+    print(variableResponse)
     print("INTERPOLATION")
-    interpol_b = water.GetInterpolation(variableResponse['values'], 'backward')
-    interpol_f = water.GetInterpolation(variableResponse['values'], 'forward')
-    interpol_m = water.GetInterpolation(variableResponse['values'], 'mean')
+    interpol_b = water.GetInterpolation(variableResponse, 'backward')
+    interpol_f = water.GetInterpolation(variableResponse, 'forward')
+    interpol_m = water.GetInterpolation(variableResponse, 'mean')
     print(len(interpol_f))
     print(len(interpol_b))
     print(len(interpol_m))
 
-    m_avg = water.GetMonthlyAverage(None, site_full_code, variable_full_code, methodID, start_date, end_date)
+    m_avg = water.GetMonthlyAverage(None, fullSiteCodeFirstSite, fullVariableCodeFirstVariable, methodID, start_date, end_date)
     print(m_avg)
-    y_pred = water.GetClustersMonthlyAvg(sites,siteInfo[0]['name'])
+    y_pred = water.GetClustersMonthlyAvg(sites,siteInfo['siteInfo'][0]['variableCode'])
     print(len(y_pred))
     """
     UNCOMMENT TO USE WITH THE epsg:3857

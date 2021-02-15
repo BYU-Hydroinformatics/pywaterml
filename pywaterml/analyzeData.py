@@ -15,10 +15,12 @@ class WaterAnalityca():
         Returns:
             dataInterpolated: Interpolated data
         """
-        time_pd, values_pd = zip(*GetValuesResponse)
+        return_array = GetValuesResponse['values']
+        df = pd.DataFrame.from_dict(return_array)
+        # time_pd, values_pd = zip(*GetValuesResponse)
         pds={}
-        pds['time'] = time_pd
-        pds['value'] = values_pd
+        pds['time'] = df['dateTime'].tolist()
+        pds['value'] = df['dataValue'].tolist()
         df_interpolation= pd.DataFrame(pds,columns = ["time","value"])
         df_interpolation2= pd.DataFrame(pds,columns = ["time","value"])
         df_interpolation.loc[df_interpolation.value < 0] = np.NaN
