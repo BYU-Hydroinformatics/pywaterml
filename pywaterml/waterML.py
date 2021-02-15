@@ -496,7 +496,7 @@ class WaterMLOperations():
             return return_array
         return return_array
 
-    def GetValues(self,site_full_code, variable_full_code, methodID, start_date, end_date):
+    def GetValues(self,site_full_code, variable_full_code, start_date, end_date, methodCode = None, qualityControlLevelCode = None, format = 'json'):
         """
         Get the specific values for an specific variable in a site. GetValues() function is similar to the GetValues() WaterML function.
 
@@ -539,109 +539,198 @@ class WaterMLOperations():
         """
         values = self.client.service.GetValues(
             site_full_code, variable_full_code, start_date, end_date, "")
+
+        if format is "waterml":
+            return values
         values_dict = xmltodict.parse(values)
         values_json_object = json.dumps(values_dict)
+        print (json.dumps(values_dict,sort_keys=True, indent=4))
+
         values_json = json.loads(values_json_object)
         times_series = {}
-        graph_json = {}
+        return_array = []
+        # graph_json = {}
         try:
             if 'timeSeriesResponse' in values_json:
-
-                times_series = values_json['timeSeriesResponse'][
-                    'timeSeries']
+                times_series = values_json['timeSeriesResponse']['timeSeries']
                 if times_series['values'] is not None:
+                    # graph_json = {}
+                    # graph_json["variable"] = times_series['variable']['variableName']
+                    # graph_json["unit"]=""
+                    # if times_series['variable']['unit']['unitAbbreviation'] is not None:
+                        # graph_json["unit"] = times_series['variable']['unit']['unitAbbreviation']
+                    #
+                    # json_response['variable'] = times_series['variable']['variableName']
+                    # json_response["unit"]=""
+                    # if times_series['variable']['unit']['unitAbbreviation'] is not None:
+                    #     json_response["unit"] = times_series['variable']['unit']['unitAbbreviation']
+                    # json_response['dataType'] = times_series['variable']['dataType']
+                    # json_response['noDataValue'] = times_series['variable']['noDataValue']
+                    # json_response['sampleMedium'] = times_series['variable']['sampleMedium']
+                    # json_response['speciation'] = times_series['variable']['speciation']
 
-                    graph_json = {}
-                    graph_json["variable"] = times_series['variable']['variableName']
-                    graph_json["unit"]=""
-                    if times_series['variable']['unit']['unitAbbreviation'] is not None:
-                        graph_json["unit"] = times_series[
-                            'variable']['unit']['unitAbbreviation']
-
-                    graph_json["title"] = times_series['variable']['variableName'] + " (" + graph_json["unit"] + ") vs Time"
+                    # graph_json["title"] = times_series['variable']['variableName'] + " (" + graph_json["unit"] + ") vs Time"
                     for j in times_series['values']:
-                        data_values = []
+
+                        # json_response['siteName'] = times_series['sourceInfo']['siteName']
+                        # json_response['siteCode'] = times_series['sourceInfo']['siteCode']['#text']
+                        # json_response['network'] = times_series['sourceInfo']['siteCode']['@network']
+                        # json_response['siteID'] = times_series['sourceInfo']['siteCode']['@siteID']
+                        # json_response['latitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
+                        # json_response['longitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
+                        # json_response['variable'] = times_series['variable']['variableName']
+                        # json_response["unit"]=""
+                        # if times_series['variable']['unit']['unitAbbreviation'] is not None:
+                        #     json_response["unit"] = times_series['variable']['unit']['unitAbbreviation']
+                        #
+                        # json_response['dataType'] = times_series['variable']['dataType']
+                        # json_response['noDataValue'] = times_series['variable']['noDataValue']
+                        # json_response['sampleMedium'] = times_series['variable']['sampleMedium']
+                        # json_response['speciation'] = times_series['variable']['speciation']
+                        # data_values = []
                         if j == "value":
                             if type(times_series['values']['value']) is list:
-
+                                json_response = {}
                                 for k in times_series['values']['value']:
                                     try:
-                                        if k['@methodCode'] == methodID:
-                                            time = k['@dateTimeUTC']
-                                            time1 = time.replace("T", "-")
-                                            time_split = time1.split("-")
-                                            year = int(time_split[0])
-                                            month = int(time_split[1])
-                                            day = int(time_split[2])
-                                            hour_minute = time_split[3].split(":")
-                                            hour = int(hour_minute[0])
-                                            minute = int(hour_minute[1])
-                                            value = float(str(k['#text']))
-                                            date_string = datetime(
-                                                year, month, day, hour, minute)
-                                            date_string_converted = date_string.strftime("%Y-%m-%d %H:%M:%S")
-                                            data_values.append([date_string_converted,value])
-                                            data_values.sort()
-                                        graph_json["values"] = data_values
-                                    except KeyError:  # The Key Error kicks in when there is only one timeseries
-                                        time = k['@dateTimeUTC']
-                                        time1 = time.replace("T", "-")
-                                        time_split = time1.split("-")
-                                        year = int(time_split[0])
-                                        month = int(time_split[1])
-                                        day = int(time_split[2])
-                                        hour_minute = time_split[3].split(":")
-                                        hour = int(hour_minute[0])
-                                        minute = int(hour_minute[1])
-                                        value = float(str(k['#text']))
-                                        date_string = datetime(
-                                            year, month, day, hour, minute)
-                                        data_values.append([date_string,value])
-                                        data_values.sort()
-                                    graph_json["values"] = data_values
+                                        if k['@methodCode'] == methodCode and methodCode is not None:
+                                            json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                            json_response = self.aux._getValuesHelper(k,json_response)
+                                            return_array.append(json_response)
+
+                                            print("HERE")
+                                        if k['@qualityControlLevelCode'] == qualityControlLevelCode and qualityControlLevelCode is not None:
+                                            json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                            json_response = self.aux._getValuesHelper(k,json_response)
+                                            return_array.append(json_response)
+
+                                            print("HERE_NOT1")
+
+                                        else:
+                                            json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                            json_response = self.aux._getValuesHelper(k,json_response)
+                                            return_array.append(json_response)
+
+
+                                        #     time = k['@dateTimeUTC']
+                                        #     time1 = time.replace("T", "-")
+                                        #     time_split = time1.split("-")
+                                        #     year = int(time_split[0])
+                                        #     month = int(time_split[1])
+                                        #     day = int(time_split[2])
+                                        #     hour_minute = time_split[3].split(":")
+                                        #     hour = int(hour_minute[0])
+                                        #     minute = int(hour_minute[1])
+                                        #     value = float(str(k['#text']))
+                                        #     date_string = datetime(
+                                        #         year, month, day, hour, minute)
+                                        #     date_string_converted = date_string.strftime("%Y-%m-%d %H:%M:%S")
+                                        #     data_values.append([date_string_converted,value])
+                                        #     data_values.sort()
+                                        # graph_json["values"] = data_values
+                                    except KeyError as ke:  # The Key Error kicks in when there is only one timeseries
+                                        print(ke)
+                                        json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                        json_response = self.aux._getValuesHelper(k,json_response)
+                                        return_array.append(json_response)
+
+                                        print("HERE_NOT2")
+
+
+                                    #
+                                    #     time = k['@dateTimeUTC']
+                                    #     time1 = time.replace("T", "-")
+                                    #     time_split = time1.split("-")
+                                    #     year = int(time_split[0])
+                                    #     month = int(time_split[1])
+                                    #     day = int(time_split[2])
+                                    #     hour_minute = time_split[3].split(":")
+                                    #     hour = int(hour_minute[0])
+                                    #     minute = int(hour_minute[1])
+                                    #     value = float(str(k['#text']))
+                                    #     date_string = datetime(
+                                    #         year, month, day, hour, minute)
+                                    #     data_values.append([date_string,value])
+                                    #     data_values.sort()
+                                    # graph_json["values"] = data_values
 
                             else:  # The else statement is executed is there is only one value in the timeseries
+                                k = times_series['values']['value']
                                 try:
-                                    if times_series['values']['value']['@methodCode'] == methodID:
-                                        time = times_series['values'][
-                                            'value']['@dateTimeUTC']
-                                        time1 = time.replace("T", "-")
-                                        time_split = time1.split("-")
-                                        year = int(time_split[0])
-                                        month = int(time_split[1])
-                                        day = int(time_split[2])
-                                        hour_minute = time_split[3].split(":")
-                                        hour = int(hour_minute[0])
-                                        minute = int(hour_minute[1])
-                                        value = float(
-                                            str(times_series['values']['value']['#text']))
-                                        date_string = datetime(
-                                            year, month, day, hour, minute)
+                                    if k['@methodCode'] == methodCode and methodCode is not None:
+                                        json_response = {}
+                                        json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                        json_response = self.aux._getValuesHelper(k,json_response)
+                                        return_array.append(json_response)
 
-                                        data_values.append([date_string,value])
-                                        data_values.sort()
-                                        graph_json["values"] = data_values
+                                    if k['@qualityControlLevelCode'] == qualityControlLevelCode and qualityControlLevelCode is not None:
+                                        json_response = {}
+                                        json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                        json_response = self.aux._getValuesHelper(k,json_response)
+                                        return_array.append(json_response)
 
-                                except KeyError:
-                                    time = times_series['values'][
-                                        'value']['@dateTimeUTC']
-                                    time1 = time.replace("T", "-")
-                                    time_split = time1.split("-")
-                                    year = int(time_split[0])
-                                    month = int(time_split[1])
-                                    day = int(time_split[2])
-                                    hour_minute = time_split[3].split(":")
-                                    hour = int(hour_minute[0])
-                                    minute = int(hour_minute[1])
-                                    value = float(
-                                        str(times_series['values']['value']['#text']))
-                                    date_string = datetime(
-                                        year, month, day, hour, minute)
-                                    data_values.append([date_string,value])
-                                    data_values.sort()
-                                    graph_json["values"] = data_values
+                                    else:
+                                        json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                        json_response = self.aux._getValuesHelper(k,json_response)
+                                        return_array.append(json_response)
+                                    # if times_series['values']['value']['@methodCode'] == methodID:
+                                    #     time = times_series['values'][
+                                    #         'value']['@dateTimeUTC']
+                                    #     time1 = time.replace("T", "-")
+                                    #     time_split = time1.split("-")
+                                    #     year = int(time_split[0])
+                                    #     month = int(time_split[1])
+                                    #     day = int(time_split[2])
+                                    #     hour_minute = time_split[3].split(":")
+                                    #     hour = int(hour_minute[0])
+                                    #     minute = int(hour_minute[1])
+                                    #     value = float(
+                                    #         str(times_series['values']['value']['#text']))
+                                    #     date_string = datetime(
+                                    #         year, month, day, hour, minute)
+                                    #
+                                    #     data_values.append([date_string,value])
+                                    #     data_values.sort()
+                                    #     graph_json["values"] = data_values
+
+                                except KeyError as ke:
+                                    json_response = {}
+                                    json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                    json_response = self.aux._getValuesHelper(k,json_response)
+                                    return_array.append(json_response)
+
+                                    # time = times_series['values'][
+                                    #     'value']['@dateTimeUTC']
+                                    # time1 = time.replace("T", "-")
+                                    # time_split = time1.split("-")
+                                    # year = int(time_split[0])
+                                    # month = int(time_split[1])
+                                    # day = int(time_split[2])
+                                    # hour_minute = time_split[3].split(":")
+                                    # hour = int(hour_minute[0])
+                                    # minute = int(hour_minute[1])
+                                    # value = float(
+                                    #     str(times_series['values']['value']['#text']))
+                                    # date_string = datetime(
+                                    #     year, month, day, hour, minute)
+                                    # data_values.append([date_string,value])
+                                    # data_values.sort()
+                                    # graph_json["values"] = data_values
         except KeyError as error:
             print(error)
+
+        if format is "json":
+            json_response = {
+                'values': return_array
+            }
+            return(json_response)
+        elif format is "csv":
+            df = pd.DataFrame.from_dict(return_array)
+            # print(df)
+            csv_values = df.to_csv(index=False)
+            return csv_values
+        else:
+            return print("the only supported formats are json, csv, and waterml")
 
         return graph_json
 
@@ -788,14 +877,14 @@ class WaterMLOperations():
             m_avg = WaterAnalityca._MonthlyAverages(vals)
             return m_avg
 
-    def GetClustersMonthlyAvg(self,sites, variable, n_cluster = 3):
+    def GetClustersMonthlyAvg(self,sites, variableCode, n_cluster = 3):
         """
         Gets "n" number of clusters using dtw time series interpolation for a given variable
 
         Args:
 
             sites: response from the GetSites() function. Performance of the fuction can be given if the resuls of the GetSitesByVariable() function is passed instead
-            variable: string representing the variable for the time series clusters of the given sites
+            variableCode: string representing the variable code for the time series clusters of the given sites
             n_clusters: integer representing the number of cluster to form.
 
         Returns:
@@ -820,12 +909,14 @@ class WaterMLOperations():
         timeSerie_cluster=[]
         try:
             for site in sites:
-                site_full_code = f'{site["network"]}:{site["sitecode"]}'
-                siteInfo =  self.GetSiteInfo(site_full_code)
+                # site_full_code = f'{site["network"]}:{site["sitecode"]}'
+                site_full_code = site['fullSiteCode']
+                siteInfo =  self.GetSiteInfo(site_full_code)['siteInfo']
                 for sinfo in siteInfo:
-                    if sinfo['name'] == variable:
-                        firstVariableCode = siteInfo[0]['code']
-                        variable_full_code = site["network"] + ":" + firstVariableCode
+                    if sinfo['variableCode'] == variableCode:
+                        # firstVariableCode = siteInfo[0]['code']
+                        # variable_full_code = site["network"] + ":" + firstVariableCode
+                        variable_full_code = sinfo['fullVariableCode']
                         methodID = siteInfo[0]['methodID']
                         start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
                         end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
