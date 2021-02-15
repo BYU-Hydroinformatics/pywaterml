@@ -544,7 +544,7 @@ class WaterMLOperations():
             return values
         values_dict = xmltodict.parse(values)
         values_json_object = json.dumps(values_dict)
-        print (json.dumps(values_dict,sort_keys=True, indent=4))
+        # print (json.dumps(values_dict,sort_keys=True, indent=4))
 
         values_json = json.loads(values_json_object)
         times_series = {}
@@ -567,25 +567,24 @@ class WaterMLOperations():
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
                                             json_response = {}
+                                            # print("HERE")
 
-                                            print("HERE")
                                         if k['@qualityControlLevelCode'] == qualityControlLevelCode and qualityControlLevelCode is not None:
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
                                             json_response = {}
-
-                                            print("HERE_NOT1")
+                                            # print("HERE_NOT1")
 
                                         else:
                                             json_response = self.aux._getValuesHelper2(times_series,json_response)
                                             json_response = self.aux._getValuesHelper(k,json_response)
                                             return_array.append(json_response)
-                                            print("HERE_NOT1")
                                             json_response = {}
 
+                                            # print("HERE_NOT1")
                                             # print(json_response)
-                                            print(return_array)
+                                            # print(return_array)
 
 
 
@@ -594,7 +593,6 @@ class WaterMLOperations():
                                         json_response = self.aux._getValuesHelper2(times_series,json_response)
                                         json_response = self.aux._getValuesHelper(k,json_response)
                                         json_response = {}
-
                                         return_array.append(json_response)
 
 
@@ -785,7 +783,7 @@ class WaterMLOperations():
             m_avg = WaterAnalityca._MonthlyAverages(vals)
             return m_avg
 
-    def GetClustersMonthlyAvg(self,sites, variableCode, n_cluster = 3):
+    def GetClustersMonthlyAvg(self,sites, variableCode, n_cluster = 3, methodCode = None, qualityControlLevelCode = None, timeUTC = False):
         """
         Gets "n" number of clusters using dtw time series interpolation for a given variable
 
@@ -824,11 +822,17 @@ class WaterMLOperations():
                     if sinfo['variableCode'] == variableCode:
                         # firstVariableCode = siteInfo[0]['code']
                         # variable_full_code = site["network"] + ":" + firstVariableCode
+                        # methodID = siteInfo[0]['methodID']
+                        # start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
+                        # end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
                         variable_full_code = sinfo['fullVariableCode']
-                        methodID = siteInfo[0]['methodID']
-                        start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-                        end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
-                        variableResponse = self.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+                        start_date = sinfo['beginDateTime'].split('T')[0]
+                        end_date = sinfo['endDateTime'].split('T')[0]
+
+                        if timeUTC is True:
+                            start_date = sinfo['beginDateTimeUTC'].split('T')[0]
+                            end_date = sinfo['endDateTimeUTC'].split('T')[0]
+                        variableResponse = self.GetValues(site_full_code, variable_full_code,start_date, end_date, methodCode= methodCode, qualityControlLevelCode=qualityControlLevelCode)
                         m_avg = self.GetMonthlyAverage(variableResponse)
                         timeseries.append(to_time_series(m_avg))
                         timeSerie_cluster.append([m_avg])

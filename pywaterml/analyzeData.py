@@ -6,7 +6,7 @@ class WaterAnalityca():
     This class represents the Analitics object for the WaterMLOperations class. The WaterAnalityca provides functions related to statistics(monthly and daily averages) and
     basic Math functionality(Interpolation). However, this is a helper class for the main WaterMLOperations class.
     """
-    def _Interpolate(GetValuesResponse, type='mean'):
+    def _Interpolate(GetValuesResponse, type='mean', timeUTC = False):
         """
         Helper function to rerieve different kinds of interpolation in the WaterMLOperations GetInterpolation() function
         Args:
@@ -19,10 +19,12 @@ class WaterAnalityca():
         df = pd.DataFrame.from_dict(return_array)
         # time_pd, values_pd = zip(*GetValuesResponse)
         pds={}
-        pds['time'] = df['dateTime'].tolist()
+        if timeUTC is True:
+            pds['time'] = df['dateTimeUTC'].tolist()
+        else:
+            pds['time'] = df['dateTime'].tolist()
         pds['value'] = df['dataValue'].tolist()
         df_interpolation= pd.DataFrame(pds,columns = ["time","value"])
-        df_interpolation2= pd.DataFrame(pds,columns = ["time","value"])
         df_interpolation.loc[df_interpolation.value < 0] = np.NaN
         df_interpolation.replace(0, np.NaN, inplace=True)
         df_interpolation['time'] = pd.to_datetime(df_interpolation['time'])
@@ -55,8 +57,16 @@ class WaterAnalityca():
         Returns:
             m_avg: monthly_average array
         """
+        return_array = GetValuesResponse['values']
+        df_in = pd.DataFrame.from_dict(return_array)
+        # time_pd, values_pd = zip(*GetValuesResponse)
+        pds={}
+        pds['dates'] = df_in['dateTime'].tolist()
+        pds['values'] = df_in['dataValue'].tolist()
         columns = ['dates','values']
-        df = pd.DataFrame(GetValuesResponse['values'], columns=columns)
+        df= pd.DataFrame(pds,columns = columns)
+
+        # df = pd.DataFrame(GetValuesResponse['values'], columns=columns)
         df['dates'] = pd.to_datetime(df['dates'])
         df_2 = df.groupby(df.dates.dt.strftime('%m')).values.agg(['mean'])
         m_avg = df_2.to_numpy()
