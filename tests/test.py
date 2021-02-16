@@ -9,45 +9,53 @@ from tslearn.utils import to_time_series, to_time_series_dataset
 import pandas as pd
 import numpy as np
 import time
-url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
+
+url_testing = [
+    "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/CALVIN_HHS/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/CCBEPDAP/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/glacialridge/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/KentState/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/czo_boulder/cuahsi_1_1.asmx?WSDL",
+    "http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/nevados/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/Ramsar_atacama/cuahsi_1_1.asmx?WSDL",
+    "http://hydrolite.ddns.net/italia/hsl-bol/index.php/default/services/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/czo_catalina/cuahsi_1_1.asmx?WSDL",
+    "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-plata/cuahsi_1_1.asmx?WSDL",
+    "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-arctic/cuahsi_1_1.asmx?WSDL",
+    "http://hydroportal.cuahsi.org/czo_catalina/cuahsi_1_1.asmx?WSDL"
+]
+
 # url_testing = "http://hydroportal.cuahsi.org/czo_catalina/cuahsi_1_1.asmx?WSDL"
-water = WaterMLOperations(url = url_testing)
+# water = WaterMLOperations(url = url_testing)
 
 def main():
+    try:
+        for url in url_testing:
+            single_test(url)
+        print("Successful testing the different Endpoints")
+    except Exception as e:
+        print(e)
+
+def single_test(url_testing):
+    start_time = time.time()
+    water = WaterMLOperations(url = url_testing)
     sites = water.GetSites()
     variables = water.GetVariables()
-    print("************SITES***************")
-    print(len(sites))
-    print("************VARIABLES***********")
+    print("************GETSITES***************")
+    print(sites)
+
+    print("************GETVARIABLES***********")
     print(variables)
-    print("***********GET SITE INFO****************")
-    # site_full_code = "Para_La_Naturaleza:Rio_Toro_Negro"
+
+    print("***********GETSITEINFO****************")
     fullSiteCodeFirstSite = sites[0]['fullSiteCode']
     siteInfo =  water.GetSiteInfo(fullSiteCodeFirstSite)
     print(siteInfo)
-    print("VALUES")
-    # network = sites[0]['network']
-    fullVariableCodeFirstVariable = siteInfo['siteInfo'][0]['fullVariableCode']
-    # variable_full_code = network + ":" + firstVariableCode
-    methodID = siteInfo['siteInfo'][0]['methodID']
-    start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
-    end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
-    print(fullSiteCodeFirstSite,fullVariableCodeFirstVariable,start_date,end_date)
 
-    variableResponse = water.GetValues(fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
-    print(variableResponse)
-    print("INTERPOLATION")
-    interpol_b = water.GetInterpolation(variableResponse, 'backward')
-    interpol_f = water.GetInterpolation(variableResponse, 'forward')
-    interpol_m = water.GetInterpolation(variableResponse, 'mean')
-    print(len(interpol_f))
-    print(len(interpol_b))
-    print(len(interpol_m))
+    print("**********GETSITESBYBOUNDINGBOX***************")
 
-    m_avg = water.GetMonthlyAverage(None, fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
-    print(m_avg)
-    y_pred = water.GetClustersMonthlyAvg(sites,siteInfo['siteInfo'][0]['variableCode'])
-    print(y_pred)
     """
     UNCOMMENT TO USE WITH THE epsg:3857
     """
@@ -59,62 +67,56 @@ def main():
     """
     BoundsRearranged = [-66.4903,18.19699,-66.28665,18.28559]
     SitesByBoundingBox = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
-    print(len(SitesByBoundingBox))
+    print("The number of sites in the bounding box is: ",len(SitesByBoundingBox))
 
     print("***********FILTERING SITES BY KEYWORD****************")
-    variablesTest = [variables[0]]
+
+    variablesTest = [variables['variables'][0]['variableCode']]
+    print("Variable for testing: ", variablesTest)
 
     """
     USING A COOKIE CUTTER
     """
     sitesFiltered = water.GetSitesByVariable(variablesTest,sites)
-    print("GetSitesByVariable With CookieCutter")
-    print(len(sitesFiltered))
+    print("Sites using the GetSitesByVariable With CookieCutter", len(sitesFiltered))
 
     """
     WITHOUT USING A COOKIE CUTTER
     """
     sitesFiltered = water.GetSitesByVariable(variablesTest)
-    print("GetSitesByVariable No CookieCutter")
-    print(len(sitesFiltered))
+    print("Sites using the GetSitesByVariable No CookieCutter", len(sitesFiltered))
 
-    print("******************CHANGE URL***********")
-    water.ChangeEndpoint("http://hydroportal.cuahsi.org/CALVIN_HHS/cuahsi_1_1.asmx?WSDL")
-    sites = water.GetSites()
-    variables = water.GetVariables()
-    print("************SITES***************")
-    print(len(sites))
-    print("************VARIABLES***********")
-    print(variables)
-    print("***********FILTERING SITES BY KEYWORD****************")
-    variablesTest = [variables[0]]
-    """
-    USING A COOKIE CUTTER
-    """
-    sitesFiltered = water.GetSitesByVariable(variablesTest,sites)
-    print("GetSitesByVariable With CookieCutter")
-    print(len(sitesFiltered))
-    """
-    WITHOUT USING A COOKIE CUTTER
-    """
-    sitesFiltered = water.GetSitesByVariable(variablesTest)
-    print("GetSitesByVariable No CookieCutter")
-    print(len(sitesFiltered))
-    columns = ['dates','values']
-    df = pd.DataFrame(variableResponse['values'], columns=columns)
-    # print(df.head())
-    df['dates'] = pd.to_datetime(df['dates'])
-    df_2 = df.groupby(df.dates.dt.strftime('%m')).values.agg(['mean'])
-    # df_2 = df.groupby(df.dates.dt.strftime('%Y-%m')).values.agg(['mean'])
-    # print(df_2)
-    m_avg = df_2.to_numpy()
-    m_avg = m_avg.reshape((m_avg.shape[0],))
-    print(len(m_avg))
-    start_time = time.time()
-    y_pred = water.GetClustersMonthlyAvg(sitesFiltered,variablesTest[0])
-    print(len(y_pred))
+    print("***********GETVALUES****************")
+
+    fullVariableCodeFirstVariable = siteInfo['siteInfo'][0]['fullVariableCode']
+    methodID = siteInfo['siteInfo'][0]['methodID']
+    start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
+    end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
+    variableResponse = water.GetValues(fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
+    print("The variable and site contains values ",len(variableResponse['values']))
+
+    print("**********INTERPOLATIONS***************")
+    interpol_b = water.GetInterpolation(variableResponse, 'backward')
+    interpol_f = water.GetInterpolation(variableResponse, 'forward')
+    interpol_m = water.GetInterpolation(variableResponse, 'mean')
+    print("The lenght of the interpolated values is ",len(interpol_f))
+    print("The lenght of the interpolated values is",len(interpol_b))
+    print("The lenght of the interpolated values is",len(interpol_m))
+
+    print("**********MONTHLY AVERAGES***************")
+    m_avg = water.GetMonthlyAverage(None, fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
+
+    print("Monthly Averages:")
+    print(m_avg)
+    print("**********MONTHLY CLUSTERS***************")
+
+    y_pred = water.GetClustersMonthlyAvg(sites,siteInfo['siteInfo'][0]['variableCode'])
+    print("Clusters")
+    print(y_pred)
+
     print("--- %s seconds ---" % (time.time() - start_time))
     print("Test was sucessful")
+
 
 if __name__ == "__main__":
     main()
