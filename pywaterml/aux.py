@@ -508,7 +508,7 @@ class Auxiliary():
 
         return return_obj
 
-    def _getVariablesHelper(self,one_variable, return_obj):
+    def _getVariablesHelper(self,one_variable, return_object):
 
         try:
             return_object['variableName'] = one_variable['variableName']
@@ -574,7 +574,7 @@ class Auxiliary():
         except KeyError as ke:
             return_object['speciation'] = "No Data Provided"
 
-        return return_obj
+        return return_object
 
 
 if __name__ == "__main__":

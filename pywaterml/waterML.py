@@ -194,7 +194,7 @@ class WaterMLOperations():
             if isinstance(array_variables,type([])):
                 return_object = {}
                 for one_variable in array_variables:
-                    return_object = self.aux._getVariablesHelper(one_variable, return_obj)
+                    return_object = self.aux._getVariablesHelper(one_variable, return_object)
                     # return_object['variableName'] = one_variable['variableName']
                     # return_object['variableCode'] = one_variable['variableCode']['#text']
                     # return_object['valueType']= one_variable['valueType']
@@ -214,7 +214,7 @@ class WaterMLOperations():
 
             if isinstance(array_variables,dict):
                 return_object = {}
-                return_object = self.aux._getVariablesHelper(array_variables, return_obj)
+                return_object = self.aux._getVariablesHelper(array_variables, return_object)
 
                 # return_object['variableName'] = array_variables['variableName']
                 # return_object['variableCode'] = array_variables['variableCode']['#text']
@@ -333,7 +333,18 @@ class WaterMLOperations():
             print(ke)
             print("No series for the site")
             return_array = []
-            return return_array
+            if format is "json":
+                json_response = {
+                    'siteInfo':return_array
+                }
+                return json_response
+            elif format is "csv":
+                df = pd.DataFrame.from_dict(return_array)
+                csv_siteInfo = df.to_csv(index=False)
+                return csv_siteInfo
+            else:
+                return print("the only supported formats are json, csv, and waterml")
+            # return return_array
         return return_array
 
     def GetValues(self,site_full_code, variable_full_code, start_date, end_date, methodCode = None, qualityControlLevelCode = None, format = 'json'):
@@ -379,11 +390,11 @@ class WaterMLOperations():
         """
         values = self.client.service.GetValues(
             site_full_code, variable_full_code, start_date, end_date, "")
-
         if format is "waterml":
             return values
         values_dict = xmltodict.parse(values)
         values_json_object = json.dumps(values_dict)
+        # print(values_json_object)
 
         values_json = json.loads(values_json_object)
         times_series = {}
