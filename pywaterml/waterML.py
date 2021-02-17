@@ -145,6 +145,7 @@ class WaterMLOperations():
                 x1, y1, x2, y2, '1', '')
         except Exception as error:
             print(error)
+            return([])
         if format is "waterml":
             return bbox
 
@@ -193,40 +194,43 @@ class WaterMLOperations():
             if isinstance(array_variables,type([])):
                 return_object = {}
                 for one_variable in array_variables:
-                    return_object['variableName'] = one_variable['variableName']
-                    return_object['variableCode'] = one_variable['variableCode']['#text']
-                    return_object['valueType']= one_variable['valueType']
-                    return_object['dataType']= one_variable['dataType']
-                    return_object['generalCategory'] = one_variable['generalCategory']
-                    return_object['sampleMedium'] = one_variable['sampleMedium']
-                    return_object['unitName'] = one_variable['unit']['unitName']
-                    return_object['unitType'] = one_variable['unit']['unitType']
-                    return_object['unitAbbreviation'] = one_variable['unit']['unitAbbreviation']
-                    return_object['noDataValue'] = one_variable['noDataValue']
-                    return_object['isRegular'] = one_variable['variableCode']['@default']
-                    return_object['timeUnitName'] = one_variable['timeScale']['unit']['unitName']
-                    return_object['timeUnitAbbreviation'] = one_variable['timeScale']['unit']['unitAbbreviation']
-                    return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
-                    return_object['speciation'] = one_variable['speciation']
+                    return_object = self.aux._getVariablesHelper(one_variable, return_obj)
+                    # return_object['variableName'] = one_variable['variableName']
+                    # return_object['variableCode'] = one_variable['variableCode']['#text']
+                    # return_object['valueType']= one_variable['valueType']
+                    # return_object['dataType']= one_variable['dataType']
+                    # return_object['generalCategory'] = one_variable['generalCategory']
+                    # return_object['sampleMedium'] = one_variable['sampleMedium']
+                    # return_object['unitName'] = one_variable['unit']['unitName']
+                    # return_object['unitType'] = one_variable['unit']['unitType']
+                    # return_object['unitAbbreviation'] = one_variable['unit']['unitAbbreviation']
+                    # return_object['noDataValue'] = one_variable['noDataValue']
+                    # return_object['isRegular'] = one_variable['variableCode']['@default']
+                    # return_object['timeUnitName'] = one_variable['timeScale']['unit']['unitName']
+                    # return_object['timeUnitAbbreviation'] = one_variable['timeScale']['unit']['unitAbbreviation']
+                    # return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
+                    # return_object['speciation'] = one_variable['speciation']
                     return_array.append(return_object)
 
             if isinstance(array_variables,dict):
                 return_object = {}
-                return_object['variableName'] = array_variables['variableName']
-                return_object['variableCode'] = array_variables['variableCode']['#text']
-                return_object['valueType']= array_variables['valueType']
-                return_object['dataType']= array_variables['dataType']
-                return_object['generalCategory'] = array_variables['generalCategory']
-                return_object['sampleMedium'] = array_variables['sampleMedium']
-                return_object['unitName'] = array_variables['unit']['unitName']
-                return_object['unitType'] = array_variables['unit']['unitType']
-                return_object['unitAbbreviation'] = array_variables['unit']['unitAbbreviation']
-                return_object['noDataValue'] = array_variables['noDataValue']
-                return_object['isRegular'] = array_variables['variableCode']['@default']
-                return_object['timeUnitName'] = array_variables['timeScale']['unit']['unitName']
-                return_object['timeUnitAbbreviation'] = array_variables['timeScale']['unit']['unitAbbreviation']
-                return_object['timeSupport'] = array_variables['timeScale']['timeSupport']
-                return_object['speciation'] = array_variables['speciation']
+                return_object = self.aux._getVariablesHelper(array_variables, return_obj)
+
+                # return_object['variableName'] = array_variables['variableName']
+                # return_object['variableCode'] = array_variables['variableCode']['#text']
+                # return_object['valueType']= array_variables['valueType']
+                # return_object['dataType']= array_variables['dataType']
+                # return_object['generalCategory'] = array_variables['generalCategory']
+                # return_object['sampleMedium'] = array_variables['sampleMedium']
+                # return_object['unitName'] = array_variables['unit']['unitName']
+                # return_object['unitType'] = array_variables['unit']['unitType']
+                # return_object['unitAbbreviation'] = array_variables['unit']['unitAbbreviation']
+                # return_object['noDataValue'] = array_variables['noDataValue']
+                # return_object['isRegular'] = array_variables['variableCode']['@default']
+                # return_object['timeUnitName'] = array_variables['timeScale']['unit']['unitName']
+                # return_object['timeUnitAbbreviation'] = array_variables['timeScale']['unit']['unitAbbreviation']
+                # return_object['timeSupport'] = array_variables['timeScale']['timeSupport']
+                # return_object['speciation'] = array_variables['speciation']
                 return_array.append(return_object)
 
             if format is "json":
@@ -307,107 +311,12 @@ class WaterMLOperations():
             object_siteInfo = site_info_Mc_json['sitesResponse']['site']['siteInfo']
             return_array = []
             if(isinstance(object_methods,(dict))):
-                return_obj = {}
-                return_obj['siteName']= object_siteInfo['siteName']
-                return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
-                return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
-                return_obj['network'] = object_siteInfo['siteCode']['@network']
-                return_obj['siteCode'] = object_siteInfo['siteCode']['#text']
-                return_obj['fullSiteCode'] = return_obj['network'] + ":" + return_obj['siteCode']
-
-                return_obj['variableName'] = object_methods['variable']['variableName']
-                return_obj['variableCode'] = object_methods['variable']['variableCode']['#text']
-                return_obj['fullVariableCode'] = return_obj['network'] + ":" + return_obj['variableCode']
-                return_obj['variableCount'] = object_methods['valueCount']
-
-                return_obj['dataType'] = object_methods['variable']['dataType']
-                return_obj['valueType'] = object_methods['variable']['valueType']
-                return_obj['generalCategory'] = object_methods['variable']['generalCategory']
-                return_obj['noDataValue'] = object_methods['variable']['noDataValue']
-                return_obj['sampleMedium'] = object_methods['variable']['sampleMedium']
-                return_obj['speciation'] = object_methods['variable']['speciation']
-                return_obj['timeUnitAbbreviation'] = object_methods['variable']['timeScale']['unit']['unitAbbreviation']
-                return_obj['timeUnitName'] = object_methods['variable']['timeScale']['unit']['unitName']
-                return_obj['timeUnitType'] = object_methods['variable']['timeScale']['unit']['unitType']
-                return_obj['timeSupport'] = object_methods['variable']['timeScale']['timeSupport']
-                return_obj['isRegular'] = object_methods['variable']['timeScale']['@isRegular']
-                return_obj['unitAbbreviation'] = object_methods['variable']['unit']['unitAbbreviation']
-                return_obj['unitName'] = object_methods['variable']['unit']['unitName']
-                return_obj['unitType'] = object_methods['variable']['unit']['unitType']
-
-
-                if 'method' in object_methods:
-                    return_obj['methodID'] = object_methods['method']['@methodID']
-                    return_obj['methodDescription'] = object_methods['method']['methodDescription']
-                else:
-                    return_obj['methodID'] = "No Method Id was provided"
-                    return_obj['methodDescription'] = "No Method Description was provided"
-
-
-                return_obj['qualityControlLevelID'] = object_methods['qualityControlLevel']['@qualityControlLevelID']
-                return_obj['definition'] = object_methods['qualityControlLevel']['definition']
-                return_obj['qualityControlLevelCode'] = object_methods['qualityControlLevel']['qualityControlLevelCode']
-
-                return_obj['citation'] = object_methods['source']['citation']
-                return_obj['organization'] = object_methods['source']['organization']
-                return_obj['description'] = object_methods['source']['sourceDescription']
-
-                return_obj['beginDateTime'] = object_methods['variableTimeInterval']['beginDateTime']
-                return_obj['endDateTime'] = object_methods['variableTimeInterval']['endDateTime']
-                return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
-                return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
+                return_obj = self.aux._getSiteInfoHelper(object_siteInfo,object_methods)
                 return_array.append(return_obj)
 
             else:
                 for object_method in object_methods:
-                    return_obj = {}
-
-                    return_obj['siteName']= object_siteInfo['siteName']
-                    return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
-                    return_obj['network'] = object_siteInfo['siteCode']['@network']
-                    return_obj['siteCode'] = object_siteInfo['siteCode']['#text']
-                    return_obj['fullSiteCode'] = return_obj['network'] + ":" + return_obj['siteCode']
-
-                    return_obj['variableName'] = object_method['variable']['variableName']
-                    return_obj['variableCode'] = object_method['variable']['variableCode']['#text']
-                    return_obj['fullVariableCode'] = return_obj['network'] + ":" + return_obj['variableCode']
-                    return_obj['variableCount'] = object_method['valueCount']
-
-                    return_obj['dataType'] = object_method['variable']['dataType']
-                    return_obj['valueType'] = object_method['variable']['valueType']
-                    return_obj['generalCategory'] = object_method['variable']['generalCategory']
-                    return_obj['noDataValue'] = object_method['variable']['noDataValue']
-                    return_obj['sampleMedium'] = object_method['variable']['sampleMedium']
-                    return_obj['speciation'] = object_method['variable']['speciation']
-                    return_obj['timeUnitAbbreviation'] = object_method['variable']['timeScale']['unit']['unitAbbreviation']
-                    return_obj['timeUnitName'] = object_method['variable']['timeScale']['unit']['unitName']
-                    return_obj['timeUnitType'] = object_method['variable']['timeScale']['unit']['unitType']
-                    return_obj['timeSupport'] = object_method['variable']['timeScale']['timeSupport']
-                    return_obj['isRegular'] = object_method['variable']['timeScale']['@isRegular']
-                    return_obj['unitAbbreviation'] = object_method['variable']['unit']['unitAbbreviation']
-                    return_obj['unitName'] = object_method['variable']['unit']['unitName']
-                    return_obj['unitType'] = object_method['variable']['unit']['unitType']
-
-                    if 'method' in object_method:
-                        return_obj['methodID'] = object_method['method']['@methodID']
-                        return_obj['methodDescription'] = object_method['method']['methodDescription']
-                    else:
-                        return_obj['methodID'] = "No MethodID provided"
-                        return_obj['methodDescription'] = "No Method Description was provided"
-
-                    return_obj['qualityControlLevelID'] = object_method['qualityControlLevel']['@qualityControlLevelID']
-                    return_obj['definition'] = object_method['qualityControlLevel']['definition']
-                    return_obj['qualityControlLevelCode'] = object_method['qualityControlLevel']['qualityControlLevelCode']
-
-                    return_obj['citation'] = object_method['source']['citation']
-                    return_obj['organization'] = object_method['source']['organization']
-                    return_obj['description'] = object_method['source']['sourceDescription']
-
-                    return_obj['beginDateTime'] = object_method['variableTimeInterval']['beginDateTime']
-                    return_obj['endDateTime'] = object_method['variableTimeInterval']['endDateTime']
-                    return_obj['beginDateTimeUTC'] = object_method['variableTimeInterval']['beginDateTimeUTC']
-                    return_obj['endDateTimeUTC'] = object_method['variableTimeInterval']['endDateTimeUTC']
-
+                    return_obj = self.aux._getSiteInfoHelper(object_siteInfo,object_method)
                     return_array.append(return_obj)
             if format is "json":
                 json_response = {
@@ -420,7 +329,8 @@ class WaterMLOperations():
                 return csv_siteInfo
             else:
                 return print("the only supported formats are json, csv, and waterml")
-        except KeyError:
+        except KeyError as ke:
+            print(ke)
             print("No series for the site")
             return_array = []
             return return_array
@@ -597,11 +507,14 @@ class WaterMLOperations():
             site_desc = site['fullSiteCode']
             site_info = self.GetSiteInfo(site_desc)
 
-            for variable_site in site_info['siteInfo']:
-                if variable_site['variableCode'] in specific_variables_codes:
-                    new_sites.append(site)
-                    break
-
+            try:
+                for variable_site in site_info['siteInfo']:
+                    if variable_site['variableCode'] in specific_variables_codes:
+                        new_sites.append(site)
+                        break
+            except Exception as ke:
+                print(ke)
+                print("site does not contain series")
         if format is "json":
             json_response = {}
             json_response['sites'] = sites
@@ -740,29 +653,34 @@ class WaterMLOperations():
             for site in sites:
                 # site_full_code = f'{site["network"]}:{site["sitecode"]}'
                 site_full_code = site['fullSiteCode']
-                siteInfo =  self.GetSiteInfo(site_full_code)['siteInfo']
-                for sinfo in siteInfo:
-                    if sinfo['variableCode'] == variableCode:
-                        variable_full_code = sinfo['fullVariableCode']
-                        start_date = sinfo['beginDateTime'].split('T')[0]
-                        end_date = sinfo['endDateTime'].split('T')[0]
+                try:
+                    siteInfo =  self.GetSiteInfo(site_full_code)['siteInfo']
+                    for sinfo in siteInfo:
+                        if sinfo['variableCode'] == variableCode:
+                            variable_full_code = sinfo['fullVariableCode']
+                            start_date = sinfo['beginDateTime'].split('T')[0]
+                            end_date = sinfo['endDateTime'].split('T')[0]
 
-                        if timeUTC is True:
-                            start_date = sinfo['beginDateTimeUTC'].split('T')[0]
-                            end_date = sinfo['endDateTimeUTC'].split('T')[0]
-                        variableResponse = self.GetValues(site_full_code, variable_full_code,start_date, end_date, methodCode= methodCode, qualityControlLevelCode=qualityControlLevelCode)
-                        m_avg = self.GetMonthlyAverage(variableResponse)
-                        timeseries.append(to_time_series(m_avg))
-                        timeSerie_cluster.append([m_avg])
-                        break
+                            if timeUTC is True:
+                                start_date = sinfo['beginDateTimeUTC'].split('T')[0]
+                                end_date = sinfo['endDateTimeUTC'].split('T')[0]
+                            variableResponse = self.GetValues(site_full_code, variable_full_code,start_date, end_date, methodCode= methodCode, qualityControlLevelCode=qualityControlLevelCode)
+                            m_avg = self.GetMonthlyAverage(variableResponse)
+                            timeseries.append(to_time_series(m_avg))
+                            timeSerie_cluster.append([m_avg])
+                            break
+                except Exception as e:
+                    print(e)
+                    print("the current site does not contain siteInformation")
             formatted_time_series = to_time_series_dataset(timeseries)
             model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
             y_pred = model.fit_predict(formatted_time_series)
             for tc, y in zip(timeSerie_cluster,y_pred):
                 tc.append(y)
             return timeSerie_cluster
-        except KeyError:
-            print("No values in GetValuesResponse")
+        except KeyError as e:
+            print(e)
+            return timeSerie_cluster
         return timeSerie_cluster
 
 if __name__ == "__main__":

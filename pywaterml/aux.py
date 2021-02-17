@@ -327,5 +327,255 @@ class Auxiliary():
 
         return return_object
 
+    def _getSiteInfoHelper(self,object_siteInfo,object_methods):
+        return_obj = {}
+        try:
+            return_obj['siteName'] = object_siteInfo['siteName']
+        except KeyError as ke:
+            return_obj['siteName'] = "No Data was Provided"
+
+        try:
+            return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
+        except KeyError as ke:
+            return_obj['latitude'] = "No Data was Provided"
+
+        try:
+            return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
+        except KeyError as ke:
+            return_obj['longitude'] = "No Data was Provided"
+
+        try:
+            return_obj['network'] = object_siteInfo['siteCode']['@network']
+        except KeyError as ke:
+            return_obj['network'] = "No Data was Provided"
+
+        try:
+            return_obj['siteCode'] = object_siteInfo['siteCode']['#text']
+        except KeyError as ke:
+            return_obj['siteCode'] = "No Data was Provided"
+
+        try:
+            return_obj['fullSiteCode'] = return_obj['network'] + ":" + return_obj['siteCode']
+        except KeyError as ke:
+            return_obj['fullSiteCode'] = "No Data was Provided"
+
+        try:
+            return_obj['variableName'] = object_methods['variable']['variableName']
+        except KeyError as ke:
+            return_obj['variableName'] = "No Data was Provided"
+
+        try:
+            return_obj['variableCode'] = object_methods['variable']['variableCode']['#text']
+        except KeyError as ke:
+            return_obj['variableCode'] = "No Data was Provided"
+
+        try:
+            return_obj['fullVariableCode'] = return_obj['network'] + ":" + return_obj['variableCode']
+        except KeyError as ke:
+            return_obj['fullVariableCode'] = "No Data was Provided"
+
+        try:
+            return_obj['variableCount'] = object_methods['valueCount']
+        except KeyError as ke:
+            return_obj['variableCount'] = "No Data was Provided"
+
+        try:
+            return_obj['dataType'] = object_methods['variable']['dataType']
+        except KeyError as ke:
+            return_obj['dataType'] = "No Data was Provided"
+
+        try:
+            return_obj['valueType'] = object_methods['variable']['valueType']
+        except KeyError as ke:
+            return_obj['valueType'] = "No Data was Provided"
+
+        try:
+            return_obj['generalCategory'] = object_methods['variable']['generalCategory']
+        except KeyError as ke:
+            return_obj['generalCategory'] = "No Data was Provided"
+
+        try:
+            return_obj['noDataValue'] = object_methods['variable']['noDataValue']
+        except KeyError as ke:
+            return_obj['noDataValue'] = "No Data was Provided"
+
+        try:
+            return_obj['sampleMedium'] = object_methods['variable']['sampleMedium']
+        except KeyError as ke:
+            return_obj['sampleMedium'] = "No Data was Provided"
+
+        try:
+            return_obj['speciation'] = object_methods['variable']['speciation']
+        except KeyError as ke:
+            return_obj['speciation'] = "No Data was Provided"
+        try:
+            return_obj['timeUnitAbbreviation'] = object_methods['variable']['timeScale']['unit']['unitAbbreviation']
+        except KeyError as ke:
+            return_obj['timeUnitAbbreviation'] = "No Data was Provided"
+
+        try:
+            return_obj['timeUnitName'] = object_methods['variable']['timeScale']['unit']['unitName']
+        except KeyError as ke:
+            return_obj['timeUnitName'] = "No Data was Provided"
+
+        try:
+            return_obj['timeUnitType'] = object_methods['variable']['timeScale']['unit']['unitType']
+        except KeyError as ke:
+            return_obj['timeUnitType'] = "No Data was Provided"
+
+        try:
+            return_obj['timeSupport'] = object_methods['variable']['timeScale']['timeSupport']
+        except KeyError as ke:
+            return_obj['timeSupport'] = "No Data was Provided"
+
+        try:
+            return_obj['isRegular'] = object_methods['variable']['timeScale']['@isRegular']
+        except KeyError as ke:
+            return_obj['isRegular'] = "No Data was Provided"
+
+        try:
+            return_obj['unitAbbreviation'] = object_methods['variable']['unit']['unitAbbreviation']
+        except KeyError as ke:
+            return_obj['unitAbbreviation'] = "No Data was Provided"
+
+        try:
+            return_obj['unitName'] = object_methods['variable']['unit']['unitName']
+        except KeyError as ke:
+            return_obj['unitName'] = "No Data was Provided"
+
+        try:
+            return_obj['unitType'] = object_methods['variable']['unit']['unitType']
+        except KeyError as ke:
+            return_obj['unitType'] = "No Data was Provided"
+
+        if 'method' in object_methods:
+            return_obj['methodID'] = object_methods['method']['@methodID']
+            return_obj['methodDescription'] = object_methods['method']['methodDescription']
+        else:
+            return_obj['methodID'] = "No Method Id was provided"
+            return_obj['methodDescription'] = "No Method Description was provided"
+
+
+        try:
+            return_obj['qualityControlLevelID'] = object_methods['qualityControlLevel']['@qualityControlLevelID']
+        except KeyError as ke:
+            return_obj['qualityControlLevelID'] = "No Data was Provided"
+
+        try:
+            return_obj['definition'] = object_methods['qualityControlLevel']['definition']
+        except KeyError as ke:
+            return_obj['definition'] = "No Data was Provided"
+
+        try:
+            return_obj['qualityControlLevelCode'] = object_methods['qualityControlLevel']['qualityControlLevelCode']
+        except KeyError as ke:
+            return_obj['qualityControlLevelCode'] = "No Data was Provided"
+
+        try:
+            return_obj['citation'] = object_methods['source']['citation']
+        except KeyError as ke:
+            return_obj['citation'] = "No Data was Provided"
+
+        try:
+            return_obj['organization'] = object_methods['source']['organization']
+        except KeyError as ke:
+            return_obj['organization'] = "No Data was Provided"
+
+        try:
+            return_obj['description'] = object_methods['source']['sourceDescription']
+        except KeyError as ke:
+            return_obj['description'] = "No Data was Provided"
+
+        try:
+            return_obj['beginDateTime'] = object_methods['variableTimeInterval']['beginDateTime']
+        except KeyError as ke:
+            return_obj['beginDateTime'] = "No Data was Provided"
+
+        try:
+            return_obj['endDateTime'] = object_methods['variableTimeInterval']['endDateTime']
+        except KeyError as ke:
+            return_obj['endDateTime'] = "No Data was Provided"
+
+        try:
+            return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
+        except KeyError as ke:
+            return_obj['beginDateTimeUTC'] = "No Data was Provided"
+
+        try:
+            return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
+        except KeyError as ke:
+            return_obj['endDateTimeUTC'] = "No Data was Provided"
+
+        return return_obj
+
+    def _getVariablesHelper(self,one_variable, return_obj):
+
+        try:
+            return_object['variableName'] = one_variable['variableName']
+        except KeyError as ke:
+            return_object['variableName'] = "No Data Provided"
+
+        try:
+            return_object['variableCode'] = one_variable['variableCode']['#text']
+        except KeyError as ke:
+            return_object['variableName'] = "No Data Provided"
+
+        try:
+            return_object['valueType']= one_variable['valueType']
+        except KeyError as ke:
+            return_object['valueType'] = "No Data Provided"
+
+        try:
+            return_object['dataType']= one_variable['dataType']
+        except KeyError as ke:
+            return_object['dataType'] = "No Data Provided"
+        try:
+            return_object['generalCategory'] = one_variable['generalCategory']
+        except KeyError as ke:
+            return_object['generalCategory'] = "No Data Provided"
+        try:
+            return_object['sampleMedium'] = one_variable['sampleMedium']
+        except KeyError as ke:
+            return_object['sampleMedium'] = "No Data Provided"
+        try:
+            return_object['unitName'] = one_variable['unit']['unitName']
+        except KeyError as ke:
+            return_object['unitName'] = "No Data Provided"
+        try:
+            return_object['unitType'] = one_variable['unit']['unitType']
+        except KeyError as ke:
+            return_object['unitType'] = "No Data Provided"
+        try:
+            return_object['unitAbbreviation'] = one_variable['unit']['unitAbbreviation']
+        except KeyError as ke:
+            return_object['unitAbbreviation'] = "No Data Provided"
+        try:
+            return_object['noDataValue'] = one_variable['noDataValue']
+        except KeyError as ke:
+            return_object['noDataValue'] = "No Data Provided"
+        try:
+            return_object['isRegular'] = one_variable['variableCode']['@default']
+        except KeyError as ke:
+            return_object['isRegular'] = "No Data Provided"
+        try:
+            return_object['timeUnitName'] = one_variable['timeScale']['unit']['unitName']
+        except KeyError as ke:
+            return_object['timeUnitName'] = "No Data Provided"
+        try:
+            return_object['timeUnitAbbreviation'] = one_variable['timeScale']['unit']['unitAbbreviation']
+        except KeyError as ke:
+            return_object['timeUnitAbbreviation'] = "No Data Provided"
+        try:
+            return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
+        except KeyError as ke:
+            return_object['timeSupport'] = "No Data Provided"
+        try:
+            return_object['speciation'] = one_variable['speciation']
+        except KeyError as ke:
+            return_object['speciation'] = "No Data Provided"
+
+        return return_obj
+
+
 if __name__ == "__main__":
     print("Why are you running the wrapper class file?")
