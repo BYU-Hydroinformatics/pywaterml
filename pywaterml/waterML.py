@@ -1,5 +1,9 @@
 from suds.client import Client
 from suds.xsd.doctor import Import, ImportDoctor
+import urllib.request
+import urllib.error
+import urllib.parse
+
 # https://stackoverflow.com/questions/403980/i-am-confused-about-soap-namespaces
 import json
 import xmltodict
@@ -31,7 +35,7 @@ class WaterMLOperations():
         # self.client = Client(url, settings = settings)
         self.aux = Auxiliary()
 
-    def AddEndpoint(self,url):
+    def AddService(self,url):
         """
         Add a endpoint to the WaterMLOperations class. It can have any endpoint that uses the SOAP protocol.
 
@@ -52,7 +56,7 @@ class WaterMLOperations():
             print("There is already an enpoint, if you want to change the endpoint try ChangeEndpoint() function")
         pass
 
-    def ChangeEndpoint(self,url):
+    def ChangeService(self,url):
         """
         Change the endpoint of a WaterMLOperations class. The current endpoint can be changed by any endpoint that uses the SOAP protocol.
 
@@ -75,6 +79,34 @@ class WaterMLOperations():
             print("There is no endpoint, please before changing an endpoint add one with AddEndpoint() function")
         pass
 
+    def AvailableServices(self, format = "json"):
+        hs_services = {}
+        if self.url:
+            try:
+                service_info = client.service.GetWaterOneFlowServiceInfo()
+                services = service_info.ServiceInfo
+                obj_services = self.aux._giveServices(services)
+                hs_services['available'] = obj_services['working']
+                hs_services['broken'] = obj_services['failed']
+            except Exception as e:
+                services = self.aux._parseService(self.url)
+                # print(services)
+                views = self.aux._giveServices(services)
+                # print(views)
+                hs_services['available'] = views['working']
+                hs_services['broken'] = views['failed']
+        return hs_services
+
+    def GetWaterOneFlowServicesInfo(self, format= "json"):
+        try:
+            service_info = client.service.GetWaterOneFlowServiceInfo()
+            services = service_info.ServiceInfo
+            return services
+        except:
+            services = self.aux._parseService(self.url)
+            return services
+
+
     def GetSites(self, format="json"):
         """
         Get all the sites from a endpoint that complies to the SOAP protocol. The GetSites() function is similar to the GetSites() WaterML function.
@@ -95,16 +127,17 @@ class WaterMLOperations():
             print(self.client.service)
             try:
                 sites = self.client.service.GetSites('[:]')
+                # sites = self.client.service.GetSites2('[:]')
             except Exception as e:
                 print(e)
-                raw_get = self.plugin.last_received_raw
-                new_raws = raw_get.split(">")
-                soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
-                soap_namespace = soap_namespace.split('"')[1]
-                version =  new_raws[0].split(" ")[1]
-                binding.envns=('SOAP-ENV', soap_namespace)
-                sites = self.client.service.GetSites('[:]')
-                binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
+                # raw_get = self.plugin.last_received_raw
+                # new_raws = raw_get.split(">")
+                # soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
+                # soap_namespace = soap_namespace.split('"')[1]
+                # version =  new_raws[0].split(" ")[1]
+                # binding.envns=('SOAP-ENV', soap_namespace)
+                # sites = self.client.service.GetSites('[:]')
+                # binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
             # print(sites)
             if format is "waterml":
                 return sites
@@ -244,10 +277,10 @@ class WaterMLOperations():
 
             variables_json = json.loads(variables_dict_object)
             array_variables = variables_json['variablesResponse']['variables']['variable']
-
+            print(array_variables)
             if isinstance(array_variables,type([])):
-                return_object = {}
                 for one_variable in array_variables:
+                    return_object = {}
                     return_object = self.aux._getVariablesHelper(one_variable, return_object)
                     return_array.append(return_object)
 
