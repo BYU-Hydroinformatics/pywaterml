@@ -1,9 +1,11 @@
 from suds.client import Client
+from suds.xsd.doctor import Import, ImportDoctor
+# https://stackoverflow.com/questions/403980/i-am-confused-about-soap-namespaces
 import json
 import xmltodict
 from bs4 import BeautifulSoup
 from json import dumps, loads
-from pywaterml.aux import Auxiliary
+from pywaterml.aux import Auxiliary, GetSoapsPlugin
 from pywaterml.analyzeData import WaterAnalityca
 from pyproj import Proj, transform
 import xml.etree.ElementTree as ET
@@ -12,7 +14,8 @@ from datetime import datetime
 from tslearn.metrics import dtw
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series, to_time_series_dataset
-
+from suds.bindings import binding
+# from zeep import Client, Settings
 class WaterMLOperations():
     """
     This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services
@@ -21,8 +24,11 @@ class WaterMLOperations():
         url: Endpoint that complies to the SOAP protocol
     """
     def __init__(self,url = None):
+        self.plugin = GetSoapsPlugin()
         self.url = url
-        self.client = Client(url, timeout= 500)
+        self.client = Client(url,plugins=[self.plugin], timeout= 500)
+        # settings = Settings(strict=False)
+        # self.client = Client(url, settings = settings)
         self.aux = Auxiliary()
 
     def AddEndpoint(self,url):
@@ -86,31 +92,56 @@ class WaterMLOperations():
             sites = water.GetSites()
         """
         try:
-            sites = self.client.service.GetSites('[:]')
+            print(self.client.service)
+            try:
+                sites = self.client.service.GetSites('[:]')
+            except Exception as e:
+                print(e)
+                raw_get = self.plugin.last_received_raw
+                new_raws = raw_get.split(">")
+                soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
+                soap_namespace = soap_namespace.split('"')[1]
+                version =  new_raws[0].split(" ")[1]
+                binding.envns=('SOAP-ENV', soap_namespace)
+                sites = self.client.service.GetSites('[:]')
+                binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
+            # print(sites)
+            if format is "waterml":
+                return sites
+            sites_json={}
+            if isinstance(sites, str):
+                sites_dict = xmltodict.parse(sites)
+                sites_json_object = json.dumps(sites_dict)
+                sites_json = json.loads(sites_json_object)
+            else:
+                sites_json_object = suds_to_json(sites)
+                sites_json = json.loads(sites_json_object)
+
+            sites_object = Auxiliary._parseJSON(sites_json)
+
+            if format is "json":
+                return sites_object
+            elif format is "csv":
+                df = pd.DataFrame.from_dict(sites_object)
+                csv_sites = df.to_csv(index=False)
+                # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
+                return csv_sites
+            else:
+                return print("the only supported formats are json, csv, and waterml")
         except Exception as error:
-            print(error)
-        if format is "waterml":
-            return sites
-        sites_json={}
-        if isinstance(sites, str):
-            sites_dict = xmltodict.parse(sites)
-            sites_json_object = json.dumps(sites_dict)
-            sites_json = json.loads(sites_json_object)
-        else:
-            sites_json_object = suds_to_json(sites)
-            sites_json = json.loads(sites_json_object)
+            # print(error)
+            sites_object={}
+            if format is "waterml":
+                return sites_object
 
-        sites_object = Auxiliary._parseJSON(sites_json)
+            if format is "json":
+                return sites_object
+            elif format is "csv":
+                df = pd.DataFrame.from_dict(sites_object)
+                csv_sites = df.to_csv(index=False)
+                # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
+                return csv_sites
 
-        if format is "json":
-            return sites_object
-        elif format is "csv":
-            df = pd.DataFrame.from_dict(sites_object)
-            csv_sites = df.to_csv(index=False)
-            # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
-            return csv_sites
-        else:
-            return print("the only supported formats are json, csv, and waterml")
 
     def GetSitesByBoxObject(self,ext_list, inProjection, format="json"):
         """
@@ -141,10 +172,22 @@ class WaterMLOperations():
         x1, y1 = transform(inProj, outProj, minx, miny)
         x2, y2 = transform(inProj, outProj, maxx, maxy)
         try:
-            bbox = self.client.service.GetSitesByBoxObject(
-                x1, y1, x2, y2, '1', '')
+            try:
+                bbox = self.client.service.GetSitesByBoxObject(
+                    x1, y1, x2, y2, '1', '')
+            except Exception as error:
+                print(e)
+                raw_get = self.plugin.last_received_raw
+                new_raws = raw_get.split(">")
+                soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
+                soap_namespace = soap_namespace.split('"')[1]
+                version =  new_raws[0].split(" ")[1]
+                binding.envns=('SOAP-ENV', soap_namespace)
+                bbox = self.client.service.GetSitesByBoxObject(
+                    x1, y1, x2, y2, '1', '')
+                binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
         except Exception as error:
-            print(error)
+            # print(error)
             return([])
         if format is "waterml":
             return bbox
@@ -182,7 +225,18 @@ class WaterMLOperations():
         """
         return_array = []
         try:
-            variables = self.client.service.GetVariables('[:]')
+            try:
+                variables = self.client.service.GetVariables('[:]')
+            except Exception as error:
+                print(e)
+                raw_get = self.plugin.last_received_raw
+                new_raws = raw_get.split(">")
+                soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
+                soap_namespace = soap_namespace.split('"')[1]
+                version =  new_raws[0].split(" ")[1]
+                binding.envns=('SOAP-ENV', soap_namespace)
+                variables = self.client.service.GetVariables('[:]')
+                binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
             if format is 'waterml':
                 return variables
             variables_dict = xmltodict.parse(variables)
@@ -195,42 +249,11 @@ class WaterMLOperations():
                 return_object = {}
                 for one_variable in array_variables:
                     return_object = self.aux._getVariablesHelper(one_variable, return_object)
-                    # return_object['variableName'] = one_variable['variableName']
-                    # return_object['variableCode'] = one_variable['variableCode']['#text']
-                    # return_object['valueType']= one_variable['valueType']
-                    # return_object['dataType']= one_variable['dataType']
-                    # return_object['generalCategory'] = one_variable['generalCategory']
-                    # return_object['sampleMedium'] = one_variable['sampleMedium']
-                    # return_object['unitName'] = one_variable['unit']['unitName']
-                    # return_object['unitType'] = one_variable['unit']['unitType']
-                    # return_object['unitAbbreviation'] = one_variable['unit']['unitAbbreviation']
-                    # return_object['noDataValue'] = one_variable['noDataValue']
-                    # return_object['isRegular'] = one_variable['variableCode']['@default']
-                    # return_object['timeUnitName'] = one_variable['timeScale']['unit']['unitName']
-                    # return_object['timeUnitAbbreviation'] = one_variable['timeScale']['unit']['unitAbbreviation']
-                    # return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
-                    # return_object['speciation'] = one_variable['speciation']
                     return_array.append(return_object)
 
             if isinstance(array_variables,dict):
                 return_object = {}
                 return_object = self.aux._getVariablesHelper(array_variables, return_object)
-
-                # return_object['variableName'] = array_variables['variableName']
-                # return_object['variableCode'] = array_variables['variableCode']['#text']
-                # return_object['valueType']= array_variables['valueType']
-                # return_object['dataType']= array_variables['dataType']
-                # return_object['generalCategory'] = array_variables['generalCategory']
-                # return_object['sampleMedium'] = array_variables['sampleMedium']
-                # return_object['unitName'] = array_variables['unit']['unitName']
-                # return_object['unitType'] = array_variables['unit']['unitType']
-                # return_object['unitAbbreviation'] = array_variables['unit']['unitAbbreviation']
-                # return_object['noDataValue'] = array_variables['noDataValue']
-                # return_object['isRegular'] = array_variables['variableCode']['@default']
-                # return_object['timeUnitName'] = array_variables['timeScale']['unit']['unitName']
-                # return_object['timeUnitAbbreviation'] = array_variables['timeScale']['unit']['unitAbbreviation']
-                # return_object['timeSupport'] = array_variables['timeScale']['timeSupport']
-                # return_object['speciation'] = array_variables['speciation']
                 return_array.append(return_object)
 
             if format is "json":
@@ -298,7 +321,19 @@ class WaterMLOperations():
             site_full_code = network +":"+firstSiteCode
             siteInfo = water.GetSiteInfo(site_full_code)
         """
-        site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
+        try:
+            site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
+        except Exception as error:
+            print(error)
+            raw_get = self.plugin.last_received_raw
+            new_raws = raw_get.split(">")
+            soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
+            soap_namespace = soap_namespace.split('"')[1]
+            version =  new_raws[0].split(" ")[1]
+            binding.envns=('SOAP-ENV', soap_namespace)
+            site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
+            binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
+
         if format is 'waterml':
             return site_info_Mc
         site_info_Mc_dict = xmltodict.parse(site_info_Mc)
@@ -330,8 +365,8 @@ class WaterMLOperations():
             else:
                 return print("the only supported formats are json, csv, and waterml")
         except KeyError as ke:
-            print(ke)
-            print("No series for the site")
+            # print(ke)
+            # print("No series for the site")
             return_array = []
             if format is "json":
                 json_response = {
@@ -388,8 +423,18 @@ class WaterMLOperations():
             end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
             variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
         """
-        values = self.client.service.GetValues(
-            site_full_code, variable_full_code, start_date, end_date, "")
+        try:
+            values = self.client.service.GetValues(site_full_code, variable_full_code, start_date, end_date, "")
+        except Exception as error:
+            print(error)
+            raw_get = self.plugin.last_received_raw
+            new_raws = raw_get.split(">")
+            soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
+            soap_namespace = soap_namespace.split('"')[1]
+            version =  new_raws[0].split(" ")[1]
+            binding.envns=('SOAP-ENV', soap_namespace)
+            values = self.client.service.GetValues(site_full_code, variable_full_code, start_date, end_date, "")
+            binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
         if format is "waterml":
             return values
         values_dict = xmltodict.parse(values)
@@ -430,12 +475,13 @@ class WaterMLOperations():
                                             json_response = {}
 
                                     except KeyError as ke:  # The Key Error kicks in when there is only one timeseries
-                                        print(ke)
+                                        # print(ke)
+                                        # print(times_series)
                                         json_response = self.aux._getValuesHelper2(times_series,json_response)
+                                        # print(json_response)
                                         json_response = self.aux._getValuesHelper(k,json_response)
-                                        json_response = {}
                                         return_array.append(json_response)
-
+                                        json_response = {}
 
                             else:  # The else statement is executed is there is only one value in the timeseries
                                 k = times_series['values']['value']
@@ -464,7 +510,19 @@ class WaterMLOperations():
                                     return_array.append(json_response)
 
         except KeyError as error:
-            print(error)
+            if format is "json":
+                json_response = {
+                    'values': return_array
+                }
+                return(json_response)
+            elif format is "csv":
+                df = pd.DataFrame.from_dict(return_array)
+                # print(df)
+                csv_values = df.to_csv(index=False)
+                return csv_values
+            else:
+                return print("the only supported formats are json, csv, and waterml")
+            # print(error)
 
         if format is "json":
             json_response = {
@@ -520,15 +578,30 @@ class WaterMLOperations():
 
             try:
                 for variable_site in site_info['siteInfo']:
+                    # print(variable_site['variableCode'],specific_variables_codes )
                     if variable_site['variableCode'] in specific_variables_codes:
                         new_sites.append(site)
+                        # print(new_sites)
                         break
             except Exception as ke:
-                print(ke)
-                print("site does not contain series")
+                if format is "json":
+                    json_response = {}
+                    json_response['sites'] = sites
+                    return json_response
+
+                elif format is "csv":
+                    df = pd.DataFrame.from_dict(new_sites)
+                    csv_sites = df.to_csv(index=False)
+                    # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
+                    return csv_sites
+                else:
+                    return print("the only supported formats are json, csv, and waterml")
+                # print(ke)
+                # print("site does not contain series")
         if format is "json":
             json_response = {}
             json_response['sites'] = sites
+            # print(json_response)
             return json_response
 
         elif format is "csv":
@@ -690,7 +763,7 @@ class WaterMLOperations():
                 tc.append(y)
             return timeSerie_cluster
         except KeyError as e:
-            print(e)
+            # print(e)
             return timeSerie_cluster
         return timeSerie_cluster
 

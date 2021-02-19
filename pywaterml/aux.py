@@ -1,8 +1,29 @@
 import requests
 import json
 from suds.sudsobject import asdict
+from suds.plugin import *
 from datetime import datetime
 
+class GetSoapsPlugin(MessagePlugin):
+    def __init__(self):
+        self.last_sent_raw = None
+        self.last_received_raw = None
+        self.parsed_res = None
+    def sending(self, context):
+        self.last_sent_raw = str(context.envelope)
+
+    def received(self, context):
+        self.last_received_raw = str(context.reply)
+
+    def parsed(self, context):
+        # self.parsed_res = str(context.envelope)
+        pass
+
+    # def marshalled(self, context):
+    #     body = context.envelope
+    #     foo = body[0]
+    #     foo.set('id', '12345')
+    #     foo.set('version', '2.0')
 
 class Auxiliary():
     """
@@ -209,7 +230,7 @@ class Auxiliary():
             methodCode = k['@methodCode']
             return_obj['methodCode'] = methodCode
         except KeyError as ke:
-            return_obj['methodCode']= methodCode
+            return_obj['methodCode']= "No Data provided"
 
         #qualityControlLevel
         try:
@@ -237,100 +258,161 @@ class Auxiliary():
 
     def _getValuesHelper2(self,times_series,return_object):
         try:
-            siteName = times_series['sourceInfo']['siteName'].encode("utf-8")
-            return_object['siteName'] = siteName.decode("utf-8")
-        except KeyError as ke:
-            return_object['siteName'] = "No Data was Provided"
+            try:
 
-        try:
-            return_object['siteCode'] = times_series['sourceInfo']['siteCode']['#text']
-        except KeyError as ke:
-            return_object['siteCode'] = "No Data was Provided"
+                siteName = times_series['sourceInfo']['siteName'].encode("utf-8")
+                # siteName = times_series['sourceInfo']['siteName']
+                # return_object['siteName'] = siteName
+                return_object['siteName'] = siteName.decode("utf-8")
+            except KeyError as ke:
+                # print(ke)
+                return_object['siteName'] = "No Data was Provided"
 
-        try:
-            return_object['network'] = times_series['sourceInfo']['siteCode']['@network']
-        except KeyError as ke:
-            return_object['network'] = "No Data was Provided"
+            try:
+                # print(times_series)
+                return_object['siteCode'] = times_series['sourceInfo']['siteCode']['#text']
+                # print(return_object)
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+                return_object['siteCode'] = "No Data was Provided"
 
-        try:
-            return_object['siteID'] = times_series['sourceInfo']['siteCode']['@siteID']
+            try:
+                return_object['network'] = times_series['sourceInfo']['siteCode']['@network']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        except KeyError as ke:
-            return_object['siteID'] = "No Data was Provided"
+                return_object['network'] = "No Data was Provided"
 
-        try:
-            return_object['latitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
-        except KeyError as ke:
-            return_object['latitude'] = "No Data was Provided"
+            try:
+                return_object['siteID'] = times_series['sourceInfo']['siteCode']['@siteID']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        try:
-            return_object['longitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['longitude']
-        except KeyError as ke:
-            return_object['longitude'] = "No Data was Provided"
+                return_object['siteID'] = "No Data was Provided"
 
-        try:
-            return_object['variableName'] = times_series['variable']['variableName']
-        except KeyError as ke:
-            return_object['variableName'] =  "No Data was Provided"
+            try:
+                return_object['latitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['latitude'] = "No Data was Provided"
+
+            try:
+                return_object['longitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['longitude']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['longitude'] = "No Data was Provided"
+
+            try:
+                return_object['variableName'] = times_series['variable']['variableName']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['variableName'] =  "No Data was Provided"
 
 
-        try:
-            return_object["unitName"] = times_series['variable']['unit']['unitName']
-        except KeyError as ke:
-            return_object['unitName'] = "No Data was Provided"
+            try:
+                return_object["unitName"] = times_series['variable']['unit']['unitName']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        try:
-            if times_series['variable']['unit']['unitAbbreviation'] is not None:
-                return_object["unitAbbreviation"] = times_series['variable']['unit']['unitAbbreviation']
-        except KeyError as ke:
-            return_object['unitAbbreviation'] = "No Data was Provided"
+                return_object['unitName'] = "No Data was Provided"
 
-        try:
-            return_object['dataType'] = times_series['variable']['dataType']
-        except KeyError as ke:
-            return_object['dataType'] = "No Data was Provided"
+            try:
+                if times_series['variable']['unit']['unitAbbreviation'] is not None:
+                    return_object["unitAbbreviation"] = times_series['variable']['unit']['unitAbbreviation']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        try:
-            return_object['noDataValue'] = times_series['variable']['noDataValue']
-        except KeyError as ke:
-            return_object['noDataValue'] = "No Data was Provided"
+                return_object['unitAbbreviation'] = "No Data was Provided"
 
-        try:
-            return_object["isRegular"] = times_series['variable']['timeScale']['@isRegular']
-        except KeyError as ke:
-            return_object['isRegular'] = "No Data was provided"
+            try:
+                return_object['dataType'] = times_series['variable']['dataType']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        try:
-            return_object['timeSupport'] = times_series['variable']['timeScale']['timeSupport']
-        except KeyError as ke:
-            return_object['timeSupport'] = "No Data was provided"
+                return_object['dataType'] = "No Data was Provided"
 
-        try:
-            return_object['timeUnitName'] = times_series['variable']['timeScale']['unit']['unitName']
-        except KeyError as ke:
-            return_object['timeUnitName'] = "No Data was provided"
+            try:
+                return_object['noDataValue'] = times_series['variable']['noDataValue']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        try:
-            return_object['timeUnitAbbreviation'] = times_series['variable']['timeScale']['unit']['unitAbbreviation']
-        except KeyError as ke:
-            return_object['timeUnitAbbreviation'] = "No Data was provided"
+                return_object['noDataValue'] = "No Data was Provided"
 
-        try:
-            return_object['sampleMedium'] = times_series['variable']['sampleMedium']
-        except KeyError as ke:
-            return_object['sampleMedium'] = "No Data was Provided"
+            try:
+                return_object["isRegular"] = times_series['variable']['timeScale']['@isRegular']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
 
-        try:
-            return_object['speciation'] = times_series['variable']['speciation']
-        except KeyError as ke:
-            return_object['speciation'] = "No Data was Provided"
+                return_object['isRegular'] = "No Data was provided"
 
+            try:
+                return_object['timeSupport'] = times_series['variable']['timeScale']['timeSupport']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['timeSupport'] = "No Data was provided"
+
+            try:
+                return_object['timeUnitName'] = times_series['variable']['timeScale']['unit']['unitName']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['timeUnitName'] = "No Data was provided"
+
+            try:
+                return_object['timeUnitAbbreviation'] = times_series['variable']['timeScale']['unit']['unitAbbreviation']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['timeUnitAbbreviation'] = "No Data was provided"
+
+            try:
+                return_object['sampleMedium'] = times_series['variable']['sampleMedium']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['sampleMedium'] = "No Data was Provided"
+
+            try:
+                return_object['speciation'] = times_series['variable']['speciation']
+            except KeyError as ke:
+                # print(ke)
+                # print(return_object)
+
+                return_object['speciation'] = "No Data was Provided"
+        except Exception as e:
+            return_object = return_object
+            # print(e)
+            # print(return_object)
+
+            # return
         return return_object
 
     def _getSiteInfoHelper(self,object_siteInfo,object_methods):
         return_obj = {}
         try:
-            return_obj['siteName'] = object_siteInfo['siteName']
+            # return_obj['siteName'] = object_siteInfo['siteName']
+            siteName = object_siteInfo['siteName'].encode("utf-8")
+            # return_object['siteName'] = siteName
+            return_obj['siteName'] = siteName.decode("utf-8")
         except KeyError as ke:
             return_obj['siteName'] = "No Data was Provided"
 
@@ -575,6 +657,9 @@ class Auxiliary():
             return_object['speciation'] = "No Data Provided"
 
         return return_object
+
+    # def return_option(self,return_object):
+
 
 
 if __name__ == "__main__":
