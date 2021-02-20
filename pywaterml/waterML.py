@@ -469,9 +469,9 @@ class WaterMLOperations():
             start_date: beginning date time for the time series of the variable
             end_date: end date time for the time series of the variable
             methodCode: method code for data extraction for the given variable
-            qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.
-            To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
-            then the observations in the output data.frame won’t befiltered by quality control level code.
+            qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.To get a list of possible quality controllevel IDs,
+                see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,then the observations in the output data.frame won’t befiltered
+                by quality control level code.
             format: format of the response (json, csv or waterML)
 
         Returns:
@@ -761,9 +761,9 @@ class WaterMLOperations():
             start_date: beginning date time for the time series of the variable
             end_date: end date time for the time series of the variable
             methodCode: method code for data extraction for the given variable
-            qualityControlLevelCode: The ID of the quality control level. Typically 0 is used for raw dataand 1 is used for quality controlled data.
-            To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
-            then the observations in the output data.frame won’t befiltered by quality control level code.
+            qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.
+                To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo().
+                If qualityControlLevelCode is not specified,then the observations in the output data.frame won’t befiltered by quality control level code.
 
 
         Returns:
@@ -805,8 +805,8 @@ class WaterMLOperations():
             n_clusters: integer representing the number of cluster to form.
             methodCode: method code for data extraction for the given variable.
             qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.
-            To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
-            then the observations in the output data.frame won’t befiltered by quality control level code.
+                To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
+                then the observations in the output data.frame won’t befiltered by quality control level code.
             timeUTC: Boolean to use the UTC time instead of the time of the observation.
         Returns:
 
