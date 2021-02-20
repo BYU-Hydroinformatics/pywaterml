@@ -14,6 +14,8 @@ The package has multiple files which are: waterML, analyzeData, aux. The main mo
 3) GetVariables(): Get all the variables from a endpoint that complies to the SOAP protocol. GetVariables() function is similar to the GetVariables() WaterML function
 4) GetSiteInfo(): Get the information of a given site. GetSiteInfo() function is similar to the GetSiteInfo() WaterML function.
 5) GetValues(): Get the specific values for an specific variable in a site. GetValues() function is similar to the GetValues() WaterML function.
+6) AvailableServices(): Get the WaterOneFlow web services that are available from a WaterOneFlow service containing a HIS catalog.
+7) GetWaterOneFlowServiceInfo(): Get all registered data services from a given WaterOneFlow Web service containing a HIS catalog. GetWaterOneFlowServiceInfo can be regarded as a special case of GetServicesInBox2, as the former requests the returns for the global area.
 
 The waterML module also has functions that add functionality to the 'WaterOneFlow' web services. The extra functionality includes the following functions:
 
