@@ -7,7 +7,7 @@ Functions to perform WaterML operations
 
 .. automodule:: pywaterml.waterML
    :members:
-        AddEndpoint, ChangeEndpoint, GetSites, GetSitesByBoxObject, GetVariables, GetSiteInfo, GetValues
+        AddService, ChangeService, GetSites, GetSitesByBoxObject, GetVariables, GetSiteInfo, GetValues
    :noindex:
 
 Extra functionality to the WaterML operations
