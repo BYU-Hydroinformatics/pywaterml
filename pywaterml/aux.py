@@ -2,6 +2,7 @@ import requests
 import json
 from suds.sudsobject import asdict
 from suds.plugin import *
+from suds.plugin import MessagePlugin
 from datetime import datetime
 import urllib.request
 import urllib.error
@@ -13,6 +14,15 @@ class GetSoapsPlugin(MessagePlugin):
     """
     This class represents the GetSoapsPlugin object for the WaterMLOperations class. The GetSoapsPlugin provides two functions of the MessagePlugin: the reveived and sending functions.
     It helps for debugging purposesrealted to the SOAP protocol.
+
+    Args:
+        MessagePlugin: The MessagePlugin currently has (5) hooks:
+            - marshalled():: Provides the plugin with the opportunity to inspect/modify the envelope Document before it is sent.
+            - sending():: Provides the plugin with the opportunity to inspect/modify the message text before it is sent.
+            - received():: Provides the plugin with the opportunity to inspect/modify the received XML text before it is SAX parsed.
+            - parsed():: Provides the plugin with the opportunity to inspect/modify the sax parsed DOM tree for the reply before it is unmarshalled.
+            - unmarshalled():: Provides the plugin with the opportunity to inspect/modify the unmarshalled reply before it is returned to the caller.
+
     """
     def __init__(self):
         self.last_sent_raw = None
