@@ -3,27 +3,39 @@ import json
 from suds.sudsobject import asdict
 from suds.plugin import *
 from datetime import datetime
+import urllib.request
+import urllib.error
+import urllib.parse
+import xml.etree.ElementTree as et
+from suds.client import Client
 
 class GetSoapsPlugin(MessagePlugin):
+    """
+    This class represents the GetSoapsPlugin object for the WaterMLOperations class. The GetSoapsPlugin provides two functions of the MessagePlugin: the reveived and sending functions.
+    It helps for debugging purposesrealted to the SOAP protocol.
+    """
     def __init__(self):
         self.last_sent_raw = None
         self.last_received_raw = None
-        self.parsed_res = None
+
     def sending(self, context):
+        """
+        Provides the plugin with the opportunity to inspect/modify the message text before it is sent.
+            Args: The Context classes which are passed to the plugin.
+        Returns:
+            None
+        """
         self.last_sent_raw = str(context.envelope)
 
     def received(self, context):
+        """
+        Provides the plugin with the opportunity to inspect/modify the received XML text before it is SAX parsed.
+            Args: The Context classes which are passed to the plugin.
+        Returns:
+            None
+        """
         self.last_received_raw = str(context.reply)
 
-    def parsed(self, context):
-        # self.parsed_res = str(context.envelope)
-        pass
-
-    # def marshalled(self, context):
-    #     body = context.envelope
-    #     foo = body[0]
-    #     foo.set('id', '12345')
-    #     foo.set('version', '2.0')
 
 class Auxiliary():
     """
@@ -173,6 +185,25 @@ class Auxiliary():
         return out
 
     def _getValuesHelper(self,k,return_obj):
+        """
+        Helper function to parse and store the content of the dictionary response from the GetValues at the level (['timeSeriesResponse']['timeSeries']['values']['value'])
+        into a new dictionary. The data stored into this dictionary from the GetValues response is the following:
+            - dateTimeUTC: The UTC time of the observation.
+            - dateTime: The local date/time of the observation.
+            - dataValue: Data value from the observation.
+            - censorCode: The code for censored observations.  Possible values are nc (not censored), gt(greater than), lt (less than), nd (non-detect), pnq (present but not quantified)
+            - methodCode: The code of the method or instrument used for the observation
+            - qualityControlLevelCode: The code of the quality control level.  Possible values are -9999(Unknown), 0 (Raw data), 1 (Quality controlled data), 2 (Derived products), 3 (Interpretedproducts), 4 (Knowledge products)
+            - sourceCode: The code of the data source
+            - timeOffSet: The difference between local time and UTC time in hours.
+
+        This function is only stores half of the reponse from the GetValues method, and it is usually used with the _getValuesHelper2 function that stores the other half of the function.
+        Args:
+            k: GetValues response dictionary at level -> (['timeSeriesResponse']['timeSeries']['values']['value'])
+            return_obj: python dictionary that will store the data from teh GetValues response.
+        Returns:
+            return_obj: python dictionary containing data from the GetValues response.
+        """
         #UTC TIME
         try:
             timeUTC = k['@dateTimeUTC']
@@ -257,6 +288,34 @@ class Auxiliary():
         return return_obj
 
     def _getValuesHelper2(self,times_series,return_object):
+        """
+        Helper function to parse and store the content of the dictionary response from the GetValues at the level (['timeSeriesResponse']['timeSeries']['values']['value'])
+        into a new dictionary. The data stored into this dictionary from the GetValues response is the following:
+            - siteName: Name of the site.
+            - siteCode: Code of the site.
+            - network: observation network that the site belongs to
+            - siteID: ID of the site
+            - latitude: latitude of the site
+            - longitude: longitude of the site
+            - variableName: Name of the variable
+            - unitName: Name of the units of the values associated to the given variable and site
+            - unitAbbreviation: unit abbreviation of the units from the values associated to the given variable and site
+            - dataType: Type of data
+            - noDataValue: value associated to lack of data.
+            - isRegular: Boolean to indicate whether the observation measurements and collections regular
+            - timeSupport: Boolean to indicate whether the values support time
+            - timeUnitName: Time Units associated to the observation
+            - timeUnitAbbreviation: Time units abbreviation
+            - sampleMedium: the sample medium, for example water, atmosphere, soil.
+            - speciation: The chemical sample speciation (as nitrogen, as phosphorus..)
+
+        This function is only stores half of the reponse from the GetValues method, and it is usually used with the _getValuesHelper function that stores the other half of the function.
+        Args:
+            times_series: GetValues response dictionary at level -> (['timeSeriesResponse']['timeSeries']['values']['value'])
+            return_object: python dictionary that will store the data from teh GetValues response.
+        Returns:
+            return_object: python dictionary containing data from the GetValues response.
+        """
         try:
             try:
 
@@ -407,6 +466,50 @@ class Auxiliary():
         return return_object
 
     def _getSiteInfoHelper(self,object_siteInfo,object_methods):
+        """
+        Helper function to parse and store the content of two dictionaries:
+
+            - object_methods = GetSiteInfoResponse ['sitesResponse']['site']['seriesCatalog']['series']
+            - object_siteInfo = GetSiteInfoResponse ['sitesResponse']['site']['siteInfo']
+
+        Both dictionaries containing the response from the GetSiteInfo at store the following content into a new dictionary:
+
+            - siteName: Name of the site.
+            - siteCode: Code of the site.
+            - network: observation network that the site belongs to
+            - fullVariableCode: The full variable code, for example: SNOTEL:SNWD.Use this value as the variableCode parameter in GetValues().
+            - siteID: ID of the site
+            - latitude: latitude of the site
+            - longitude: longitude of the site
+            - variableName: Name of the variable
+            - unitName: Name of the units of the values associated to the given variable and site
+            - unitAbbreviation: unit abbreviation of the units from the values associated to the given variable and site
+            - dataType: Type of data
+            - noDataValue: value associated to lack of data.
+            - isRegular: Boolean to indicate whether the observation measurements and collections regular
+            - timeSupport: Boolean to indicate whether the values support time
+            - timeUnitName: Time Units associated to the observation
+            - timeUnitAbbreviation: Time units abbreviation
+            - sampleMedium: the sample medium, for example water, atmosphere, soil.
+            - speciation: The chemical sample speciation (as nitrogen, as phosphorus..)
+            - beginningDateTimeUTC: The UTC date and time of the first available
+            - EndDateTimeUTC: The UTC date and time of the last available
+            - beginningDateTime: The local date and time of the first available
+            - EndDateTime: The local date and time of the last available
+            - censorCode: The code for censored observations.  Possible values are nc (not censored), gt(greater than), lt (less than), nd (non-detect), pnq (present but not quantified)
+            - methodCode: The code of the method or instrument used for the observation
+            - methodID: The ID of the sensor or measurement method
+            - qualityControlLevelCode: The code of the quality control level.  Possible values are -9999(Unknown), 0 (Raw data), 1 (Quality controlled data), 2 (Derived products), 3 (Interpretedproducts), 4 (Knowledge products)
+            - qualityControlLevelID: The ID of the quality control level. Usually 0 means raw data and 1 means quality controlled data.
+            - sourceCode: The code of the data source.
+            - timeOffSet: The difference between local time and UTC time in hours.
+
+        Args:
+            object_siteInfo: Contains metadata associated to the site.
+            object_methods: Contains a list of <series>, which are unique combinations of site, variable and time intervals that specify a sequence of observations.
+        Returns:
+            return_obj: python dictionary containing data from the GetSiteInfo response.
+        """
         return_obj = {}
         try:
             # return_obj['siteName'] = object_siteInfo['siteName']
@@ -591,7 +694,31 @@ class Auxiliary():
         return return_obj
 
     def _getVariablesHelper(self,one_variable, return_object):
+        """
+        Helper function to parse and store the content of the GetValues response dictionary at the level:
 
+            - one_variable = GetVariablesResponse ['variablesResponse']['variables']['variable']
+
+        The dictionary containing the response from the GetValues method stores the following content into a new dictionary:
+
+            - variableName: Name of the variable
+            - unitName: Name of the units of the values associated to the given variable and site
+            - unitAbbreviation: unit abbreviation of the units from the values associated to the given variable and site
+            - noDataValue: value associated to lack of data.
+            - isRegular: Boolean to indicate whether the observation measurements and collections regular
+            - timeSupport: Boolean to indicate whether the values support time
+            - timeUnitName: Time Units associated to the observation
+            - timeUnitAbbreviation: Time units abbreviation
+            - sampleMedium: the sample medium, for example water, atmosphere, soil.
+            - speciation: The chemical sample speciation (as nitrogen, as phosphorus..)
+
+        Args:
+            one_variable: Contains metadata associated to the different variables of the site.
+            return_object: python dictionary that will store the data from the GetVariables response.
+
+        Returns:
+            return_object: python dictionary containing data from the GetVariables response.
+        """
         try:
             return_object['variableName'] = one_variable['variableName']
         except KeyError as ke:
@@ -660,7 +787,86 @@ class Auxiliary():
 
     # def return_option(self,return_object):
 
+    def _parseService(self,centralUrl):
+        """
+        Helper function to parse JSON data into a python dictionary. It is used in the WaterMLOperations GetWaterOneFlowServiceInfo() function. If the WaterOneFlow web service endpoint is
+        not accesible though the suds library.
+        Args:
+            centralUrl: URL from a WaterOneFlow web servicee to access a HIS catalog
+        Returns:
+            services: Dictionary from all the web services contained in the WaterOneFlow web service endpoint. The folllowing data is returned for each service:
+                - servURL: URL of the WaterOneFlow  web service
+                - Title: title of the WaterOneFlow  web service
+                - organization: supervising organization of the WaterOneFlow  web service
+                - aabstract: abstract of the WaterOneFlow  web service
+        """
+        url = centralUrl + "/GetWaterOneFlowServiceInfo"
+        # print(url)
+        response = urllib.request.urlopen(url)
+        # response = request.get(url)
+        data = response.read()
+        parse_xml = et.fromstring(data)
 
+        services = []
+        for item in parse_xml:
+            newService = {}
+
+            for child in item:
+                if child.tag == '{http://hiscentral.cuahsi.org/20100205/}servURL':
+                    newService['servURL'] = child.text
+                if child.tag == '{http://hiscentral.cuahsi.org/20100205/}Title':
+                    newService['Title'] = child.text
+                if child.tag == '{http://hiscentral.cuahsi.org/20100205/}organization':
+                    newService['organization'] = child.text
+                if child.tag == '{http://hiscentral.cuahsi.org/20100205/}aabstract':
+                    newService['aabstract'] = child.text
+
+            services.append(newService)
+
+        return services
+
+    def _giveServices(self,services,filter_serv=None):
+        # print("hola")
+        json_response = {}
+        hs_list = []
+        hs_list_notworking=[]
+        for i in services:
+            # print(i)
+            hs = {}
+            url = i['servURL']
+            if not url.endswith('?WSDL'):
+                url = url + "?WSDL"
+            title = i['Title']
+            description = "None was provided by the organiation in charge of the Web Service"
+            if 'aabstract' in i:
+                description = i['aabstract']
+            if filter_serv is not None:
+                if title in filter_serv:
+                    hs['url'] = url
+                    hs['title'] = title
+                    hs['description'] = description
+                    try:
+                        url_client = Client(url)
+                        hs_list.append(hs)
+                    except Exception as e:
+                        hs_list_notworking.append(hs)
+
+            else:
+                hs['url'] = url
+                hs['title'] = title
+                hs['description'] = description
+                try:
+                    url_client = Client(url)
+                    hs_list.append(hs)
+                except Exception as e:
+                    hs_list_notworking.append(hs)
+
+                    # error_list.append(hs)
+                # hs_list['servers'] = hs_list
+                # list['errors'] = error_list
+        json_response['working'] = hs_list
+        json_response['failed'] = hs_list_notworking
+        return json_response
 
 if __name__ == "__main__":
     print("Why are you running the wrapper class file?")
