@@ -49,7 +49,13 @@ class Auxiliary():
         Args:
             json: json object
         Returns:
-            hs_sites: Dictionary from all the sites of an specific URL
+            hs_sites: Dictionary from all the sites of an specific URL with the following data:
+                - latitude = The WGS84 latitude in decimal degrees
+                - longitude = The WGS84 longitude in decimal degrees
+                - site_name = The name of the site
+                - network = Network that the site belongs to
+                - sitecode = A short unique code of the site
+                - siteID = The site ID in the original database
         """
         hs_sites = []
         sites_object = None
@@ -108,7 +114,13 @@ class Auxiliary():
         Args:
             bbox: json object from belonging to the bounding box
         Returns:
-            hs_sites: Dictionary from all the sites of an specific URL
+            hs_sites: Dictionary from all the sites of an specific WaterOneFlow web service with the following data:
+                - latitude = The WGS84 latitude in decimal degrees
+                - longitude = The WGS84 longitude in decimal degrees
+                - site_name = The name of the site
+                - network = Network that the site belongs to
+                - sitecode = A short unique code of the site
+                - siteID = The site ID in the original database
         """
         hs_sites = []
 
