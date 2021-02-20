@@ -36,5 +36,5 @@ The following links will result useful to the users that want to contribute or e
    :name: mastertoc
    :caption: Contents:
 
-   WaterML Module Methods Definition<waterML>
-   About the BYU Hydroinformatics group <hydroinformatics>
+   WaterML Module Methods Definition <waterML>
+   About the BYU Hydroinformatics group<hydroinformatics>
