@@ -32,7 +32,7 @@ The following links will result useful to the users that want to contribute or e
 2) `Google Collaboratory Example <https://colab.research.google.com/drive/1R9T-cu1l7KgXcNU7wLGfcUhKOOY0Ltvg#scrollTo=axKiaVU1pjQe>`__
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :name: mastertoc
    :caption: Contents:
 
