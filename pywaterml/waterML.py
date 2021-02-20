@@ -25,22 +25,20 @@ class WaterMLOperations():
     This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services
 
     Args:
-        url: Endpoint that complies to the SOAP protocol
+        url: WaterOneFlow web service that complies to the SOAP protocol
     """
     def __init__(self,url = None):
         self.plugin = GetSoapsPlugin()
         self.url = url
         self.client = Client(url,plugins=[self.plugin], timeout= 500)
-        # settings = Settings(strict=False)
-        # self.client = Client(url, settings = settings)
         self.aux = Auxiliary()
 
     def AddService(self,url):
         """
-        Add a endpoint to the WaterMLOperations class. It can have any endpoint that uses the SOAP protocol.
+        Add a WaterOneFlow web service to the WaterMLOperations class. It can have any WaterOneFlow web service that uses the SOAP protocol.
 
         Args:
-            url: endpoint that complies to the SOAP protocol
+            url: WaterOneFlow web service that complies to the SOAP protocol
         Returns:
             None
         Example::
@@ -53,15 +51,15 @@ class WaterMLOperations():
             self.url = url
             self.client = Client(url, timeout= 500)
         else:
-            print("There is already an enpoint, if you want to change the endpoint try ChangeEndpoint() function")
+            print("There is already an enpoint, if you want to change the WaterOneFlow web service try ChangeEndpoint() function")
         pass
 
     def ChangeService(self,url):
         """
-        Change the endpoint of a WaterMLOperations class. The current endpoint can be changed by any endpoint that uses the SOAP protocol.
+        Change the WaterOneFlow web service of a WaterMLOperations class. The current WaterOneFlow web service can be changed by any WaterOneFlow web service that uses the SOAP protocol.
 
         Args:
-            url: endpoint that complies to the SOAP protocol
+            url: WaterOneFlow web service that complies to the SOAP protocol
 
         Returns:
             None
@@ -76,10 +74,25 @@ class WaterMLOperations():
             self.url = url
             self.client = Client(url, timeout= 500)
         else:
-            print("There is no endpoint, please before changing an endpoint add one with AddEndpoint() function")
+            print("There is no WaterOneFlow web service, please before changing an WaterOneFlow web service add one with AddEndpoint() function")
         pass
 
-    def AvailableServices(self, format = "json"):
+    def AvailableServices(self):
+        """
+        Give the WaterOneFlow web services that are available from a WaterOneFlow service containing a HIS catalog.
+
+        Args:
+            url: WaterOneFlow web service that complies to the SOAP protocol
+
+        Returns:
+            hs_services: available services in a given WaterOneFlow service containing a HIS catalog.
+
+        Example::
+
+            url_testing = "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-country/hiscentral.asmx"
+            water = WaterMLOperations(url = url_testing)
+            available_services = water.AvailableServices(url_testing)
+        """
         hs_services = {}
         if self.url:
             try:
@@ -97,7 +110,26 @@ class WaterMLOperations():
                 hs_services['broken'] = views['failed']
         return hs_services
 
-    def GetWaterOneFlowServicesInfo(self, format= "json"):
+    def GetWaterOneFlowServicesInfo(self):
+        """
+        Get all registered data services from a given WaterOneFlow Web service containing a HIS catalog. GetWaterOneFlowServiceInfo can be regarded as a special case of GetServicesInBox2, as the former requests the returns for the global area.
+        Args:
+            None
+
+        Returns:
+            A dictionary containing the following data for the different WaterOneFlow web services contained in the HIS catalog:
+                - servURL: URL of the WaterOneFlow  web service
+                - Title: title of the WaterOneFlow  web service
+                - organization: supervising organization of the WaterOneFlow  web service
+                - aabstract: abstract of the WaterOneFlow  web service
+
+        Example::
+
+            url_testing = "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-country/hiscentral.asmx"
+            water = WaterMLOperations(url = url_testing)
+            services = water.GetWaterOneFlowServiceInfo()
+
+        """
         try:
             service_info = client.service.GetWaterOneFlowServiceInfo()
             services = service_info.ServiceInfo
@@ -106,16 +138,22 @@ class WaterMLOperations():
             services = self.aux._parseService(self.url)
             return services
 
-
     def GetSites(self, format="json"):
         """
-        Get all the sites from a endpoint that complies to the SOAP protocol. The GetSites() function is similar to the GetSites() WaterML function.
+        Get all the sites from a WaterOneFlow web service that complies to the SOAP protocol. The GetSites() function is similar to the GetSites() WaterML function.
 
         Args:
-            format: format of the response (json or waterML)
+            format: format of the response (json, csv or waterML)
 
         Returns:
-            An array of objects that represent each site. The structure of the response is the following
+            A json, csv or waterML file containing the following data for all the differet sites:
+                - latitude = The WGS84 latitude in decimal degrees
+                - longitude = The WGS84 longitude in decimal degrees
+                - site_name = The name of the site
+                - network = Network that the site belongs to
+                - sitecode = A short unique code of the site
+                - siteID = The site ID in the original database
+                - fullSiteCode = full site code of the current site. The fullSiteCode of every site is the following string: "network: sitecode"
 
         Example::
 
@@ -124,21 +162,7 @@ class WaterMLOperations():
             sites = water.GetSites()
         """
         try:
-            print(self.client.service)
-            try:
-                sites = self.client.service.GetSites('[:]')
-                # sites = self.client.service.GetSites2('[:]')
-            except Exception as e:
-                print(e)
-                # raw_get = self.plugin.last_received_raw
-                # new_raws = raw_get.split(">")
-                # soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
-                # soap_namespace = soap_namespace.split('"')[1]
-                # version =  new_raws[0].split(" ")[1]
-                # binding.envns=('SOAP-ENV', soap_namespace)
-                # sites = self.client.service.GetSites('[:]')
-                # binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
-            # print(sites)
+            sites = self.client.service.GetSites('[:]')
             if format is "waterml":
                 return sites
             sites_json={}
@@ -175,18 +199,24 @@ class WaterMLOperations():
                 # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
                 return csv_sites
 
-
     def GetSitesByBoxObject(self,ext_list, inProjection, format="json"):
         """
-        Get all the sites from a bounding box from a endpoint that complies to the SOAP protocol. The GetSitesByBoxObject() function is similar to the GetSitesByBoxObject() WaterML function.
+        Get all the sites from a bounding box from a WaterOneFlow web service that complies to the SOAP protocol. The GetSitesByBoxObject() function is similar to the GetSitesByBoxObject() WaterML function.
 
         Args:
             ext_list: Array of bounding box coordinates in a given projection.
             inProjection: Projection from the array of coordinates of the given bounding box.
-            format: format of the response (json or waterML)
+            format: format of the response (json, csv or waterML)
 
         Returns:
-            An array of objects that represent each site. The structure of the response is the following
+            A json, csv or waterML file containing the following data for all the differet sites in the selected boundingbox
+                - latitude = The WGS84 latitude in decimal degrees
+                - longitude = The WGS84 longitude in decimal degrees
+                - site_name = The name of the site
+                - network = Network that the site belongs to
+                - sitecode = A short unique code of the site
+                - siteID = The site ID in the original database
+                - fullSiteCode = full site code of the current site. The fullSiteCode of every site is the following string: "network: sitecode"
 
         Example::
 
@@ -239,18 +269,25 @@ class WaterMLOperations():
 
     def GetVariables(self, format="json"):
         """
-        Get all the variables from a endpoint that complies to the SOAP protocol. GetVariables() function is similar to the GetVariables() WaterML function
+        Get variables meatada from a WaterOneFlow web service that complies to the SOAP protocol. GetVariables() function is similar to the GetVariables() WaterML function
 
         Args:
-            format: format of the response (json or waterML)
-
+            format: format of the response (json, csv or waterML)
         Returns:
-            An array of strings representing the variables from the enpoint. The structure of the response is the following
+            A json, csv or waterML file containing the following data of the variables from the WaterOneFlow web service:
 
-            ['Water depth, averaged', 'Discharge', 'Velocity']
+                - variableName: Name of the variable
+                - unitName: Name of the units of the values associated to the given variable and site
+                - unitAbbreviation: unit abbreviation of the units from the values associated to the given variable and site
+                - noDataValue: value associated to lack of data.
+                - isRegular: Boolean to indicate whether the observation measurements and collections regular
+                - timeSupport: Boolean to indicate whether the values support time
+                - timeUnitName: Time Units associated to the observation
+                - timeUnitAbbreviation: Time units abbreviation
+                - sampleMedium: the sample medium, for example water, atmosphere, soil.
+                - speciation: The chemical sample speciation (as nitrogen, as phosphorus..)
 
         Example::
-
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
             variables = water.GetVariables()
@@ -277,7 +314,7 @@ class WaterMLOperations():
 
             variables_json = json.loads(variables_dict_object)
             array_variables = variables_json['variablesResponse']['variables']['variable']
-            print(array_variables)
+            # print(array_variables)
             if isinstance(array_variables,type([])):
                 for one_variable in array_variables:
                     return_object = {}
@@ -316,43 +353,48 @@ class WaterMLOperations():
         Args:
             site_full_code: A string representing the full code of the given site following the structure
                 - site_full_code = site network + ":" + site code
+            format: format of the response (json, csv or waterML)
+
         Returns:
-            An array of objects that represent information for each site variable. Each object has the following properties
 
-            - name: variable name
-            - code: varibale code
-            - count: time series data points for the given variable
-            - methodID: method for data extraction for the given variable
-            - description: object containing different properties for the description of the given variable in each site.
-                - organization: organization responsible for the data extraction of the site.
-                - sourceDescription: description of the source from the data extraction of the site
-                - citation: site citation for all the sites
-            - timeInterval
-                - beginDateTime: beginning date time for the time series of the variable
-                - endDateTime: end date time for the time series of the variable
-                - beginDateTimeUTC: beginning date time for the time series of the variable in UTC format
-                - endDateTimeUTC: end date time for the time series of the variable in UTC format
-
-            The structure of the response is the following
-                - name
-                - code
-                - count
-                - description
-                - organization
-                - sourceDescription
-                - citation
-                - timeInterval
-
+            A json, csv or waterML file containing the following data of the seleceted site from the WaterOneFlow web service:
+                - siteName: Name of the site.
+                - siteCode: Code of the site.
+                - network: observation network that the site belongs to
+                - fullVariableCode: The full variable code, for example: SNOTEL:SNWD.Use this value as the variableCode parameter in GetValues().
+                - siteID: ID of the site
+                - latitude: latitude of the site
+                - longitude: longitude of the site
+                - variableName: Name of the variable
+                - unitName: Name of the units of the values associated to the given variable and site
+                - unitAbbreviation: unit abbreviation of the units from the values associated to the given variable and site
+                - dataType: Type of data
+                - noDataValue: value associated to lack of data.
+                - isRegular: Boolean to indicate whether the observation measurements and collections regular
+                - timeSupport: Boolean to indicate whether the values support time
+                - timeUnitName: Time Units associated to the observation
+                - timeUnitAbbreviation: Time units abbreviation
+                - sampleMedium: the sample medium, for example water, atmosphere, soil.
+                - speciation: The chemical sample speciation (as nitrogen, as phosphorus..)
+                - beginningDateTimeUTC: The UTC date and time of the first available
+                - EndDateTimeUTC: The UTC date and time of the last available
+                - beginningDateTime: The local date and time of the first available
+                - EndDateTime: The local date and time of the last available
+                - censorCode: The code for censored observations.  Possible values are nc (not censored), gt(greater than), lt (less than), nd (non-detect), pnq (present but not quantified)
+                - methodCode: The code of the method or instrument used for the observation
+                - methodID: The ID of the sensor or measurement method
+                - qualityControlLevelCode: The code of the quality control level.  Possible values are -9999(Unknown), 0 (Raw data), 1 (Quality controlled data), 2 (Derived products), 3 (Interpretedproducts), 4 (Knowledge products)
+                - qualityControlLevelID: The ID of the quality control level. Usually 0 means raw data and 1 means quality controlled data.
+                - sourceCode: The code of the data source.
+                - timeOffSet: The difference between local time and UTC time in hours.
 
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
-            firstSiteCode = sites[0]['sitecode']
-            network = sites[0]['network']
-            site_full_code = network +":"+firstSiteCode
-            siteInfo = water.GetSiteInfo(site_full_code)
+            firstSiteFullSiteCode = sites[0]['fullSiteCode']
+            siteInfo = water.GetSiteInfo(firstSiteFullSiteCode)
         """
         try:
             site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
@@ -422,39 +464,55 @@ class WaterMLOperations():
         Args:
             site_full_code: A string representing the full code of the given site following the structure
                 - site_full_code = site network + ":" + site code
-
             variable_full_code: A string representing the full code of the given variable following the structure
                 - variable_full_code = site network + ":" + variable code
-
-            methodID: method for data extraction for the given variable
             start_date: beginning date time for the time series of the variable
             end_date: end date time for the time series of the variable
+            methodCode: method code for data extraction for the given variable
+            qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.
+            To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
+            then the observations in the output data.frame won’t befiltered by quality control level code.
+            format: format of the response (json, csv or waterML)
 
         Returns:
-            An object containing properties for the time series values for the given variable in the given site. The structure of the response is the following
+            An object containing properties for the time series values for the given variable in the given site. The object has the following data:
+                - siteName: Name of the site.
+                - siteCode: Code of the site.
+                - network: observation network that the site belongs to
+                - siteID: ID of the site
+                - latitude: latitude of the site
+                - longitude: longitude of the site
+                - variableName: Name of the variable
+                - unitName: Name of the units of the values associated to the given variable and site
+                - unitAbbreviation: unit abbreviation of the units from the values associated to the given variable and site
+                - dataType: Type of data
+                - noDataValue: value associated to lack of data.
+                - isRegular: Boolean to indicate whether the observation measurements and collections regular
+                - timeSupport: Boolean to indicate whether the values support time
+                - timeUnitName: Time Units associated to the observation
+                - timeUnitAbbreviation: Time units abbreviation
+                - sampleMedium: the sample medium, for example water, atmosphere, soil.
+                - speciation: The chemical sample speciation (as nitrogen, as phosphorus..)
+                - dateTimeUTC: The UTC time of the observation.
+                - dateTime: The local date/time of the observation.
+                - dataValue: Data value from the observation.
+                - censorCode: The code for censored observations.  Possible values are nc (not censored), gt(greater than), lt (less than), nd (non-detect), pnq (present but not quantified)
+                - methodCode: The code of the method or instrument used for the observation
+                - qualityControlLevelCode: The code of the quality control level.  Possible values are -9999(Unknown), 0 (Raw data), 1 (Quality controlled data), 2 (Derived products), 3 (Interpretedproducts), 4 (Knowledge products)
+                - sourceCode: The code of the data source
+                - timeOffSet: The difference between local time and UTC time in hours.
 
-                - variable: variable name
-                - unit: units of the values
-                - title: title of the time series values
-                - values: an array of arrays containing [date, value]
-
-            An example of the response is:
-            {'variable': 'Water depth, averaged', 'unit': 'm', 'title': 'Water depth, averaged (m) vs Time', 'values': [['2013-08-03 05:00:00', 0.1815], ['2013-09-07 05:00:00', 0.187], ['2013-10-05 05:00:00', 0.226], ['2013-11-02 05:00:00', 0.1535], ['2013-12-07 05:00:00', 0.231], ['2014-01-11 05:00:00', 0.15525], ['2014-02-01 05:00:00', 0.124875], ['2014-03-01 05:00:00', 0.0], ['2014-04-05 05:00:00', 0.1145], ['2014-05-03 05:00:00', 0.0877], ['2014-06-07 05:00:00', 0.0], ['2014-07-05 05:00:00', 0.09375], ['2014-09-06 05:00:00', 0.12175], ['2014-10-04 05:00:00', 0.10325], ['2014-11-01 05:00:00', 0.1693], ['2014-12-06 05:00:00', 0.187], ['2015-01-03 05:00:00', 0.1285], ['2015-02-07 05:00:00', 0.125], ['2015-03-07 05:00:00', 0.159], ['2015-04-04 05:00:00', 0.14]]}
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
-            firstSiteCode = sites[0]['sitecode']
-            network = sites[0]['network']
-            site_full_code = network +":"+firstSiteCode
-            siteInfo = water.GetSiteInfo(site_full_code)
-            firstVariableCode = siteInfo[0]['code']
-            variable_full_code = network + ":" + firstVariableCode
-            methodID = siteInfo[0]['methodID']
-            start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-            end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
-            variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+            firstSiteFullSiteCode = sites[0]['fullSiteCode']
+            siteInfo = water.GetSiteInfo(firstSiteFullSiteCode)
+            firstVariableFullCode = siteInfo['siteInfo'][0]['fullVariableCode']
+            start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
+            end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
+            variableResponse= water.GetValues(site_full_code, variable_full_code, start_date, end_date)
         """
         try:
             values = self.client.service.GetValues(site_full_code, variable_full_code, start_date, end_date, "")
@@ -574,7 +632,7 @@ class WaterMLOperations():
 
     def GetSitesByVariable(self,specific_variables_codes,cookiCutter = None, format='json'):
         """
-        Get the specific sites according to a variable search array from a endpoint that complies to the SOAP protocol. The GetSitesByVariable() is an addition to the WaterML functions
+        Get the specific sites according to a variable search array from a WaterOneFlow web service that complies to the SOAP protocol. The GetSitesByVariable() is an addition to the WaterML functions
         because it allows the user to retrieve sites that contains the epecific site/s.
 
         Args
@@ -582,19 +640,30 @@ class WaterMLOperations():
             specific_variables: An array of strings representing a list of variables that will serve as a filter when retrieving sites.
             cookiCutter: A list containing the different information from each site. It can be the response of the GetSites() or GetSitesByBoxObject() functions.
             if the cookiCutter is not specified, the function will filter all the functions calling GetSites() internally.
+            format: format of the response (json, csv or waterML)
 
         Returns:
 
-            An array of objects that represent each site. The structure of the response is the following
+            An array of objects that represent each site. The structure of the response is the following:
 
-            [{'sitename': 'Río Toro Negro', 'latitude': '18.28559', 'longitude': '-66.4903', 'sitecode': 'Rio_Toro_Negro', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Quebrada Batista', 'latitude': '18.19699', 'longitude': '-66.32992', 'sitecode': 'Quebrada_Batista', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}, {'sitename': 'Río Grande de Manatí', 'latitude': '18.2144', 'longitude': '-66.28665', 'sitecode': 'Rio_Grande_de_Manati', 'network': 'Para_La_Naturaleza', 'service': 'SOAP'}]
+                - latitude = The WGS84 latitude in decimal degrees
+                - longitude = The WGS84 longitude in decimal degrees
+                - site_name = The name of the site
+                - network = Network that the site belongs to
+                - sitecode = A short unique code of the site
+                - siteID = The site ID in the original database
+                - fullSiteCode = full site code of the current site. The fullSiteCode of every site is the following string: "network: sitecode"
+
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
-            sites = water.GetSites()
-            variables = water.GetVariables()
-            variables_to_filter = [variables[0]]
+            sites = water.GetSites()['sites']
+            variables = water.GetVariables()['variables']
+
+            # choose the first variable to filter#
+
+            variables_to_filter = [variables[0][variableCode]]
             sitesFiltered = water.GetSitesByVariable(variables_to_filter,sites)
         """
         sites = []
@@ -656,33 +725,23 @@ class WaterMLOperations():
 
             GetValuesResponse: response from the GetValues() function
             type: type of interpolation to be performed: mean, backward, forward
+            format: format of the response (json, csv or waterML)
 
         Returns:
 
-            An object containing properties for the time series values for the given variable in the given site. The structure of the response is the following
+            An array containing the interpolation chosen by the user (backward, mean, forward)
 
-                - variable: variable name
-                - unit: units of the values
-                - title: title of the time series values
-                - values: an array of arrays containing [date, value]
-
-            An example of the response is:
-            {'variable': 'Water depth, averaged', 'unit': 'm', 'title': 'Water depth, averaged (m) vs Time', 'values': [['2013-08-03 05:00:00', 0.1815], ['2013-09-07 05:00:00', 0.187], ['2013-10-05 05:00:00', 0.226], ['2013-11-02 05:00:00', 0.1535], ['2013-12-07 05:00:00', 0.231], ['2014-01-11 05:00:00', 0.15525], ['2014-02-01 05:00:00', 0.124875], ['2014-03-01 05:00:00', 0.0], ['2014-04-05 05:00:00', 0.1145], ['2014-05-03 05:00:00', 0.0877], ['2014-06-07 05:00:00', 0.0], ['2014-07-05 05:00:00', 0.09375], ['2014-09-06 05:00:00', 0.12175], ['2014-10-04 05:00:00', 0.10325], ['2014-11-01 05:00:00', 0.1693], ['2014-12-06 05:00:00', 0.187], ['2015-01-03 05:00:00', 0.1285], ['2015-02-07 05:00:00', 0.125], ['2015-03-07 05:00:00', 0.159], ['2015-04-04 05:00:00', 0.14]]}
         Example::
 
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
-            firstSiteCode = sites[0]['sitecode']
-            network = sites[0]['network']
-            site_full_code = network +":"+firstSiteCode
-            siteInfo = water.GetSiteInfo(site_full_code)
-            firstVariableCode = siteInfo[0]['code']
-            variable_full_code = network + ":" + firstVariableCode
-            methodID = siteInfo[0]['methodID']
-            start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-            end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
-            variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+            firstSiteFullSiteCode = sites[0]['fullSiteCode']
+            siteInfo = water.GetSiteInfo(firstSiteFullSiteCode)
+            firstVariableFullCode = siteInfo['siteInfo'][0]['fullVariableCode']
+            start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
+            end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
+            variableResponse= water.GetValues(site_full_code, variable_full_code, start_date, end_date)
             interpolationData = water.GetInterpolation(variableResponse, 'mean')
         """
         mean_interpolation = WaterAnalityca._Interpolate(GetValuesResponse)
@@ -695,13 +754,17 @@ class WaterMLOperations():
         Args:
 
             GetValuesResponse: response from the GetValues() function. If this is given the others paramters do not need to be given.
-            site_full_code: A string representing the full code of the given site following the structure:
-                -site_full_code = site network + ":" + site code
-            variable_full_code: A string representing the full code of the given variable following the structure:
-                -variable_full_code = site network + ":" + variable code
-            methodID: method for data extraction for the given variable
+            site_full_code: A string representing the full code of the given site following the structure
+                - site_full_code = site network + ":" + site code
+            variable_full_code: A string representing the full code of the given variable following the structure
+                - variable_full_code = site network + ":" + variable code
             start_date: beginning date time for the time series of the variable
             end_date: end date time for the time series of the variable
+            methodCode: method code for data extraction for the given variable
+            qualityControlLevelCode: The ID of the quality control level. Typically 0 is used for raw dataand 1 is used for quality controlled data.
+            To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
+            then the observations in the output data.frame won’t befiltered by quality control level code.
+
 
         Returns:
 
@@ -713,19 +776,14 @@ class WaterMLOperations():
                 - values: an array of arrays containing [date, value]
         Example::
 
-            url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
-            firstSiteCode = sites[0]['sitecode']
-            network = sites[0]['network']
-            site_full_code = network +":"+firstSiteCode
-            siteInfo = water.GetSiteInfo(site_full_code)
-            firstVariableCode = siteInfo[0]['code']
-            variable_full_code = network + ":" + firstVariableCode
-            methodID = siteInfo[0]['methodID']
-            start_date = siteInfo[0]['timeInterval']['beginDateTime'].split('T')[0]
-            end_date = siteInfo[0]['timeInterval']['endDateTime'].split('T')[0]
-            variableResponse= water.GetValues(site_full_code, variable_full_code, methodID, start_date, end_date)
+            firstSiteFullSiteCode = sites[0]['fullSiteCode']
+            siteInfo = water.GetSiteInfo(firstSiteFullSiteCode)
+            firstVariableFullCode = siteInfo['siteInfo'][0]['fullVariableCode']
+            start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
+            end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
+            variableResponse= water.GetValues(site_full_code, variable_full_code, start_date, end_date)
             monthly_averages = water.getMonthlyAverage(variableResponse)
         """
         if GetValuesResponse is not None:
@@ -742,10 +800,14 @@ class WaterMLOperations():
 
         Args:
 
-            sites: response from the GetSites() function. Performance of the fuction can be given if the resuls of the GetSitesByVariable() function is passed instead
-            variableCode: string representing the variable code for the time series clusters of the given sites
+            sites: response from the GetSites() function. Performance of the fuction can be given if the resuls of the GetSitesByVariable() function is passed instead.
+            variableCode: string representing the variable code for the time series clusters of the given sites.
             n_clusters: integer representing the number of cluster to form.
-
+            methodCode: method code for data extraction for the given variable.
+            qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.
+            To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
+            then the observations in the output data.frame won’t befiltered by quality control level code.
+            timeUTC: Boolean to use the UTC time instead of the time of the observation.
         Returns:
 
             An array of arrays of the following structure [monthly averages array, cluster_id]
@@ -758,11 +820,9 @@ class WaterMLOperations():
             url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
             water = WaterMLOperations(url = url_testing)
             sites = water.GetSites()
-            firstSiteCode = sites[0]['sitecode']
-            network = sites[0]['network']
-            site_full_code = network +":"+firstSiteCode
-            siteInfo = water.GetSiteInfo(site_full_code)
-            clusters = water.getClustersMonthlyAvg(sites,siteInfo[0]['name'])
+            firstSiteFullSiteCode = sites[0]['fullSiteCode']
+            siteInfo = water.GetSiteInfo(firstSiteFullSiteCode)['siteInfo']
+            clusters = water.getClustersMonthlyAvg(sites,siteInfo[0]['variableCode'])
         """
         timeseries = []
         timeSerie_cluster=[]
