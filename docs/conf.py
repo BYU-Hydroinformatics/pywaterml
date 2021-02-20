@@ -22,7 +22,7 @@ copyright = '2020, Elkin Giovanni Romero Bustamante'
 author = 'Elkin Giovanni Romero Bustamante'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.12.dev1'
+release = 'v1.1.24'
 master_doc = 'index'
 # -- General configuration ---------------------------------------------------
 
