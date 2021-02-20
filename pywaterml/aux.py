@@ -56,6 +56,7 @@ class Auxiliary():
                 - network = Network that the site belongs to
                 - sitecode = A short unique code of the site
                 - siteID = The site ID in the original database
+                - fullSiteCode = full site code of the current site. The fullSiteCode of every site is the following string: "network: sitecode"
         """
         hs_sites = []
         sites_object = None
@@ -121,6 +122,8 @@ class Auxiliary():
                 - network = Network that the site belongs to
                 - sitecode = A short unique code of the site
                 - siteID = The site ID in the original database
+                - fullSiteCode = full site code of the current site. The fullSiteCode of every site is the following string: "network: sitecode"
+
         """
         hs_sites = []
 
@@ -143,7 +146,7 @@ class Auxiliary():
                     hs_json["sitecode"] = sitecode
                     hs_json["network"] = network
                     hs_json["siteID"] = siteID
-
+                    hs_json["fullSiteCode"] = network +":" + sitecode
                     # hs_json["service"] = "SOAP"
                     hs_sites.append(hs_json)
             else:
@@ -163,6 +166,8 @@ class Auxiliary():
                 hs_json["sitecode"] = sitecode
                 hs_json["network"] = network
                 hs_json["siteID"] = siteID
+                hs_json["fullSiteCode"] = network +":" + sitecode
+
                 # hs_json["service"] = "SOAP"
                 hs_sites.append(hs_json)
         except (AssertionError, KeyError) as error:
@@ -200,6 +205,7 @@ class Auxiliary():
         """
         Helper function to parse and store the content of the dictionary response from the GetValues at the level (['timeSeriesResponse']['timeSeries']['values']['value'])
         into a new dictionary. The data stored into this dictionary from the GetValues response is the following:
+
             - dateTimeUTC: The UTC time of the observation.
             - dateTime: The local date/time of the observation.
             - dataValue: Data value from the observation.
