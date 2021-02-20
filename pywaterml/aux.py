@@ -317,8 +317,7 @@ class Auxiliary():
 
     def _getValuesHelper2(self,times_series,return_object):
         """
-        Helper function to parse and store the content of the dictionary response from the GetValues at the level (['timeSeriesResponse']['timeSeries']['values']['value'])
-        into a new dictionary. The data stored into this dictionary from the GetValues response is the following:
+        Helper function to parse and store the content of the dictionary response from the GetValues at the level (['timeSeriesResponse']['timeSeries']['values']['value']) into a new dictionary. The data stored into this dictionary from the GetValues response is the following:
             - siteName: Name of the site.
             - siteCode: Code of the site.
             - network: observation network that the site belongs to

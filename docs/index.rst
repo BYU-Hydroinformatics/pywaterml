@@ -32,9 +32,11 @@ The following links will result useful to the users that want to contribute or e
 2) `Google Collaboratory Example <https://colab.research.google.com/drive/1R9T-cu1l7KgXcNU7wLGfcUhKOOY0Ltvg#scrollTo=axKiaVU1pjQe>`__
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :name: mastertoc
    :caption: Contents:
 
-   WaterML Module Methods Definition <waterML>
-   About the BYU Hydroinformatics group<hydroinformatics>
+   WaterML Module Methods Information <waterML>
+   Auxiliary Module Methods Information <aux>
+   WaterAnalityca Module Methods Information <analitica>
+   About the BYU Hydroinformatics group <hydroinformatics>
