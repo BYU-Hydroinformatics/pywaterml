@@ -1,13 +1,9 @@
 from suds.client import Client
-from suds.xsd.doctor import Import, ImportDoctor
 import urllib.request
 import urllib.error
 import urllib.parse
-
-# https://stackoverflow.com/questions/403980/i-am-confused-about-soap-namespaces
 import json
 import xmltodict
-from bs4 import BeautifulSoup
 from json import dumps, loads
 from pywaterml.aux import Auxiliary, GetSoapsPlugin
 from pywaterml.analyzeData import WaterAnalityca
@@ -18,8 +14,6 @@ from datetime import datetime
 from tslearn.metrics import dtw
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series, to_time_series_dataset
-from suds.bindings import binding
-# from zeep import Client, Settings
 class WaterMLOperations():
     """
     This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services
