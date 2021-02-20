@@ -3,11 +3,6 @@
 import sys
 sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
 from pywaterml.waterML import WaterMLOperations
-from tslearn.metrics import dtw
-from tslearn.clustering import TimeSeriesKMeans
-from tslearn.utils import to_time_series, to_time_series_dataset
-import pandas as pd
-import numpy as np
 import time
 
 url_testing = [

@@ -1,8 +1,5 @@
 from pywaterml.waterML import WaterMLOperations
 import time
-url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
-water = WaterMLOperations(url = url_testing)
-
 
 
 url_testing = [
