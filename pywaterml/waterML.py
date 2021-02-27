@@ -682,7 +682,7 @@ class WaterMLOperations():
             except Exception as ke:
                 if format is "json":
                     json_response = {}
-                    json_response['sites'] = sites
+                    json_response['sites'] = new_sites
                     return json_response
 
                 elif format is "csv":
@@ -696,7 +696,7 @@ class WaterMLOperations():
                 # print("site does not contain series")
         if format is "json":
             json_response = {}
-            json_response['sites'] = sites
+            json_response['sites'] = new_sites
             # print(json_response)
             return json_response
 
