@@ -37,6 +37,6 @@ The following links will result useful to the users that want to contribute or e
    :caption: Contents:
 
    WaterML Module Methods Information <waterML>
-   Auxiliary Module Methods Information <aux>
+   Auxiliary Module Methods Information <auxiliaryMod>
    WaterAnalityca Module Methods Information <analitica>
    About the BYU Hydroinformatics group <hydroinformatics>
