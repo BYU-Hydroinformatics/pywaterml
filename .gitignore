@@ -7,3 +7,4 @@ __pycache__
 .pypirc
 .gitattributes
 _build
+*.pyc
