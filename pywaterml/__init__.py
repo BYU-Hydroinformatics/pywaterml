@@ -1,4 +1,4 @@
-import pywaterml.aux
+import pywaterml.auxiliaryMod
 import pywaterml.analyzeData
 import pywaterml.waterML
 

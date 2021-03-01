@@ -42,6 +42,9 @@ requirements:
 test:
   imports:
     - pywaterml
+    - pywaterml.waterML
+    - pywaterml.auxiliaryMod
+    - pywaterml.analyzeData
 
 about:
   home: "https://github.com/romer8/pywaterml"

@@ -5,7 +5,7 @@ import urllib.parse
 import json
 import xmltodict
 from json import dumps, loads
-from pywaterml.aux import Auxiliary, GetSoapsPlugin
+from pywaterml.auxiliaryMod import Auxiliary, GetSoapsPlugin
 from pywaterml.analyzeData import WaterAnalityca
 from pyproj import Proj, transform
 import xml.etree.ElementTree as ET
