@@ -1,22 +1,21 @@
 from setuptools import setup
 import versioneer
 
-with open("README.md", "r") as readme:
-    long_description = readme.read()
+# with open("README.md", "r") as readme:
+#     long_description = readme.read()
+#
+# with open('requirements.txt', 'r') as req:
+#     requirements = req.read().splitlines()
 
-with open('requirements.txt', 'r') as req:
-    requirements = req.read().splitlines()
-
-# requirements = [
-#     "xmltodict",
-#     "pandas",
-#     "numpy",
-#     "owslib",
-#     # "suds-py3",
-#     "suds-jurko",
-#     "scikit-learn==0.22",
-#     "tslearn",
-# ]
+requirements = [
+    "xmltodict",
+    "pandas",
+    "numpy",
+    "owslib",
+    "suds-jurko",
+    "scikit-learn==0.22",
+    "tslearn",
+]
 
 setup(
     name='pywaterml',
@@ -25,8 +24,8 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
+    # long_description=long_description,
+    # long_description_content_type="text/markdown",
     license='BSD 3-Clause',
     license_family='BSD',
     author="Elkin Giovanni Romero Bustamante",
