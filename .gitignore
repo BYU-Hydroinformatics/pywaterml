@@ -3,7 +3,7 @@ pywaterml.egg-info
 dist
 build.sh
 bld.bat
-*__pycache__
+__pycache__/
 .pypirc
 .gitattributes
 _build
