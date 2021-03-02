@@ -1,16 +1,19 @@
 from setuptools import setup
 import versioneer
 
-requirements = [
-    "xmltodict",
-    "pandas",
-    "numpy",
-    "owslib",
-    # "suds-py3",
-    "suds-jurko",
-    "scikit-learn==0.22",
-    "tslearn",
-]
+with open('requirements.txt', 'r') as req:
+    requirements = req.read().splitlines()
+
+# requirements = [
+#     "xmltodict",
+#     "pandas",
+#     "numpy",
+#     "owslib",
+#     # "suds-py3",
+#     "suds-jurko",
+#     "scikit-learn==0.22",
+#     "tslearn",
+# ]
 
 setup(
     name='pywaterml',
