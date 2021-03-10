@@ -15,6 +15,8 @@ from tslearn.metrics import dtw
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series, to_time_series_dataset
 
+from suds.bindings import binding
+
 class WaterMLOperations():
     """
     This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services

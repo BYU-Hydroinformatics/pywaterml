@@ -275,28 +275,28 @@ class Auxiliary():
             value = float(str(k['#text']))
             return_obj['dataValue'] = value
         except KeyError as ke:
-            return_obj['dataValue'] = "No Data provided"
+            return_obj['dataValue'] = "No Data Provided"
 
         #@censorCode
         try:
             censorCode = k['@censorCode']
             return_obj['censorCode'] = censorCode
         except KeyError as ke:
-            return_obj['censorCode'] = "No Data provided"
+            return_obj['censorCode'] = "No Data Provided"
 
         #methodCode
         try:
             methodCode = k['@methodCode']
             return_obj['methodCode'] = methodCode
         except KeyError as ke:
-            return_obj['methodCode']= "No Data provided"
+            return_obj['methodCode']= "No Data Provided"
 
         #qualityControlLevel
         try:
             qualityControlLevelCode= k['@qualityControlLevelCode']
             return_obj['qualityControlLevelCode'] = qualityControlLevelCode
         except KeyError as ke:
-            return_obj['qualityControlLevelCode'] = "No Data provided"
+            return_obj['qualityControlLevelCode'] = "No Data Provided"
 
         #SourceCode
         try:
@@ -304,14 +304,14 @@ class Auxiliary():
             return_obj['sourceCode'] = sourceCode
 
         except KeyError as ke:
-            return_obj['sourceCode'] = "No Data provided"
+            return_obj['sourceCode'] = "No Data Provided"
 
         #TimeOffSet
         try:
             timeOffSet = k['@timeOffset']
             return_obj['timeOffSet'] = timeOffSet
         except KeyError as ke:
-            return_obj['timeOffset'] = "No Data provided"
+            return_obj['timeOffset'] = "No Data Provided"
 
         return return_obj
 
@@ -827,10 +827,10 @@ class Auxiliary():
                 - organization: supervising organization of the WaterOneFlow  web service
                 - aabstract: abstract of the WaterOneFlow  web service
         """
-        url = centralUrl + "/GetWaterOneFlowServiceInfo"
+        url_trim = centralUrl.split("?WSDL")[0]
+        url = url_trim + "/GetWaterOneFlowServiceInfo"
         # print(url)
         response = urllib.request.urlopen(url)
-        # response = request.get(url)
         data = response.read()
         parse_xml = et.fromstring(data)
 
