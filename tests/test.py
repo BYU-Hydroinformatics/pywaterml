@@ -1,13 +1,14 @@
 # from pywaterml.waterML import WaterMLOperations
 
 import sys
-sys.path.append("/home/elkin/Projects/condaPackages/pywaterml")
+sys.path.append("/Users/ElkiGio/pypack/pywaterml")
+import pywaterml
 from pywaterml.waterML import WaterMLOperations
 import time
-
+import pandas as pd
 url_testing = [
-    # ["http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-country/hiscentral.asmx/GetWaterOneFlowServiceInfo",True],
-    # ["http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-transboundary/hiscentral.asmx/GetWaterOneFlowServiceInfo",True],
+    # # ["http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-country/hiscentral.asmx/GetWaterOneFlowServiceInfo",True],
+    # # ["http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-transboundary/hiscentral.asmx/GetWaterOneFlowServiceInfo",True],
     ["http://hydroportal.cuahsi.org/nevados/cuahsi_1_1.asmx?WSDL", False],
     ["http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL", False],
     ["http://hydroportal.cuahsi.org/CALVIN_HHS/cuahsi_1_1.asmx?WSDL", False],
@@ -65,6 +66,7 @@ def single_test_quick(url_testing,url_catalog_testing = False):
 
             print("***********Passing: GETSITEINFO****************")
             fullSiteCodeFirstSite = sites[0]['fullSiteCode']
+            print(fullSiteCodeFirstSite)
             siteInfo =  water.GetSiteInfo(fullSiteCodeFirstSite)
             print(len(siteInfo['siteInfo']))
             #
@@ -92,6 +94,8 @@ def single_test_quick(url_testing,url_catalog_testing = False):
                 start_date = siteInfo['siteInfo'][0]['beginDateTime'].split('T')[0]
                 end_date = siteInfo['siteInfo'][0]['endDateTime'].split('T')[0]
                 variableResponse = water.GetValues(fullSiteCodeFirstSite, fullVariableCodeFirstVariable, start_date, end_date)
+                df_values = pd.DataFrame.from_dict(variableResponse['values'])
+                print(list(df_values))
                 print("The variable and site contains values ",len(variableResponse['values']))
             else:
                 print("No values for the variable and site selected")

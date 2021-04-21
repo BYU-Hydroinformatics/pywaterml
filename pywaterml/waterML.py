@@ -168,7 +168,7 @@ class WaterMLOperations():
                 sites_json_object = json.dumps(sites_dict)
                 sites_json = json.loads(sites_json_object)
             else:
-                sites_json_object = suds_to_json(sites)
+                sites_json_object = json.dumps(Auxiliary._recursive_asdict(sites))
                 sites_json = json.loads(sites_json_object)
 
             sites_object = Auxiliary._parseJSON(sites_json)

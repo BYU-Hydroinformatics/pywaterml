@@ -415,9 +415,9 @@ class Auxiliary():
             try:
                 if times_series['variable']['unit']['unitAbbreviation'] is not None:
                     return_object["unitAbbreviation"] = times_series['variable']['unit']['unitAbbreviation']
+                else:
+                    return_object['unitAbbreviation'] = "No Data was Provided"
             except KeyError as ke:
-                # print(ke)
-                # print(return_object)
 
                 return_object['unitAbbreviation'] = "No Data was Provided"
 
