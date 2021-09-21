@@ -23,7 +23,7 @@ requirements:
     - pandas
     - pip
     - python
-    - suds-jurko
+    - suds-community
     - scikit-learn==0.22
     - tslearn
     - xmltodict
@@ -33,7 +33,7 @@ requirements:
     - owslib
     - pandas
     - python
-    - suds-jurko
+    - suds-community
     - scikit-learn==0.22
     - tslearn
     - xmltodict
