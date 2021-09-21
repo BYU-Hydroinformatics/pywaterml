@@ -29,7 +29,7 @@ class GetSoapsPlugin(MessagePlugin):
     def sending(self, context):
         """
         Provides the plugin with the opportunity to inspect/modify the message text before it is sent.
-            Args: The Context classes which are passed to the plugin.
+        Args: The Context classes which are passed to the plugin.
         Returns:
             None
         """
@@ -38,7 +38,7 @@ class GetSoapsPlugin(MessagePlugin):
     def received(self, context):
         """
         Provides the plugin with the opportunity to inspect/modify the received XML text before it is SAX parsed.
-            Args: The Context classes which are passed to the plugin.
+        Args: The Context classes which are passed to the plugin.
         Returns:
             None
         """
