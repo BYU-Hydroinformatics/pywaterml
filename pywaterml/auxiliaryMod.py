@@ -852,6 +852,17 @@ class Auxiliary():
         return services
 
     def _giveServices(self,services,filter_serv=None):
+        """
+        Helper function to retrieve the WaterOneFlow web services of a catalog as a python dictionary. It is used in the WaterMLOperations GetWaterOneFlowServiceInfo() function to parse the different services.
+        Args:
+            services: Array of URL WaterOneFlow web services.
+            filter_serv: Filter to only parse some services that meet a condition.
+        Returns:
+            json_response: Dictionary from all the web services contained in the WaterOneFlow web service endpoint. The folllowing data is returned for each service:
+                - url: URL of the WaterOneFlow  web service
+                - title: title of the WaterOneFlow  web service
+                - description: abstract of the WaterOneFlow  web service
+        """
         json_response = {}
         hs_list = []
         hs_list_notworking=[]
