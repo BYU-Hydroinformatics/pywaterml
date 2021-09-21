@@ -3,11 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
- .. |pywaterml| image:: images/pywaterml.png
-    :scale: 10%
+.. |pywaterml| image:: images/pywaterml.png
+   :scale: 10%
 
 ===============
-|mde| pyWaterML
+|pywaterml| pyWaterML
 ================
 
 PyWaterMLis a python package developed by the Hydroinformatics laboratory in the Civil Engineering at Brigham Young University.
