@@ -19,14 +19,21 @@ PyWaterML also brings some basic machine learning clustering based on monthly av
 
 WOF Available methods:
 
-1) GetSites(): Get all the sites from a endpoint that complies to the SOAP protocol. The GetSites() method is similar to the GetSites() WaterML method.
+1) GetSites(): Get all the sites from a endpoint that complies to the SOAP protocol.
+The GetSites() method is similar to the GetSites() WaterML method.
+
 2) GetSitesByBoxObject(): Get all the sites from a bounding box from a endpoint that complies to the SOAP protocol.
 The GetSitesByBoxObject() method is similar to the GetSitesByBoxObject() WaterML method.
+
 3) GetVariables(): Get all the variables from a endpoint that complies to the SOAP protocol.
-GetVariables() method is similar to the GetVariables() WaterML method
+GetVariables() method is similar to the GetVariables() WaterML method.
+
 4) GetSiteInfo(): Get the information of a given site. GetSiteInfo() method is similar to the GetSiteInfo() WaterML method.
+
 5) GetValues(): Get the specific values for an specific variable in a site. GetValues() method is similar to the GetValues() WaterML method.
+
 6) AvailableServices(): Get the WOF web services that are available from a WOF service containing a HIS catalog.
+
 7) GetWaterOneFlowServiceInfo(): Get all registered data services from a given WOF Web service containing a HIS catalog.
 GetWaterOneFlowServiceInfo can be regarded as a special case of GetServicesInBox2, as the former requests the returns for the global area.
 
@@ -34,9 +41,12 @@ Extra functionality includes the following methods:
 
 1) GetSitesByVariable(): Get the specific sites according to a variable search array from a endpoint that complies to the SOAP protocol.
 The GetSitesByVariable() is an addition to the WaterML methods because it allows the user to retrieve sites that contains the specific site/s.
+
 2) GetInterpolation(): Interpolates the data given by the GetValues method in order to fix datasets with missing values.
 Three options for interpolation are offered: mean, backward, forward. Default is the mean interpolation.
+
 3) GetMonthlyAverage(): Gets the monthly averages for a given variable, or from the response given by the GetValues method for a given site.
+
 4) GetClustersMonthlyAvg(): Gets "n" number of clusters using dtw time series interpolation for a given variable.
 
 
