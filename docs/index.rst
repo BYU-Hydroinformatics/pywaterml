@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 .. |pywaterml| image:: images/pywaterml.png
-   :scale: 10%
+   :scale: 30%
 
 =====================
 |pywaterml| pyWaterML
