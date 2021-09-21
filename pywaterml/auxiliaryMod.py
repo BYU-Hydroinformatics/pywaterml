@@ -14,7 +14,6 @@ class GetSoapsPlugin(MessagePlugin):
     """
     This class represents the GetSoapsPlugin object for the WaterMLOperations class. The GetSoapsPlugin provides two functions of the MessagePlugin: the reveived and sending functions.
     It helps for debugging purposesrealted to the SOAP protocol.
-
     Args:
         MessagePlugin: The MessagePlugin currently has (5) hooks:
             - marshalled():: Provides the plugin with the opportunity to inspect/modify the envelope Document before it is sent.
@@ -22,7 +21,6 @@ class GetSoapsPlugin(MessagePlugin):
             - received():: Provides the plugin with the opportunity to inspect/modify the received XML text before it is SAX parsed.
             - parsed():: Provides the plugin with the opportunity to inspect/modify the sax parsed DOM tree for the reply before it is unmarshalled.
             - unmarshalled():: Provides the plugin with the opportunity to inspect/modify the unmarshalled reply before it is returned to the caller.
-
     """
     def __init__(self):
         self.last_sent_raw = None
@@ -853,12 +851,10 @@ class Auxiliary():
         return services
 
     def _giveServices(self,services,filter_serv=None):
-        # print("hola")
         json_response = {}
         hs_list = []
         hs_list_notworking=[]
         for i in services:
-            # print(i)
             hs = {}
             url = i['servURL']
             if not url.endswith('?WSDL'):
