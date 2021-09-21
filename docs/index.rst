@@ -6,9 +6,9 @@
 .. |pywaterml| image:: images/pywaterml.png
    :scale: 10%
 
-===============
+=====================
 |pywaterml| pyWaterML
-================
+=====================
 
 PyWaterMLis a python package developed by the Hydroinformatics laboratory in the Civil Engineering at Brigham Young University.
 PyWaterML allows the user to work with WaterOneFlow (WOF) web services that are compliant with the WaterML 1.0 format. The package lets you connect
