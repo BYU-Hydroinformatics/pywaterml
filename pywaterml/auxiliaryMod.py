@@ -14,6 +14,7 @@ class GetSoapsPlugin(MessagePlugin):
     """
     This class represents the GetSoapsPlugin object for the WaterMLOperations class. The GetSoapsPlugin provides two functions of the MessagePlugin: the reveived and sending functions.
     It helps for debugging purposesrealted to the SOAP protocol.
+
     Args:
         MessagePlugin: The MessagePlugin currently has (5) hooks:
             - marshalled():: Provides the plugin with the opportunity to inspect/modify the envelope Document before it is sent.
