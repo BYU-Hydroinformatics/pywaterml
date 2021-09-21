@@ -45,7 +45,7 @@ autodoc_mock_imports = [
     "pandas",
     "numpy",
     "owslib",
-    "suds",
+    "suds-jurko",
     "hdf5",
     "tslearn",
     "pyproj",
