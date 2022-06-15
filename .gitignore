@@ -9,3 +9,4 @@ __pycache__/
 _build
 *.pyc
 .vscode
+conda.recipe/test.py

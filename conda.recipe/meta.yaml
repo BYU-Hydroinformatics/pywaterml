@@ -4,15 +4,12 @@ package:
   name: "{{ name|lower }}"
   version: {{ GIT_DESCRIBE_TAG }}
 source:
-  git_url: https://github.com/romer8/pywaterml
+  git_url: https://github.com/BYU-Hydroinformatics/pywaterml
   sha256: 4642bdee860d3950c33c180a60e3244bc08bbfe13acd86bc278b50e591fc4601
 
 build:
   number: {{ GIT_DESCRIBE_NUMBER }}
   noarch: python
-
-  entry_points:
-    - pywaterml=pywaterml.cli:cli
 
   script: python setup.py install
 
@@ -24,7 +21,6 @@ requirements:
     - pip
     - python
     - suds-community
-    - scikit-learn==0.22
     - tslearn
     - xmltodict
     - cython
@@ -34,7 +30,6 @@ requirements:
     - pandas
     - python
     - suds-community
-    - scikit-learn==0.22
     - tslearn
     - xmltodict
     - cython
@@ -45,6 +40,13 @@ test:
     - pywaterml.waterML
     - pywaterml.auxiliaryMod
     - pywaterml.analyzeData
+  source_files:
+    - tests/test_pywaterml.py
+  requires:
+    - pytest
+  commands:
+    - pytest tests/test_pywaterml.py
+
 
 about:
   home: "https://github.com/romer8/pywaterml"
