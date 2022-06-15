@@ -1,5 +1,4 @@
-import requests
-import json
+import logging
 from suds.sudsobject import asdict
 from suds.plugin import *
 from suds.plugin import MessagePlugin
@@ -91,7 +90,6 @@ class Auxiliary():
                         hs_json["network"] = network
                         hs_json["fullSiteCode"] = network +":" + sitecode
                         hs_json["siteID"] = siteID
-                        # hs_json["service"] = "SOAP"
                         hs_sites.append(hs_json)
                 else:
                     hs_json = {}
@@ -111,11 +109,11 @@ class Auxiliary():
                     hs_json["network"] = network
                     hs_json["fullSiteCode"] = network +":" + sitecode
                     hs_json["siteID"] = siteID
-                    # hs_json["service"] = "SOAP"
                     hs_sites.append(hs_json)
-        except (ValueError, KeyError) as error:
-            print("There is a discrepancy in the structure of the response. It is possible that the respond object does not contain the sitesResponse attribute")
-            print(error)
+        except (ValueError, KeyError):
+            logging.error("There is a discrepancy in the structure of the response. It is possible that the respond object does not contain the sitesResponse attribute",exc_info=True)
+            
+            
         return hs_sites
 
     def _parseWML(self,bbox):
@@ -179,9 +177,8 @@ class Auxiliary():
 
                 # hs_json["service"] = "SOAP"
                 hs_sites.append(hs_json)
-        except (AssertionError, KeyError) as error:
-            print("There is an error while parsing the response object ", error)
-
+        except (AssertionError, KeyError):
+            logging.error("There is an error while parsing the response object ",exc_info=True)
         return hs_sites
 
     def _recursive_asdict(self,d):
@@ -206,8 +203,9 @@ class Auxiliary():
                             out[k].append(item)
                 else:
                     out[k] = v
-        except AssertionError as error:
-            print("The following Suds Object cannot be converted to serializable object", error)
+        except AssertionError:
+            logging.error("The following Suds Object cannot be converted to serializable object",exc_info=True)
+
         return out
 
     def _getValuesHelper(self,k,return_obj):
@@ -246,7 +244,9 @@ class Auxiliary():
                 year, month, day, hour, minute)
             date_string_convertedUTC = date_stringUTC.strftime("%Y-%m-%d %H:%M:%S")
             return_obj['dateTimeUTC'] = date_string_convertedUTC
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No Date UTC found",exc_info=True)
+
             return_obj['dateTimeUTC'] = "No Date UTC found"
 
         #not UTC time
@@ -265,7 +265,8 @@ class Auxiliary():
             date_string_converted = date_string.strftime("%Y-%m-%d %H:%M:%S")
             return_obj['dateTime'] = date_string_converted
 
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No Date found",exc_info=True)
             return_obj['dateTime'] = "No Date found"
 
 
@@ -273,28 +274,32 @@ class Auxiliary():
         try:
             value = float(str(k['#text']))
             return_obj['dataValue'] = value
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No dataValue Provided",exc_info=True)
             return_obj['dataValue'] = "No Data Provided"
 
         #@censorCode
         try:
             censorCode = k['@censorCode']
             return_obj['censorCode'] = censorCode
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No censorCode Provided",exc_info=True)
             return_obj['censorCode'] = "No Data Provided"
 
         #methodCode
         try:
             methodCode = k['@methodCode']
             return_obj['methodCode'] = methodCode
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No methodCode Provided",exc_info=True)
             return_obj['methodCode']= "No Data Provided"
 
         #qualityControlLevel
         try:
             qualityControlLevelCode= k['@qualityControlLevelCode']
             return_obj['qualityControlLevelCode'] = qualityControlLevelCode
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No @qualityControlLevelCode Provided",exc_info=True)
             return_obj['qualityControlLevelCode'] = "No Data Provided"
 
         #SourceCode
@@ -302,14 +307,16 @@ class Auxiliary():
             sourceCode = k['@sourceCode']
             return_obj['sourceCode'] = sourceCode
 
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No @sourceCode Provided",exc_info=True)
             return_obj['sourceCode'] = "No Data Provided"
 
         #TimeOffSet
         try:
             timeOffSet = k['@timeOffset']
             return_obj['timeOffSet'] = timeOffSet
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No @timeOffset Provided",exc_info=True)
             return_obj['timeOffset'] = "No Data Provided"
 
         return return_obj
@@ -346,69 +353,54 @@ class Auxiliary():
             try:
 
                 siteName = times_series['sourceInfo']['siteName'].encode("utf-8")
-                # siteName = times_series['sourceInfo']['siteName']
-                # return_object['siteName'] = siteName
                 return_object['siteName'] = siteName.decode("utf-8")
-            except KeyError as ke:
-                # print(ke)
+            except KeyError:
+                logging.error("No siteName Provided",exc_info=True)
+                
                 return_object['siteName'] = "No Data was Provided"
 
             try:
-                # print(times_series)
                 return_object['siteCode'] = times_series['sourceInfo']['siteCode']['#text']
-                # print(return_object)
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
+            except KeyError:
+                logging.error("No siteCode Provided",exc_info=True)
+
                 return_object['siteCode'] = "No Data was Provided"
 
             try:
                 return_object['network'] = times_series['sourceInfo']['siteCode']['@network']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No network Provided",exc_info=True)
                 return_object['network'] = "No Data was Provided"
 
             try:
                 return_object['siteID'] = times_series['sourceInfo']['siteCode']['@siteID']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No siteID Provided",exc_info=True)
                 return_object['siteID'] = "No Data was Provided"
 
             try:
                 return_object['latitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['latitude']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No latitude Provided",exc_info=True)
                 return_object['latitude'] = "No Data was Provided"
 
             try:
                 return_object['longitude'] = times_series['sourceInfo']['geoLocation']['geogLocation']['longitude']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No longitude Provided",exc_info=True)
                 return_object['longitude'] = "No Data was Provided"
 
             try:
                 return_object['variableName'] = times_series['variable']['variableName']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No variableName Provided",exc_info=True)
                 return_object['variableName'] =  "No Data was Provided"
 
 
             try:
                 return_object["unitName"] = times_series['variable']['unit']['unitName']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No unitName Provided",exc_info=True)
                 return_object['unitName'] = "No Data was Provided"
 
             try:
@@ -416,79 +408,61 @@ class Auxiliary():
                     return_object["unitAbbreviation"] = times_series['variable']['unit']['unitAbbreviation']
                 else:
                     return_object['unitAbbreviation'] = "No Data was Provided"
-            except KeyError as ke:
-
+            except KeyError:
+                logging.error("No unitAbbreviation Provided",exc_info=True)
                 return_object['unitAbbreviation'] = "No Data was Provided"
 
             try:
                 return_object['dataType'] = times_series['variable']['dataType']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No dataType Provided",exc_info=True)
                 return_object['dataType'] = "No Data was Provided"
 
             try:
                 return_object['noDataValue'] = times_series['variable']['noDataValue']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No noDataValue Provided",exc_info=True)
                 return_object['noDataValue'] = "No Data was Provided"
 
             try:
                 return_object["isRegular"] = times_series['variable']['timeScale']['@isRegular']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No isRegular Provided",exc_info=True)
                 return_object['isRegular'] = "No Data was provided"
 
             try:
                 return_object['timeSupport'] = times_series['variable']['timeScale']['timeSupport']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No timeSupport Provided",exc_info=True)
                 return_object['timeSupport'] = "No Data was provided"
 
             try:
                 return_object['timeUnitName'] = times_series['variable']['timeScale']['unit']['unitName']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No timeUnitName Provided",exc_info=True)
                 return_object['timeUnitName'] = "No Data was provided"
 
             try:
                 return_object['timeUnitAbbreviation'] = times_series['variable']['timeScale']['unit']['unitAbbreviation']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No timeUnitAbbreviation Provided",exc_info=True)
                 return_object['timeUnitAbbreviation'] = "No Data was provided"
 
             try:
                 return_object['sampleMedium'] = times_series['variable']['sampleMedium']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No sampleMedium Provided",exc_info=True)
                 return_object['sampleMedium'] = "No Data was Provided"
 
             try:
                 return_object['speciation'] = times_series['variable']['speciation']
-            except KeyError as ke:
-                # print(ke)
-                # print(return_object)
-
+            except KeyError:
+                logging.error("No speciation Provided",exc_info=True)
                 return_object['speciation'] = "No Data was Provided"
-        except Exception as e:
+        except Exception:
+            logging.error("The dict does not have the specific structure",exc_info=True)
             return_object = return_object
-            # print(e)
-            # print(return_object)
 
-            # return
         return return_object
 
     def _getSiteInfoHelper(self,object_siteInfo,object_methods):
@@ -542,121 +516,146 @@ class Auxiliary():
             siteName = object_siteInfo['siteName'].encode("utf-8")
             # return_object['siteName'] = siteName
             return_obj['siteName'] = siteName.decode("utf-8")
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No siteName Provided",exc_info=True)
             return_obj['siteName'] = "No Data was Provided"
 
         try:
             return_obj['latitude'] = object_siteInfo['geoLocation']['geogLocation']['latitude']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No latitude Provided",exc_info=True)
+            
             return_obj['latitude'] = "No Data was Provided"
 
         try:
             return_obj['longitude'] = object_siteInfo['geoLocation']['geogLocation']['longitude']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No longitude Provided",exc_info=True)
             return_obj['longitude'] = "No Data was Provided"
 
         try:
             return_obj['network'] = object_siteInfo['siteCode']['@network']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No network Provided",exc_info=True)
             return_obj['network'] = "No Data was Provided"
 
         try:
             return_obj['siteCode'] = object_siteInfo['siteCode']['#text']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No siteCode Provided",exc_info=True)
             return_obj['siteCode'] = "No Data was Provided"
 
         try:
             return_obj['fullSiteCode'] = return_obj['network'] + ":" + return_obj['siteCode']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No fullSiteCode Provided",exc_info=True)
             return_obj['fullSiteCode'] = "No Data was Provided"
 
         try:
             return_obj['variableName'] = object_methods['variable']['variableName']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No variableName Provided",exc_info=True)
             return_obj['variableName'] = "No Data was Provided"
 
         try:
             return_obj['variableCode'] = object_methods['variable']['variableCode']['#text']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No variableCode Provided",exc_info=True)
             return_obj['variableCode'] = "No Data was Provided"
 
         try:
             return_obj['fullVariableCode'] = return_obj['network'] + ":" + return_obj['variableCode']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No fullVariableCode Provided",exc_info=True)
             return_obj['fullVariableCode'] = "No Data was Provided"
 
         try:
             return_obj['variableCount'] = object_methods['valueCount']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No variableCount Provided",exc_info=True)
             return_obj['variableCount'] = "No Data was Provided"
 
         try:
             return_obj['dataType'] = object_methods['variable']['dataType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No dataType Provided",exc_info=True)   
             return_obj['dataType'] = "No Data was Provided"
 
         try:
             return_obj['valueType'] = object_methods['variable']['valueType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No valueType Provided",exc_info=True)
             return_obj['valueType'] = "No Data was Provided"
 
         try:
             return_obj['generalCategory'] = object_methods['variable']['generalCategory']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No generalCategory Provided",exc_info=True)
             return_obj['generalCategory'] = "No Data was Provided"
 
         try:
             return_obj['noDataValue'] = object_methods['variable']['noDataValue']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No noDataValue Provided",exc_info=True)
             return_obj['noDataValue'] = "No Data was Provided"
 
         try:
             return_obj['sampleMedium'] = object_methods['variable']['sampleMedium']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No sampleMedium Provided",exc_info=True)
             return_obj['sampleMedium'] = "No Data was Provided"
 
         try:
             return_obj['speciation'] = object_methods['variable']['speciation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No speciation Provided",exc_info=True)
             return_obj['speciation'] = "No Data was Provided"
         try:
             return_obj['timeUnitAbbreviation'] = object_methods['variable']['timeScale']['unit']['unitAbbreviation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeUnitAbbreviation Provided",exc_info=True)
             return_obj['timeUnitAbbreviation'] = "No Data was Provided"
 
         try:
             return_obj['timeUnitName'] = object_methods['variable']['timeScale']['unit']['unitName']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeUnitName Provided",exc_info=True)
             return_obj['timeUnitName'] = "No Data was Provided"
 
         try:
             return_obj['timeUnitType'] = object_methods['variable']['timeScale']['unit']['unitType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeUnitType Provided",exc_info=True)
             return_obj['timeUnitType'] = "No Data was Provided"
 
         try:
             return_obj['timeSupport'] = object_methods['variable']['timeScale']['timeSupport']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeSupport Provided",exc_info=True)
             return_obj['timeSupport'] = "No Data was Provided"
 
         try:
             return_obj['isRegular'] = object_methods['variable']['timeScale']['@isRegular']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No isRegular Provided",exc_info=True)
             return_obj['isRegular'] = "No Data was Provided"
 
         try:
             return_obj['unitAbbreviation'] = object_methods['variable']['unit']['unitAbbreviation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No unitAbbreviation Provided",exc_info=True)
             return_obj['unitAbbreviation'] = "No Data was Provided"
 
         try:
             return_obj['unitName'] = object_methods['variable']['unit']['unitName']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No unitName Provided",exc_info=True)
             return_obj['unitName'] = "No Data was Provided"
 
         try:
             return_obj['unitType'] = object_methods['variable']['unit']['unitType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No unitType Provided",exc_info=True)
             return_obj['unitType'] = "No Data was Provided"
 
         if 'method' in object_methods:
@@ -665,56 +664,66 @@ class Auxiliary():
         else:
             return_obj['methodID'] = "No Method Id was provided"
             return_obj['methodDescription'] = "No Method Description was provided"
-
+            logging.info("No methodDescription or methodDescription  Provided")
 
         try:
             return_obj['qualityControlLevelID'] = object_methods['qualityControlLevel']['@qualityControlLevelID']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No qualityControlLevelID Provided",exc_info=True)
             return_obj['qualityControlLevelID'] = "No Data was Provided"
 
         try:
             return_obj['definition'] = object_methods['qualityControlLevel']['definition']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No definition Provided",exc_info=True)
             return_obj['definition'] = "No Data was Provided"
 
         try:
             return_obj['qualityControlLevelCode'] = object_methods['qualityControlLevel']['qualityControlLevelCode']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No qualityControlLevelCode Provided",exc_info=True)
             return_obj['qualityControlLevelCode'] = "No Data was Provided"
 
         try:
             return_obj['citation'] = object_methods['source']['citation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No citation Provided",exc_info=True)
             return_obj['citation'] = "No Data was Provided"
 
         try:
             return_obj['organization'] = object_methods['source']['organization']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No organization Provided",exc_info=True)
             return_obj['organization'] = "No Data was Provided"
 
         try:
             return_obj['description'] = object_methods['source']['sourceDescription']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No description Provided",exc_info=True)
             return_obj['description'] = "No Data was Provided"
 
         try:
             return_obj['beginDateTime'] = object_methods['variableTimeInterval']['beginDateTime']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No beginDateTime Provided",exc_info=True)
             return_obj['beginDateTime'] = "No Data was Provided"
 
         try:
             return_obj['endDateTime'] = object_methods['variableTimeInterval']['endDateTime']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No endDateTime Provided",exc_info=True)
             return_obj['endDateTime'] = "No Data was Provided"
 
         try:
             return_obj['beginDateTimeUTC'] = object_methods['variableTimeInterval']['beginDateTimeUTC']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No beginDateTimeUTC Provided",exc_info=True)
             return_obj['beginDateTimeUTC'] = "No Data was Provided"
 
         try:
             return_obj['endDateTimeUTC'] = object_methods['variableTimeInterval']['endDateTimeUTC']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No endDateTimeUTC Provided",exc_info=True)
             return_obj['endDateTimeUTC'] = "No Data was Provided"
 
         return return_obj
@@ -747,71 +756,85 @@ class Auxiliary():
         """
         try:
             return_object['variableName'] = one_variable['variableName']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No variableName Provided",exc_info=True)
             return_object['variableName'] = "No Data Provided"
 
         try:
             return_object['variableCode'] = one_variable['variableCode']['#text']
-        except KeyError as ke:
-            return_object['variableName'] = "No Data Provided"
+        except KeyError:
+            logging.error("No variableCode Provided",exc_info=True)
+            return_object['variableCode'] = "No Data Provided"
 
         try:
             return_object['valueType']= one_variable['valueType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No valueType Provided",exc_info=True)
             return_object['valueType'] = "No Data Provided"
 
         try:
             return_object['dataType']= one_variable['dataType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No dataType Provided",exc_info=True)
             return_object['dataType'] = "No Data Provided"
         try:
             return_object['generalCategory'] = one_variable['generalCategory']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No generalCategory Provided",exc_info=True)
             return_object['generalCategory'] = "No Data Provided"
         try:
             return_object['sampleMedium'] = one_variable['sampleMedium']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No sampleMedium Provided",exc_info=True)
             return_object['sampleMedium'] = "No Data Provided"
         try:
             return_object['unitName'] = one_variable['unit']['unitName']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No unitName Provided",exc_info=True)
             return_object['unitName'] = "No Data Provided"
         try:
             return_object['unitType'] = one_variable['unit']['unitType']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No unitType Provided",exc_info=True)
             return_object['unitType'] = "No Data Provided"
         try:
             return_object['unitAbbreviation'] = one_variable['unit']['unitAbbreviation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No unitAbbreviation Provided",exc_info=True)
             return_object['unitAbbreviation'] = "No Data Provided"
         try:
             return_object['noDataValue'] = one_variable['noDataValue']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No noDataValue Provided",exc_info=True)
             return_object['noDataValue'] = "No Data Provided"
         try:
             return_object['isRegular'] = one_variable['variableCode']['@default']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No isRegular Provided",exc_info=True)
             return_object['isRegular'] = "No Data Provided"
         try:
             return_object['timeUnitName'] = one_variable['timeScale']['unit']['unitName']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeUnitName Provided",exc_info=True)
             return_object['timeUnitName'] = "No Data Provided"
         try:
             return_object['timeUnitAbbreviation'] = one_variable['timeScale']['unit']['unitAbbreviation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeUnitAbbreviation Provided",exc_info=True)
             return_object['timeUnitAbbreviation'] = "No Data Provided"
         try:
             return_object['timeSupport'] = one_variable['timeScale']['timeSupport']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No timeSupport Provided",exc_info=True)
             return_object['timeSupport'] = "No Data Provided"
         try:
             return_object['speciation'] = one_variable['speciation']
-        except KeyError as ke:
+        except KeyError:
+            logging.error("No speciation Provided",exc_info=True)
             return_object['speciation'] = "No Data Provided"
 
         return return_object
 
-    # def return_option(self,return_object):
 
     def _parseService(self,centralUrl):
         """
@@ -828,7 +851,6 @@ class Auxiliary():
         """
         url_trim = centralUrl.split("?WSDL")[0]
         url = url_trim + "/GetWaterOneFlowServiceInfo"
-        # print(url)
         response = urllib.request.urlopen(url)
         data = response.read()
         parse_xml = et.fromstring(data)
@@ -883,7 +905,8 @@ class Auxiliary():
                     try:
                         url_client = Client(url)
                         hs_list.append(hs)
-                    except Exception as e:
+                    except Exception:
+                        logging.error("No possible to give the service",exc_info=True)
                         hs_list_notworking.append(hs)
 
             else:
@@ -893,12 +916,10 @@ class Auxiliary():
                 try:
                     url_client = Client(url)
                     hs_list.append(hs)
-                except Exception as e:
+                except Exception:
+                    logging.error("No possible to give the service",exc_info=True)
                     hs_list_notworking.append(hs)
 
-                    # error_list.append(hs)
-                # hs_list['servers'] = hs_list
-                # list['errors'] = error_list
         json_response['working'] = hs_list
         json_response['failed'] = hs_list_notworking
         return json_response

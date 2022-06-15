@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import logging
 class WaterAnalityca():
     """
     This class represents the Analitics object for the WaterMLOperations class. The WaterAnalityca provides functions related to statistics(monthly and daily averages) and
@@ -18,7 +18,6 @@ class WaterAnalityca():
         try:
             return_array = GetValuesResponse['values']
             df = pd.DataFrame.from_dict(return_array)
-            # time_pd, values_pd = zip(*GetValuesResponse)
             pds={}
             if timeUTC is True:
                 pds['time'] = df['dateTimeUTC'].tolist()
@@ -50,7 +49,8 @@ class WaterAnalityca():
             for t,v in zip(listTimes,listVals):
                 dataInterpolated.append([t,v])
 
-        except Exception as e:
+        except Exception:
+            logging.error("No possible to interpolate",exc_info=True)
             dataInterpolated = []
             return dataInterpolated
 
@@ -83,7 +83,8 @@ class WaterAnalityca():
             m_avg = m_avg.tolist()
             return m_avg
 
-        except Exception as e:
+        except Exception:
+            logging.error("No possible to give monthly averages",exc_info=True)
             m_avg = []
             return m_avg
 

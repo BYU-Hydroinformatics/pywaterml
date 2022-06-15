@@ -1,7 +1,5 @@
+from shutil import ExecError
 from suds.client import Client
-import urllib.request
-import urllib.error
-import urllib.parse
 import json
 import xmltodict
 from json import dumps, loads
@@ -10,13 +8,11 @@ from pywaterml.analyzeData import WaterAnalityca
 from pyproj import Proj, transform
 import xml.etree.ElementTree as ET
 import pandas as pd
-from datetime import datetime
 from tslearn.metrics import dtw
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series, to_time_series_dataset
-
 from suds.bindings import binding
-
+import logging
 class WaterMLOperations():
     """
     This class represents the WaterML object that will be able to fetch and analyze Data from 'WaterML' and 'WaterOneFlow' Web Services
@@ -27,8 +23,12 @@ class WaterMLOperations():
     def __init__(self,url = None):
         self.plugin = GetSoapsPlugin()
         self.url = url
-        self.client = Client(url,plugins=[self.plugin], timeout= 500)
         self.aux = Auxiliary()
+        try:    
+            self.client = Client(url,plugins=[self.plugin], timeout= 500)
+        except Exception:
+            self.client = None
+            logging.error(f'Not possible to connect to the Soap Service at {url}',exc_info=True)
 
     def AddService(self,url):
         """
@@ -46,10 +46,17 @@ class WaterMLOperations():
         """
         if self.url is None:
             self.url = url
-            self.client = Client(url, timeout= 500)
+            try:
+                self.client = Client(url, timeout= 500)
+                logging.info("Successful connection")
+                return True    
+            except Exception:
+                self.client = None
+                logging.error(f'Not possible to connect to the Soap Service at {url}',exc_info=True)
+                return False
         else:
-            print("There is already an enpoint, if you want to change the WaterOneFlow web service try ChangeEndpoint() function")
-        pass
+            logging.info("There is already an enpoint, if you want to change the WaterOneFlow web service try ChangeEndpoint() function")
+            return False
 
     def ChangeService(self,url):
         """
@@ -68,11 +75,17 @@ class WaterMLOperations():
             data = water.ChangeEndpoint("http://128.187.106.131/app/index.php/dr/services/cuahsi_1_1.asmx?WSDL")
         """
         if self.url is not None:
-            self.url = url
-            self.client = Client(url, timeout= 500)
+            try:
+                self.client = Client(url, timeout= 500)
+                logging.info("Successful connection")
+                return True
+            except Exception:
+                self.client = None
+                logging.error(f'Not possible to connect to the Soap Service at {url}',exc_info=True)
+                return False
         else:
-            print("There is no WaterOneFlow web service, please before changing an WaterOneFlow web service add one with AddEndpoint() function")
-        pass
+            logging.info("There is no WaterOneFlow web service, please before changing an WaterOneFlow web service add one with AddEndpoint() function") 
+            return False
 
     def AvailableServices(self):
         """
@@ -93,16 +106,15 @@ class WaterMLOperations():
         hs_services = {}
         if self.url:
             try:
-                service_info = client.service.GetWaterOneFlowServiceInfo()
+                service_info = self.client.service.GetWaterOneFlowServiceInfo()
                 services = service_info.ServiceInfo
                 obj_services = self.aux._giveServices(services)
                 hs_services['available'] = obj_services['working']
                 hs_services['broken'] = obj_services['failed']
-            except Exception as e:
+            except Exception:
+                logging.error("Not using the suds library", exc_info=True) 
                 services = self.aux._parseService(self.url)
-                # print(services)
                 views = self.aux._giveServices(services)
-                # print(views)
                 hs_services['available'] = views['working']
                 hs_services['broken'] = views['failed']
         return hs_services
@@ -127,11 +139,13 @@ class WaterMLOperations():
             services = water.GetWaterOneFlowServiceInfo()
 
         """
+        services = []
         try:
-            service_info = client.service.GetWaterOneFlowServiceInfo()
+            service_info = self.client.service.GetWaterOneFlowServiceInfo()
             services = service_info.ServiceInfo
             return services
-        except:
+        except Exception:
+            logging.error("Not using the suds library", exc_info=True)  
             services = self.aux._parseService(self.url)
             return services
 
@@ -178,12 +192,12 @@ class WaterMLOperations():
             elif format is "csv":
                 df = pd.DataFrame.from_dict(sites_object)
                 csv_sites = df.to_csv(index=False)
-                # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
                 return csv_sites
             else:
-                return print("the only supported formats are json, csv, and waterml")
-        except Exception as error:
-            # print(error)
+                logging.info("The only supported formats are json, csv, and waterml")
+                return sites_json
+        except Exception:
+            logging.error("Sites object with length 0", exc_info=True)
             sites_object={}
             if format is "waterml":
                 return sites_object
@@ -193,7 +207,6 @@ class WaterMLOperations():
             elif format is "csv":
                 df = pd.DataFrame.from_dict(sites_object)
                 csv_sites = df.to_csv(index=False)
-                # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
                 return csv_sites
 
     def GetSitesByBoxObject(self,ext_list, inProjection, format="json"):
@@ -235,8 +248,9 @@ class WaterMLOperations():
             try:
                 bbox = self.client.service.GetSitesByBoxObject(
                     x1, y1, x2, y2, '1', '')
-            except Exception as error:
-                print(e)
+            except Exception:
+                logging.error("Not using the suds library directly trying to use the plugin", exc_info=True)  
+
                 raw_get = self.plugin.last_received_raw
                 new_raws = raw_get.split(">")
                 soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
@@ -246,23 +260,22 @@ class WaterMLOperations():
                 bbox = self.client.service.GetSitesByBoxObject(
                     x1, y1, x2, y2, '1', '')
                 binding.envns=('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
-        except Exception as error:
-            # print(error)
+        except Exception:
+            logging.error("Not using the suds library, returning zero sites", exc_info=True)  
             return([])
         if format is "waterml":
             return bbox
 
         wml_sites = self.aux._parseWML(bbox)
         if format is "json":
-        # sites_parsed_json = json.dumps(wml_sites)
-        # return sites_parsed_json
             return wml_sites
         elif format is "csv":
             df = pd.DataFrame.from_dict(wml_sites)
             csv_sites = df.to_csv(index=False)
             return csv_sites
         else:
-            return print("the only supported formats are json, csv, and waterml")
+            logging.info("The only supported formats are json, csv, and waterml")  
+            return
 
     def GetVariables(self, format="json"):
         """
@@ -294,8 +307,8 @@ class WaterMLOperations():
         try:
             try:
                 variables = self.client.service.GetVariables('[:]')
-            except Exception as error:
-                print(e)
+            except Exception:
+                logging.error("Not using the suds library directly, using a plugin", exc_info=True)                
                 raw_get = self.plugin.last_received_raw
                 new_raws = raw_get.split(">")
                 soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
@@ -311,7 +324,6 @@ class WaterMLOperations():
 
             variables_json = json.loads(variables_dict_object)
             array_variables = variables_json['variablesResponse']['variables']['variable']
-            # print(array_variables)
             if isinstance(array_variables,type([])):
                 for one_variable in array_variables:
                     return_object = {}
@@ -330,13 +342,13 @@ class WaterMLOperations():
                 return(json_response)
             elif format is "csv":
                 df = pd.DataFrame.from_dict(return_array)
-                # print(df)
                 csv_siteInfo = df.to_csv(index=False)
                 return csv_siteInfo
             else:
-                return print("the only supported formats are json, csv, and waterml")
-        except Exception as error:
-            print(error)
+                logging.info("The only supported formats are json, csv, and waterml")
+                return  return_array
+        except Exception:
+            logging.error("Returning 0 variables", exc_info=True)                
             return_array = []
             return return_array
 
@@ -395,8 +407,8 @@ class WaterMLOperations():
         """
         try:
             site_info_Mc = self.client.service.GetSiteInfo(site_full_code)
-        except Exception as error:
-            print(error)
+        except Exception:
+            logging.error("Not using the suds library directly, using a plugin", exc_info=True)                
             raw_get = self.plugin.last_received_raw
             new_raws = raw_get.split(">")
             soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
@@ -435,10 +447,10 @@ class WaterMLOperations():
                 csv_siteInfo = df.to_csv(index=False)
                 return csv_siteInfo
             else:
-                return print("the only supported formats are json, csv, and waterml")
-        except KeyError as ke:
-            # print(ke)
-            # print("No series for the site")
+                logging.info("The only supported formats are json, csv, and waterml")
+                return return_array
+        except KeyError:
+            logging.error("Not using the suds library directly,returning an empty dict for site info", exc_info=True)
             return_array = []
             if format is "json":
                 json_response = {
@@ -450,9 +462,8 @@ class WaterMLOperations():
                 csv_siteInfo = df.to_csv(index=False)
                 return csv_siteInfo
             else:
-                return print("the only supported formats are json, csv, and waterml")
-            # return return_array
-        return return_array
+                logging.info("The only supported formats are json, csv, and waterml")                
+                return
 
     def GetValues(self,site_full_code, variable_full_code, start_date, end_date, methodCode = None, qualityControlLevelCode = None, format = 'json'):
         """
@@ -513,8 +524,8 @@ class WaterMLOperations():
         """
         try:
             values = self.client.service.GetValues(site_full_code, variable_full_code, start_date, end_date, "")
-        except Exception as error:
-            print(error)
+        except Exception:
+            logging.error("Not using the suds library directly, using a plugin", exc_info=True)       
             raw_get = self.plugin.last_received_raw
             new_raws = raw_get.split(">")
             soap_namespace =  new_raws[1].split("xmlns")[1].split("=")[1]
@@ -527,7 +538,6 @@ class WaterMLOperations():
             return values
         values_dict = xmltodict.parse(values)
         values_json_object = json.dumps(values_dict)
-        # print(values_json_object)
 
         values_json = json.loads(values_json_object)
         times_series = {}
@@ -562,16 +572,15 @@ class WaterMLOperations():
                                             return_array.append(json_response)
                                             json_response = {}
 
-                                    except KeyError as ke:  # The Key Error kicks in when there is only one timeseries
-                                        # print(ke)
-                                        # print(times_series)
+                                    except KeyError:  # The Key Error kicks in when there is only one timeseries
+                                        logging.error("Keyerror in dict", exc_info=True)
                                         json_response = self.aux._getValuesHelper2(times_series,json_response)
-                                        # print(json_response)
                                         json_response = self.aux._getValuesHelper(k,json_response)
                                         return_array.append(json_response)
                                         json_response = {}
 
                             else:  # The else statement is executed is there is only one value in the timeseries
+                                logging.info("There is only one value in the timeseries")
                                 k = times_series['values']['value']
                                 try:
                                     if k['@methodCode'] == methodCode and methodCode is not None:
@@ -591,13 +600,15 @@ class WaterMLOperations():
                                         json_response = self.aux._getValuesHelper(k,json_response)
                                         return_array.append(json_response)
 
-                                except KeyError as ke:
+                                except KeyError:
+                                    logging.error("Keyerror in dict", exc_info=True)
                                     json_response = {}
                                     json_response = self.aux._getValuesHelper2(times_series,json_response)
                                     json_response = self.aux._getValuesHelper(k,json_response)
                                     return_array.append(json_response)
 
-        except KeyError as error:
+        except KeyError:
+            logging.error("Not using the suds library directly,returning an empty dict for variable values", exc_info=True)
             if format is "json":
                 json_response = {
                     'values': return_array
@@ -605,12 +616,11 @@ class WaterMLOperations():
                 return(json_response)
             elif format is "csv":
                 df = pd.DataFrame.from_dict(return_array)
-                # print(df)
                 csv_values = df.to_csv(index=False)
                 return csv_values
             else:
-                return print("the only supported formats are json, csv, and waterml")
-            # print(error)
+                logging.info("The only supported formats are json, csv, and waterml")
+                return {}
 
         if format is "json":
             json_response = {
@@ -619,13 +629,11 @@ class WaterMLOperations():
             return(json_response)
         elif format is "csv":
             df = pd.DataFrame.from_dict(return_array)
-            # print(df)
             csv_values = df.to_csv(index=False)
             return csv_values
         else:
-            return print("the only supported formats are json, csv, and waterml")
-
-        return graph_json
+            logging.info("The only supported formats are json, csv, and waterml")                
+            return {}
 
     def GetSitesByVariable(self,specific_variables_codes,cookiCutter = None, format='json'):
         """
@@ -677,12 +685,11 @@ class WaterMLOperations():
 
             try:
                 for variable_site in site_info['siteInfo']:
-                    # print(variable_site['variableCode'],specific_variables_codes )
                     if variable_site['variableCode'] in specific_variables_codes:
                         new_sites.append(site)
-                        # print(new_sites)
                         break
-            except Exception as ke:
+            except Exception:
+                logging.error("Site does not contain series",exc_info=True)
                 if format is "json":
                     json_response = {}
                     json_response['sites'] = new_sites
@@ -691,27 +698,22 @@ class WaterMLOperations():
                 elif format is "csv":
                     df = pd.DataFrame.from_dict(new_sites)
                     csv_sites = df.to_csv(index=False)
-                    # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
                     return csv_sites
                 else:
-                    return print("the only supported formats are json, csv, and waterml")
-                # print(ke)
-                # print("site does not contain series")
+                    logging.info("The only supported formats are json, csv, and waterml")
+                    return
         if format is "json":
             json_response = {}
             json_response['sites'] = new_sites
-            # print(json_response)
             return json_response
 
         elif format is "csv":
             df = pd.DataFrame.from_dict(new_sites)
             csv_sites = df.to_csv(index=False)
-            # csv_sites.to_csv("/home/elkin/Projects/condaPackages/pywaterml/tests")
             return csv_sites
         else:
-            return print("the only supported formats are json, csv, and waterml")
-
-        return new_sites
+            logging.info("The only supported formats are json, csv, and waterml")
+            return
 
     def GetInterpolation(self, GetValuesResponse, type= 'mean'):
         """
@@ -825,7 +827,6 @@ class WaterMLOperations():
         timeSerie_cluster=[]
         try:
             for site in sites:
-                # site_full_code = f'{site["network"]}:{site["sitecode"]}'
                 site_full_code = site['fullSiteCode']
                 try:
                     siteInfo =  self.GetSiteInfo(site_full_code)['siteInfo']
@@ -843,19 +844,17 @@ class WaterMLOperations():
                             timeseries.append(to_time_series(m_avg))
                             timeSerie_cluster.append([m_avg])
                             break
-                except Exception as e:
-                    print(e)
-                    print("the current site does not contain siteInformation")
+                except Exception:
+                    logging.error("The current site does not contain siteInformation",exc_info=True)                    
             formatted_time_series = to_time_series_dataset(timeseries)
             model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
             y_pred = model.fit_predict(formatted_time_series)
             for tc, y in zip(timeSerie_cluster,y_pred):
                 tc.append(y)
             return timeSerie_cluster
-        except KeyError as e:
-            # print(e)
+        except KeyError:
+            logging.error("The dict contains a property we do have or do not have",exc_info=True)                    
             return timeSerie_cluster
-        return timeSerie_cluster
 
 if __name__ == "__main__":
     print("WaterML ops")
