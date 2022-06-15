@@ -13,8 +13,8 @@ requirements = [
     "numpy",
     "owslib",
     "suds-community",
-    "scikit-learn==0.22",
     "tslearn",
+    "pytest",
 ]
 
 setup(

@@ -5,7 +5,7 @@ package:
   version: {{ GIT_DESCRIBE_TAG }}
 source:
   git_url: https://github.com/BYU-Hydroinformatics/pywaterml
-  sha256: 9aee2b7082c697d69b78867169586482822edb83b72ed032aa64c3eed7851580
+  sha256: 98326c410a0ceacef8f0cf749815fafebfc47676953290673458c351949331db
 
 build:
   number: {{ GIT_DESCRIBE_NUMBER }}
