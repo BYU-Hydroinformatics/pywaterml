@@ -5,3 +5,4 @@ owslib
 suds-community
 tslearn
 pytest
+numba
