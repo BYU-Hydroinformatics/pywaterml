@@ -48,14 +48,13 @@ class WaterAnalityca():
             dataInterpolated = []
             for t,v in zip(listTimes,listVals):
                 dataInterpolated.append([t,v])
+        
+            return dataInterpolated
 
         except Exception:
             logging.error("No possible to interpolate",exc_info=True)
             dataInterpolated = []
             return dataInterpolated
-
-
-        return dataInterpolated
 
     def _MonthlyAverages(GetValuesResponse):
         """

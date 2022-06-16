@@ -5,7 +5,8 @@ import xmltodict
 from json import dumps, loads
 from pywaterml.auxiliaryMod import Auxiliary, GetSoapsPlugin
 from pywaterml.analyzeData import WaterAnalityca
-from pyproj import Proj, transform
+# from pyproj import Proj, transform
+from pyproj import Transformer
 import xml.etree.ElementTree as ET
 import pandas as pd
 from tslearn.metrics import dtw
@@ -237,13 +238,15 @@ class WaterMLOperations():
             sites = water.GetSitesByBoxObject(BoundsRearranged,'epsg:4326')
         """
 
-        inProj = Proj(init=inProjection)
-        outProj = Proj(init='epsg:4326')
-
+        # inProj = Proj(init=inProjection)
+        # outProj = Proj(init='epsg:4326')
+        transformer = Transformer.from_crs(inProjection, "epsg:4326")
         minx, miny = ext_list[0], ext_list[1]
         maxx, maxy = ext_list[2], ext_list[3]
-        x1, y1 = transform(inProj, outProj, minx, miny)
-        x2, y2 = transform(inProj, outProj, maxx, maxy)
+        # x1, y1 = transform(inProj, outProj, minx, miny)
+        # x2, y2 = transform(inProj, outProj, maxx, maxy)
+        x1, y1 = transformer.transform(minx, miny)
+        x2, y2 = transformer.transform(maxx, maxy)
         try:
             try:
                 bbox = self.client.service.GetSitesByBoxObject(
@@ -275,7 +278,7 @@ class WaterMLOperations():
             return csv_sites
         else:
             logging.info("The only supported formats are json, csv, and waterml")  
-            return
+            return([])
 
     def GetVariables(self, format="json"):
         """
