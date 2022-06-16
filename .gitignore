@@ -10,3 +10,4 @@ _build
 *.pyc
 .vscode
 conda.recipe/test.py
+builds

@@ -13,14 +13,12 @@ requirements = [
     "numpy",
     "owslib",
     "suds-community",
-    "tslearn",
-    "pytest",
+    "tslearn", #==0.5.2
+    "numba" #0.55.1
 ]
 
 setup(
     name='pywaterml',
-    # version='0.0.14.dev1',
-    # version='1.1.1',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps",
