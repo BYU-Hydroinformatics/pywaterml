@@ -31,7 +31,7 @@ jobs:
       - name: Test with pytest
         run: |
           cd tests
-          pytest --v test_fast.py
+          pytest -vv test_fast.py
           cd ..
 
       - name: Build a binary wheel and a source tarball
