@@ -8,15 +8,11 @@ url_dummy = 'http://hydroportal.cuahsi.org/CALVIN_HHS/cuahsi_1_1.asmx?WSDL'
 
 
 params_catalog =[
-    "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-country/hiscentral.asmx?WSDL",
-    "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-transboundary/hiscentral.asmx?WSDL",
-    "https://hiscentral.cuahsi.org/webservices/hiscentral.asmx?WSDL"  
+    "http://gs-service-production.geodab.eu/gs-service/services/essi/view/whos-country/hiscentral.asmx?WSDL"
 ]
 
 params_services = [
-    "https://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL",
-    f'https://whos.geodab.eu/gs-service/services/essi/token/{Your_Personal_Token_Identifier}/view/gs-view-and(whos,gs-view-source(onametStations))/cuahsi_1_1.asmx?WSDL',
-    f'https://whos.geodab.eu/gs-service/services/essi/token/{Your_Personal_Token_Identifier}/view/gs-view-and(whos,gs-view-source(argentina-ina))/cuahsi_1_1.asmx?WSDL'
+    f'https://whos.geodab.eu/gs-service/services/essi/token/{Your_Personal_Token_Identifier}/view/gs-view-and(whos,gs-view-source(iceland-imo))/cuahsi_1_1.asmx?WSDL'
 ]
 
 @pytest.fixture(params=params_catalog)
@@ -34,11 +30,11 @@ def sites(water,scope="class"):
     sites = water.GetSites()
     return sites
 
-@pytest.fixture(params=[0,1])    
+@pytest.fixture(params=[0])    
 def fullSiteCode(request,sites,scope="class"):
     return sites[request.param]['fullSiteCode']
 
-@pytest.fixture(params=[0,1])    
+@pytest.fixture(params=[0])    
 def variableCodeMetaData(request,siteInfo,scope="class"):
     code = siteInfo['siteInfo'][request.param]['fullVariableCode']
     start_date = siteInfo['siteInfo'][request.param]['beginDateTime'].split('T')[0]
