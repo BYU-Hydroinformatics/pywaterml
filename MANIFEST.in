@@ -2,3 +2,4 @@ include LICENSE
 include *.md
 include versioneer.py
 include pywaterml/_version.py
+recursive-include tests *.py
