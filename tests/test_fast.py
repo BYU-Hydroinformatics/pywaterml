@@ -12,7 +12,8 @@ params_catalog =[
 ]
 
 params_services = [
-    f'https://whos.geodab.eu/gs-service/services/essi/token/{Your_Personal_Token_Identifier}/view/gs-view-and(whos,gs-view-source(iceland-imo))/cuahsi_1_1.asmx?WSDL'
+    # f'https://whos.geodab.eu/gs-service/services/essi/token/{Your_Personal_Token_Identifier}/view/gs-view-and(whos,gs-view-source(iceland-imo))/cuahsi_1_1.asmx?WSDL'
+    'https://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL'
 ]
 
 @pytest.fixture(params=params_catalog)
