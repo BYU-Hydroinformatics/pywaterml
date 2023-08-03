@@ -6,3 +6,4 @@ suds-community
 tslearn
 pytest
 numba
+pyproj
