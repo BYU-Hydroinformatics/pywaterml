@@ -1,0 +1,44 @@
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pywaterml"
+
+version = "1.2.21"
+description = "The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps"
+readme = "README.md"
+authors = [
+    { name = "Elkin Giovanni Romero Bustamante", email = "gromero@aquaveo.com" },
+]
+license = { file = "LICENSE.txt" }
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    'Development Status :: 4 - Beta',
+    'Topic :: Scientific/Engineering :: Hydrology',
+    'Topic :: Scientific/Engineering :: Visualization',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Natural Language :: English',
+]
+keywords = ["WaterML"]
+dependencies = [
+    "xmltodict",
+    "pandas",
+    "numpy",
+    "owslib",
+    "suds-community",
+    "tslearn",        #==0.5.2
+    "numba",          #0.55.1
+    "pyproj",
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
+
+[project.urls]
+Homepage = "https://github.com/BYU-Hydroinformatics/pywaterml"
