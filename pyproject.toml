@@ -1,7 +1,7 @@
 # pyproject.toml
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "versioneer"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -38,7 +38,7 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "versioneer"]
 
 [project.urls]
 Homepage = "https://github.com/BYU-Hydroinformatics/pywaterml"
