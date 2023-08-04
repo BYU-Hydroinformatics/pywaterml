@@ -576,7 +576,6 @@ class WaterMLOperations():
                                             json_response = {}
 
                                     except KeyError:  # The Key Error kicks in when there is only one timeseries
-                                        logging.error("Keyerror in dict", exc_info=True)
                                         json_response = self.aux._getValuesHelper2(times_series,json_response)
                                         json_response = self.aux._getValuesHelper(k,json_response)
                                         return_array.append(json_response)
@@ -604,14 +603,12 @@ class WaterMLOperations():
                                         return_array.append(json_response)
 
                                 except KeyError:
-                                    logging.error("Keyerror in dict", exc_info=True)
                                     json_response = {}
                                     json_response = self.aux._getValuesHelper2(times_series,json_response)
                                     json_response = self.aux._getValuesHelper(k,json_response)
                                     return_array.append(json_response)
 
         except KeyError:
-            logging.error("Not using the suds library directly,returning an empty dict for variable values", exc_info=True)
             if format is "json":
                 json_response = {
                     'values': return_array
