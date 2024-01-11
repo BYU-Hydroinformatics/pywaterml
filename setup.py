@@ -14,7 +14,6 @@ requirements = [
     "numpy",
     "owslib",
     "suds-community",
-    "tslearn", #==0.5.2
     "numba" #0.55.1
 ]
 

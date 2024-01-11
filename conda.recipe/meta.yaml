@@ -30,7 +30,6 @@ requirements:
     - owslib
     - pandas
     - suds-community
-    - tslearn
     - xmltodict
 test:
   imports:

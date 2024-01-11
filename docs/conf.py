@@ -47,7 +47,6 @@ autodoc_mock_imports = [
     "owslib",
     "suds-community",
     "hdf5",
-    "tslearn",
     "pyproj",
     "requests"
 ]

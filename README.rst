@@ -22,7 +22,6 @@ The waterML module also has functions that add functionality to the 'WaterOneFlo
 1) GetSitesByVariable(): Get the specific sites according to a variable search array from a endpoint that complies to the SOAP protocol. The GetSitesByVariable() is an addition to the WaterML functions because it allows the user to retrieve sites that contains the epecific site/s.
 2) GetInterpolation(): Interpolates the data given by the GetValues function in order to fix datasets with missing values. Three ooptions for interpolation are offered: mean, backward, forward. The default is the mean interpolation.
 3) GetMonthlyAverage(): Gets the monthly averages for a given variable, or from the response given by the GetValues function for a given site.
-4) GetClustersMonthlyAvg(): Gets "n" number of clusters using dtw time series interpolation for a given variable.
 
 pyWaterML strives to be an intuitive python package for accesing WaterML information, and it also brings new functionality to the retrieved data from 'WaterOneFlow' web services.
 pyWaterML also brings some basic machine learning clsutering based on monthly average for different variables.

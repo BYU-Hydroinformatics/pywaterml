@@ -117,7 +117,3 @@ class TestWaterMLViews:
         m_avg = water.GetMonthlyAverage(variableValues)
         assert len(m_avg)>0, f'Monthly averages using pre calculated values retrieved {len(m_avg)} data values'
         
-    def test_GetClusters(self,water,sites,variableCodeMetaData):
-        var_code = variableCodeMetaData[0].split(":")[-1]
-        y_pred = water.GetClustersMonthlyAvg(sites,var_code)
-        assert len(y_pred)>0, f'Sucessful data clustering'

@@ -41,7 +41,6 @@ Extra functionality includes the following methods:
 
 3) GetMonthlyAverage(): Gets the monthly averages for a given variable, or from the response given by the GetValues method for a given site.
 
-4) GetClustersMonthlyAvg(): Gets "n" number of clusters using dtw time series interpolation for a given variable.
 
 
 The following links will result useful to the users that want to contribute or experiment the package:

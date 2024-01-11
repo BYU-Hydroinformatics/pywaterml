@@ -9,9 +9,6 @@ from pywaterml.analyzeData import WaterAnalityca
 from pyproj import Transformer
 import xml.etree.ElementTree as ET
 import pandas as pd
-from tslearn.metrics import dtw
-from tslearn.clustering import TimeSeriesKMeans
-from tslearn.utils import to_time_series, to_time_series_dataset
 from suds.bindings import binding
 import logging
 class WaterMLOperations():
@@ -793,68 +790,6 @@ class WaterMLOperations():
             m_avg = WaterAnalityca._MonthlyAverages(vals)
             return m_avg
 
-    def GetClustersMonthlyAvg(self,sites, variableCode, n_cluster = 3, methodCode = None, qualityControlLevelCode = None, timeUTC = False):
-        """
-        Gets "n" number of clusters using dtw time series interpolation for a given variable
-
-        Args:
-
-            sites: response from the GetSites() function. Performance of the fuction can be given if the resuls of the GetSitesByVariable() function is passed instead.
-            variableCode: string representing the variable code for the time series clusters of the given sites.
-            n_clusters: integer representing the number of cluster to form.
-            methodCode: method code for data extraction for the given variable.
-            qualityControlLevelCode: The ID of the quality control level.Typically 0 is used for raw dataand 1 is used for quality controlled data.
-                To get a list of possible quality controllevel IDs, see qualityControlLevelCode column in the output of GetSiteInfo(). If qualityControlLevelCode is not specified,
-                then the observations in the output data.frame won’t befiltered by quality control level code.
-            timeUTC: Boolean to use the UTC time instead of the time of the observation.
-        Returns:
-
-            An array of arrays of the following structure [monthly averages array, cluster_id]
-
-            [[[0.141875, 0.1249375, 0.0795, 0.12725, 0.0877, 0.0, 0.09375, 0.1815, 0.15437499999999998, 0.164625, 0.1614, 0.20900000000000002], 1],
-            [[0.1, 0.08662500000000001, 0.0414025, 0.048, 0.052, 0.0, 0.1105, 0.015, 0.06625, 0.10587500000000001, 0.0505, 0.046125], 0],
-            [[0.2265, 0.27225, 0.17407499999999998, 0.13475, 0.14525, 0.129, 0.17825, 0.210625, 0.103125, 0.0, 0.23675], 2]]
-        Example::
-
-            url_testing = "http://hydroportal.cuahsi.org/para_la_naturaleza/cuahsi_1_1.asmx?WSDL"
-            water = WaterMLOperations(url = url_testing)
-            sites = water.GetSites()
-            firstSiteFullSiteCode = sites[0]['fullSiteCode']
-            siteInfo = water.GetSiteInfo(firstSiteFullSiteCode)['siteInfo']
-            clusters = water.getClustersMonthlyAvg(sites,siteInfo[0]['variableCode'])
-        """
-        timeseries = []
-        timeSerie_cluster=[]
-        try:
-            for site in sites:
-                site_full_code = site['fullSiteCode']
-                try:
-                    siteInfo =  self.GetSiteInfo(site_full_code)['siteInfo']
-                    for sinfo in siteInfo:
-                        if sinfo['variableCode'] == variableCode:
-                            variable_full_code = sinfo['fullVariableCode']
-                            start_date = sinfo['beginDateTime'].split('T')[0]
-                            end_date = sinfo['endDateTime'].split('T')[0]
-
-                            if timeUTC is True:
-                                start_date = sinfo['beginDateTimeUTC'].split('T')[0]
-                                end_date = sinfo['endDateTimeUTC'].split('T')[0]
-                            variableResponse = self.GetValues(site_full_code, variable_full_code,start_date, end_date, methodCode= methodCode, qualityControlLevelCode=qualityControlLevelCode)
-                            m_avg = self.GetMonthlyAverage(variableResponse)
-                            timeseries.append(to_time_series(m_avg))
-                            timeSerie_cluster.append([m_avg])
-                            break
-                except Exception:
-                    logging.error("The current site does not contain siteInformation",exc_info=True)                    
-            formatted_time_series = to_time_series_dataset(timeseries)
-            model = TimeSeriesKMeans(n_clusters = n_cluster, metric="dtw", max_iter=10)
-            y_pred = model.fit_predict(formatted_time_series)
-            for tc, y in zip(timeSerie_cluster,y_pred):
-                tc.append(y)
-            return timeSerie_cluster
-        except KeyError:
-            logging.error("The dict contains a property we do have or do not have",exc_info=True)                    
-            return timeSerie_cluster
 
 if __name__ == "__main__":
     print("WaterML ops")
