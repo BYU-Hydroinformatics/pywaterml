@@ -19,7 +19,7 @@ requirements = [
 
 setup(
     name='pywaterml',
-    version='1.2.24',
+    version='1.2.25',
     # cmdclass=versioneer.get_cmdclass(),
     description="The pywaterml is a package that lets you handle WaterML functions such as GetValues, GetSitesInfo, etc. In addition it lets offers extra functions such as mean interpolation for data with gaps",
     long_description=long_description,
